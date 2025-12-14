@@ -22,21 +22,26 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    const supabase = createClient();
+    try {
+      console.log("Starting login...");
+      const supabase = createClient();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+      console.log("Calling signInWithPassword...");
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      console.log("signInWithPassword result:", { user: data?.user?.id, error });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
 
-    if (data.user) {
-      try {
+      if (data.user) {
+        console.log("User authenticated, fetching profile...");
+
         // Check if user is admin
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
@@ -44,29 +49,31 @@ export default function LoginPage() {
           .eq("id", data.user.id)
           .single();
 
+        console.log("Profile result:", { profile, profileError });
+
         if (profileError) {
           console.error("Profile fetch error:", profileError);
           // No profile yet, send to vetting
-          router.push("/vetting");
-          router.refresh();
+          window.location.href = "/vetting";
           return;
         }
 
+        let redirectUrl = "/vetting";
         if (profile?.is_admin) {
-          router.push("/admin/dashboard");
+          redirectUrl = "/admin/dashboard";
         } else if (profile?.is_verified) {
-          router.push("/dashboard");
-        } else {
-          router.push("/vetting");
+          redirectUrl = "/dashboard";
         }
-        router.refresh();
-      } catch (err) {
-        console.error("Login redirect error:", err);
-        setError("Login succeeded but failed to load profile. Please try again.");
+
+        console.log("Redirecting to:", redirectUrl);
+        window.location.href = redirectUrl;
+      } else {
+        setError("Login failed. Please try again.");
         setLoading(false);
       }
-    } else {
-      setError("Login failed. Please try again.");
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setError(err.message || "An unexpected error occurred");
       setLoading(false);
     }
   };
