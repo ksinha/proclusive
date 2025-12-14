@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Application, Profile } from "@/types/database.types";
 import ApplicationsList from "@/components/admin/ApplicationsList";
@@ -14,134 +13,112 @@ import {
   CheckCircle2,
   LogOut,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ApplicationWithProfile extends Application {
   profile: Profile;
 }
 
 export default function AdminDashboardPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const [dataLoading, setDataLoading] = useState(true);
   const [applications, setApplications] = useState<ApplicationWithProfile[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "under_review" | "approved" | "rejected">("pending");
 
+  // Redirect logic based on auth state
   useEffect(() => {
-    checkAdminAuth();
-  }, []);
+    if (!authLoading) {
+      console.log("[AdminDashboard] Auth loaded:", { user: user?.id, isAdmin });
 
-  useEffect(() => {
-    if (!loading) {
-      loadApplications();
-    }
-  }, [filter, loading]);
-
-  const checkAdminAuth = async () => {
-    try {
-      console.log("[AdminDashboard] Checking admin auth...");
-      const supabase = createClient();
-
-      // Use getSession first (faster, uses cached data) then verify with getUser
-      console.log("[AdminDashboard] Getting session...");
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-      console.log("[AdminDashboard] Session result:", {
-        hasSession: !!session,
-        userId: session?.user?.id,
-        sessionError
-      });
-
-      if (sessionError || !session?.user) {
-        console.log("[AdminDashboard] No session, redirecting to login");
+      if (!user) {
+        console.log("[AdminDashboard] No user, redirecting to login");
         window.location.href = "/auth/login";
         return;
       }
 
-      const user = session.user;
-
-      console.log("[AdminDashboard] Fetching profile for user:", user.id);
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", user.id)
-        .single();
-
-      console.log("[AdminDashboard] Profile check result:", { profile, profileError });
-
-      if (profileError) {
-        console.error("[AdminDashboard] Profile fetch error:", profileError);
-        window.location.href = "/auth/login";
-        return;
-      }
-
-      if (!profile?.is_admin) {
+      if (!isAdmin) {
         console.log("[AdminDashboard] Not admin, redirecting to member dashboard");
         window.location.href = "/dashboard";
         return;
       }
 
-      console.log("[AdminDashboard] Admin verified, loading dashboard");
-      setLoading(false);
-    } catch (err) {
-      console.error("[AdminDashboard] Admin auth check failed:", err);
-      window.location.href = "/auth/login";
+      // User is authenticated and is admin, load applications
+      console.log("[AdminDashboard] Admin verified, loading applications");
+      loadApplications();
     }
-  };
+  }, [authLoading, user, isAdmin]);
+
+  // Reload applications when filter changes
+  useEffect(() => {
+    if (!authLoading && user && isAdmin) {
+      loadApplications();
+    }
+  }, [filter]);
 
   const loadApplications = async () => {
-    const supabase = createClient();
+    console.log("[AdminDashboard] Loading applications with filter:", filter);
+    setDataLoading(true);
 
-    // First get applications
-    let appQuery = supabase
-      .from("applications")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      const supabase = createClient();
 
-    if (filter !== "all") {
-      appQuery = appQuery.eq("status", filter);
+      // First get applications
+      let appQuery = supabase
+        .from("applications")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (filter !== "all") {
+        appQuery = appQuery.eq("status", filter);
+      }
+
+      const { data: apps, error: appsError } = await appQuery;
+
+      if (appsError) {
+        console.error("[AdminDashboard] Error loading applications:", appsError);
+        setDataLoading(false);
+        return;
+      }
+
+      if (!apps || apps.length === 0) {
+        console.log("[AdminDashboard] No applications found");
+        setApplications([]);
+        setDataLoading(false);
+        return;
+      }
+
+      // Get user IDs
+      const userIds = apps.map((app) => app.user_id);
+
+      // Get profiles for these users
+      const { data: profiles, error: profilesError } = await supabase
+        .from("profiles")
+        .select("*")
+        .in("id", userIds);
+
+      if (profilesError) {
+        console.error("[AdminDashboard] Error loading profiles:", profilesError);
+        setDataLoading(false);
+        return;
+      }
+
+      // Combine data
+      const combined = apps.map((app) => ({
+        ...app,
+        profile: profiles?.find((p) => p.id === app.user_id),
+      }));
+
+      console.log("[AdminDashboard] Loaded", combined.length, "applications");
+      setApplications(combined as any);
+    } catch (err) {
+      console.error("[AdminDashboard] Error loading applications:", err);
+    } finally {
+      setDataLoading(false);
     }
-
-    const { data: apps, error: appsError } = await appQuery;
-
-    if (appsError) {
-      console.error("Error loading applications:", appsError);
-      return;
-    }
-
-    if (!apps || apps.length === 0) {
-      setApplications([]);
-      return;
-    }
-
-    // Get user IDs
-    const userIds = apps.map((app) => app.user_id);
-
-    // Get profiles for these users
-    const { data: profiles, error: profilesError } = await supabase
-      .from("profiles")
-      .select("*")
-      .in("id", userIds);
-
-    if (profilesError) {
-      console.error("Error loading profiles:", profilesError);
-      return;
-    }
-
-    // Combine data
-    const combined = apps.map((app) => ({
-      ...app,
-      profile: profiles?.find((p) => p.id === app.user_id),
-    }));
-
-    setApplications(combined as any);
   };
 
-  const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/auth/login");
-  };
-
-  if (loading) {
+  // Show loading while auth is being checked
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
@@ -166,7 +143,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
             <Button
-              onClick={handleSignOut}
+              onClick={signOut}
               variant="outline"
               size="sm"
               className="border-navy-600 bg-navy-700 hover:bg-navy-600 text-white"

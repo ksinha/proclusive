@@ -1,123 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-  const router = useRouter();
+  const { user, isAdmin, loading, signOut } = useAuth();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        console.log("[Navigation] Checking auth state...");
-        const supabase = createClient();
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-        if (authError) {
-          console.error("[Navigation] Auth error:", authError);
-          setIsLoggedIn(false);
-          setIsAdmin(false);
-          setLoading(false);
-          return;
-        }
-
-        if (user) {
-          console.log("[Navigation] User found:", user.id);
-          setIsLoggedIn(true);
-
-          // Check if user is admin
-          const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("is_admin")
-            .eq("id", user.id)
-            .single();
-
-          if (profileError) {
-            console.error("[Navigation] Profile fetch error:", profileError);
-            setIsAdmin(false);
-          } else {
-            console.log("[Navigation] Profile found, is_admin:", profile?.is_admin);
-            setIsAdmin(profile?.is_admin || false);
-          }
-        } else {
-          console.log("[Navigation] No user found");
-          setIsLoggedIn(false);
-          setIsAdmin(false);
-        }
-      } catch (err) {
-        console.error("[Navigation] Unexpected error in checkAuth:", err);
-        setIsLoggedIn(false);
-        setIsAdmin(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const supabase = createClient();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      try {
-        console.log("[Navigation] Auth state changed:", event);
-        setIsLoggedIn(!!session?.user);
-
-        if (session?.user) {
-          console.log("[Navigation] Session user:", session.user.id);
-          const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("is_admin")
-            .eq("id", session.user.id)
-            .single();
-
-          if (profileError) {
-            console.error("[Navigation] Profile fetch error in auth change:", profileError);
-            setIsAdmin(false);
-          } else {
-            setIsAdmin(profile?.is_admin || false);
-          }
-        } else {
-          console.log("[Navigation] No session user");
-          setIsAdmin(false);
-        }
-      } catch (err) {
-        console.error("[Navigation] Error in auth state change handler:", err);
-        setIsAdmin(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      console.log("[Navigation] Logging out...");
-      const supabase = createClient();
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        console.error("[Navigation] Logout error:", error);
-      }
-
-      setIsAdmin(false);
-      setIsLoggedIn(false);
-      console.log("[Navigation] Logout successful, redirecting...");
-      window.location.href = "/";
-    } catch (err) {
-      console.error("[Navigation] Unexpected error in logout:", err);
-      // Force redirect even on error
-      window.location.href = "/";
-    }
-  };
+  const isLoggedIn = !!user;
 
   // Determine the correct links based on role
   const dashboardLink = isAdmin ? "/admin/dashboard" : "/dashboard";
@@ -164,7 +59,7 @@ export default function Navigation() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={handleLogout}
+                      onClick={signOut}
                       className="text-gray-600 hover:text-gray-900"
                     >
                       <LogOut className="h-4 w-4 mr-1" />
@@ -236,7 +131,7 @@ export default function Navigation() {
                       variant="outline"
                       className="w-full"
                       onClick={() => {
-                        handleLogout();
+                        signOut();
                         setMobileMenuOpen(false);
                       }}
                     >

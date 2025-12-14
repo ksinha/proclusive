@@ -19,44 +19,49 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("[LoginPage] Starting login...");
     setLoading(true);
     setError(null);
 
     try {
-      console.log("Starting login...");
       const supabase = createClient();
 
-      console.log("Calling signInWithPassword...");
+      console.log("[LoginPage] Calling signInWithPassword...");
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      console.log("signInWithPassword result:", { user: data?.user?.id, error });
 
       if (error) {
+        console.error("[LoginPage] Sign in error:", error);
         setError(error.message);
         setLoading(false);
         return;
       }
 
       if (data.user) {
-        console.log("User authenticated, fetching profile...");
+        console.log("[LoginPage] User authenticated:", data.user.id);
 
         // Check if user is admin
+        console.log("[LoginPage] Fetching profile...");
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("is_admin, is_verified")
           .eq("id", data.user.id)
           .single();
 
-        console.log("Profile result:", { profile, profileError });
-
         if (profileError) {
-          console.error("Profile fetch error:", profileError);
+          console.error("[LoginPage] Profile fetch error:", profileError);
           // No profile yet, send to vetting
+          console.log("[LoginPage] Redirecting to vetting (no profile)");
           window.location.href = "/vetting";
           return;
         }
+
+        console.log("[LoginPage] Profile loaded:", {
+          is_admin: profile?.is_admin,
+          is_verified: profile?.is_verified,
+        });
 
         let redirectUrl = "/vetting";
         if (profile?.is_admin) {
@@ -65,14 +70,15 @@ export default function LoginPage() {
           redirectUrl = "/dashboard";
         }
 
-        console.log("Redirecting to:", redirectUrl);
+        console.log("[LoginPage] Redirecting to:", redirectUrl);
         window.location.href = redirectUrl;
       } else {
+        console.error("[LoginPage] No user returned");
         setError("Login failed. Please try again.");
         setLoading(false);
       }
     } catch (err: any) {
-      console.error("Login error:", err);
+      console.error("[LoginPage] Login error:", err);
       setError(err.message || "An unexpected error occurred");
       setLoading(false);
     }

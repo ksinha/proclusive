@@ -1,40 +1,43 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import VettingWizard from "@/components/vetting/VettingWizard";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function VettingPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
+  const { user, isVerified, loading: authLoading } = useAuth();
+  const [checkingApplication, setCheckingApplication] = useState(true);
+  const [hasApprovedApplication, setHasApprovedApplication] = useState(false);
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      console.log("[VettingPage] Checking authentication...");
-      const supabase = createClient();
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-      if (authError) {
-        console.error("[VettingPage] Auth error:", authError);
-        window.location.href = "/auth/signup";
-        return;
-      }
+    if (!authLoading) {
+      console.log("[VettingPage] Auth loaded:", { user: user?.id, isVerified });
 
       if (!user) {
-        console.log("[VettingPage] No user found, redirecting to signup");
+        console.log("[VettingPage] No user, redirecting to signup");
         window.location.href = "/auth/signup";
         return;
       }
 
-      console.log("[VettingPage] User authenticated:", user.id);
+      // If already verified, redirect to dashboard
+      if (isVerified) {
+        console.log("[VettingPage] User is verified, redirecting to dashboard");
+        window.location.href = "/dashboard";
+        return;
+      }
 
-      // Check if user has already submitted application
+      // Check for existing application
+      checkApplication();
+    }
+  }, [authLoading, user, isVerified]);
+
+  const checkApplication = async () => {
+    if (!user) return;
+
+    try {
+      console.log("[VettingPage] Checking for existing application...");
+      const supabase = createClient();
       const { data: application, error: appError } = await supabase
         .from("applications")
         .select("id, status")
@@ -48,25 +51,23 @@ export default function VettingPage() {
       if (application) {
         console.log("[VettingPage] Found application:", application.id, "status:", application.status);
         if (application.status === "approved") {
-          console.log("[VettingPage] Application approved, redirecting to dashboard");
+          setHasApprovedApplication(true);
           window.location.href = "/dashboard";
-        } else {
-          // Show application status
-          setUserId(user.id);
-          setLoading(false);
+          return;
         }
       } else {
-        console.log("[VettingPage] No application found, showing wizard");
-        setUserId(user.id);
-        setLoading(false);
+        console.log("[VettingPage] No existing application");
       }
+
+      setCheckingApplication(false);
     } catch (err) {
-      console.error("[VettingPage] Unexpected error in checkAuth:", err);
-      setLoading(false);
+      console.error("[VettingPage] Error checking application:", err);
+      setCheckingApplication(false);
     }
   };
 
-  if (loading) {
+  // Show loading while auth is being checked or application is being checked
+  if (authLoading || checkingApplication || hasApprovedApplication) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -75,6 +76,11 @@ export default function VettingPage() {
         </div>
       </div>
     );
+  }
+
+  // If no user after auth loaded, this shouldn't render (redirect happens in useEffect)
+  if (!user) {
+    return null;
   }
 
   return (
@@ -87,7 +93,7 @@ export default function VettingPage() {
           </p>
         </div>
 
-        <VettingWizard userId={userId!} />
+        <VettingWizard userId={user.id} />
       </div>
     </div>
   );
