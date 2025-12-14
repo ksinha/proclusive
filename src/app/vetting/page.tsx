@@ -4,11 +4,33 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import VettingWizard from "@/components/vetting/VettingWizard";
 import { useAuth } from "@/contexts/AuthContext";
+import { Application, Profile } from "@/types/database.types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, CheckCircle2, XCircle, Clock, ArrowRight } from "lucide-react";
+
+interface ExistingApplicationData {
+  application: Application;
+  profile: Profile;
+}
+
+const VERIFICATION_POINT_LABELS: Record<string, string> = {
+  point_1_business_reg: "Business Registration",
+  point_2_prof_license: "Professional License",
+  point_3_liability_ins: "Liability Insurance",
+  point_4_workers_comp: "Workers' Compensation",
+  point_5_contact_verify: "Contact Verification",
+  point_6_portfolio: "Portfolio/Tax Compliance",
+};
 
 export default function VettingPage() {
   const { user, isVerified, loading: authLoading } = useAuth();
   const [checkingApplication, setCheckingApplication] = useState(true);
   const [hasApprovedApplication, setHasApprovedApplication] = useState(false);
+  const [existingData, setExistingData] = useState<ExistingApplicationData | null>(null);
+  const [showEditMode, setShowEditMode] = useState(false);
+  const [hasPendingApplication, setHasPendingApplication] = useState(false);
 
   useEffect(() => {
     if (!authLoading) {
@@ -38,9 +60,11 @@ export default function VettingPage() {
     try {
       console.log("[VettingPage] Checking for existing application...");
       const supabase = createClient();
+
+      // Get application with all fields
       const { data: application, error: appError } = await supabase
         .from("applications")
-        .select("id, status")
+        .select("*")
         .eq("user_id", user.id)
         .single();
 
@@ -50,10 +74,27 @@ export default function VettingPage() {
 
       if (application) {
         console.log("[VettingPage] Found application:", application.id, "status:", application.status);
+
         if (application.status === "approved") {
           setHasApprovedApplication(true);
           window.location.href = "/dashboard";
           return;
+        }
+
+        // Get profile data
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (profile) {
+          setExistingData({ application, profile });
+        }
+
+        // Check if pending or under_review - show waiting screen
+        if (application.status === "pending" || application.status === "under_review") {
+          setHasPendingApplication(true);
         }
       } else {
         console.log("[VettingPage] No existing application");
@@ -83,17 +124,171 @@ export default function VettingPage() {
     return null;
   }
 
+  // Show pending/under review status
+  if (hasPendingApplication && existingData && !showEditMode) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card className="border-blue-200 bg-blue-50">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <Clock className="h-8 w-8 text-blue-600" />
+              </div>
+              <CardTitle className="text-2xl text-blue-900">Application Under Review</CardTitle>
+              <CardDescription className="text-blue-700 text-base mt-2">
+                Your application has been submitted and is currently being reviewed by our team.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <p className="text-blue-800 mb-4">
+                We'll notify you by email once your application has been reviewed.
+                This typically takes 1-2 business days.
+              </p>
+              <Badge variant="info" size="lg">
+                Status: {existingData.application.status === "pending" ? "Pending Review" : "Under Review"}
+              </Badge>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Show rejected application status with option to edit
+  if (existingData && existingData.application.status === "rejected" && !showEditMode) {
+    const verificationPoints = [
+      { key: "point_1_business_reg", status: existingData.application.point_1_business_reg },
+      { key: "point_2_prof_license", status: existingData.application.point_2_prof_license },
+      { key: "point_3_liability_ins", status: existingData.application.point_3_liability_ins },
+      { key: "point_4_workers_comp", status: existingData.application.point_4_workers_comp },
+      { key: "point_5_contact_verify", status: existingData.application.point_5_contact_verify },
+      { key: "point_6_portfolio", status: existingData.application.point_6_portfolio },
+    ];
+
+    const rejectedPoints = verificationPoints.filter(p => p.status === "rejected");
+
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          {/* Header Card */}
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <AlertTriangle className="h-8 w-8 text-red-600" />
+              </div>
+              <CardTitle className="text-2xl text-red-900">Application Needs Updates</CardTitle>
+              <CardDescription className="text-red-700 text-base mt-2">
+                Your application was reviewed and requires some corrections before it can be approved.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Admin Notes */}
+          {existingData.application.admin_notes && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">What Needs to be Fixed</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-amber-900 whitespace-pre-wrap">{existingData.application.admin_notes}</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Verification Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Verification Status</CardTitle>
+              <CardDescription>Items that need attention are highlighted</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {verificationPoints.map((point) => {
+                  const label = VERIFICATION_POINT_LABELS[point.key] || point.key;
+                  let statusIcon;
+                  let statusBadge;
+
+                  switch (point.status) {
+                    case "verified":
+                      statusIcon = <CheckCircle2 className="h-5 w-5 text-green-600" />;
+                      statusBadge = <Badge variant="success">Approved</Badge>;
+                      break;
+                    case "rejected":
+                      statusIcon = <XCircle className="h-5 w-5 text-red-600" />;
+                      statusBadge = <Badge variant="destructive">Needs Revision</Badge>;
+                      break;
+                    case "pending":
+                      statusIcon = <Clock className="h-5 w-5 text-yellow-600" />;
+                      statusBadge = <Badge variant="warning">Pending</Badge>;
+                      break;
+                    default:
+                      statusIcon = <div className="h-5 w-5 rounded-full border-2 border-gray-300" />;
+                      statusBadge = <Badge variant="secondary">Not Submitted</Badge>;
+                  }
+
+                  return (
+                    <div
+                      key={point.key}
+                      className={`flex items-center justify-between p-3 rounded-lg border ${
+                        point.status === "rejected" ? "bg-red-50 border-red-200" : "bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {statusIcon}
+                        <span className="font-medium text-gray-900">{label}</span>
+                      </div>
+                      {statusBadge}
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Button */}
+          <Card>
+            <CardContent className="pt-6">
+              <Button
+                onClick={() => setShowEditMode(true)}
+                className="w-full h-12 text-base"
+                size="lg"
+              >
+                Fix My Application
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <p className="text-center text-sm text-gray-500 mt-3">
+                You'll be able to update your information and resubmit for review
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Show vetting wizard (new application or edit mode)
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Vetting Application</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {existingData ? "Update Your Application" : "Vetting Application"}
+          </h1>
           <p className="mt-2 text-lg text-gray-600">
-            Complete your verification to join the Proclusive network
+            {existingData
+              ? "Make the necessary corrections and resubmit for review"
+              : "Complete your verification to join the Proclusive network"}
           </p>
         </div>
 
-        <VettingWizard userId={user.id} />
+        <VettingWizard
+          userId={user.id}
+          existingApplication={existingData?.application}
+          existingProfile={existingData?.profile}
+          isEditMode={!!existingData}
+        />
       </div>
     </div>
   );

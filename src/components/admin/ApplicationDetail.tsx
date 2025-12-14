@@ -49,6 +49,8 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [currentApplication, setCurrentApplication] = useState<ApplicationWithProfile>(application);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectionNotes, setRejectionNotes] = useState("");
 
   useEffect(() => {
     loadDocuments();
@@ -157,6 +159,37 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
     }
 
     setLoading(false);
+  };
+
+  const handleRejectWithEmail = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/applications/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          applicationId: application.id,
+          adminNotes: rejectionNotes,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSuccessMessage(result.message);
+        setShowRejectModal(false);
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      } else {
+        console.error('Rejection failed:', result.error);
+        setSuccessMessage(null);
+      }
+    } catch (err) {
+      console.error('Error rejecting application:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePreviewDocument = async (doc: Document) => {
@@ -462,7 +495,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
         <CardContent className="pt-6">
           <div className="flex justify-end gap-3">
             <Button
-              onClick={() => handleUpdateStatus("rejected")}
+              onClick={() => setShowRejectModal(true)}
               disabled={loading}
               variant="destructive"
             >
@@ -488,6 +521,83 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
           </div>
         </CardContent>
       </Card>
+
+      {/* Rejection Modal */}
+      {showRejectModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <Card className="max-w-lg w-full">
+            <CardHeader className="border-b">
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle className="text-[20px] text-red-700">Reject Application</CardTitle>
+                  <CardDescription className="mt-1">
+                    Send rejection email with instructions for the applicant
+                  </CardDescription>
+                </div>
+                <Button
+                  onClick={() => setShowRejectModal(false)}
+                  variant="ghost"
+                  size="icon"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-4">
+              {/* Summary of verification points */}
+              <div>
+                <h4 className="text-[13px] font-medium text-gray-700 mb-2">Verification Status Summary</h4>
+                <div className="bg-gray-50 border rounded-lg p-3 space-y-1 max-h-48 overflow-y-auto">
+                  {tier1Points.map((point) => (
+                    <div key={point.key} className="flex items-center justify-between text-[13px]">
+                      <span className="text-gray-600">{point.label}</span>
+                      {getPointStatus(point.value)}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[12px] text-gray-500 mt-2">
+                  This summary will be included in the rejection email.
+                </p>
+              </div>
+
+              {/* Rejection notes */}
+              <div>
+                <h4 className="text-[13px] font-medium text-gray-700 mb-2">
+                  What needs to be fixed? <span className="text-red-500">*</span>
+                </h4>
+                <textarea
+                  value={rejectionNotes}
+                  onChange={(e) => setRejectionNotes(e.target.value)}
+                  rows={4}
+                  className="w-full border-gray-300 rounded-md shadow-xs focus:border-red-500 focus:ring-2 focus:ring-red-500 text-[14px] border px-3 py-2 bg-white"
+                  placeholder="Explain what documents or information need to be corrected or resubmitted..."
+                />
+                <p className="text-[12px] text-gray-500 mt-1">
+                  This message will be sent to the applicant via email.
+                </p>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button
+                  onClick={() => setShowRejectModal(false)}
+                  variant="outline"
+                  disabled={loading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleRejectWithEmail}
+                  variant="destructive"
+                  disabled={loading || !rejectionNotes.trim()}
+                >
+                  {loading ? "Sending..." : "Reject & Send Email"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Document Preview Modal */}
       {previewUrl && (

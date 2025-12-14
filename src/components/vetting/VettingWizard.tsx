@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -11,9 +11,13 @@ import Step2Portfolio, { PortfolioItem } from "./Step3Portfolio";
 import Step3DocumentUploads from "./Step2DocumentUploads";
 import Step4TermsOfService from "./Step3TermsOfService";
 import Step5Review from "./Step4Review";
+import { Application, Profile } from "@/types/database.types";
 
 interface VettingWizardProps {
   userId: string;
+  existingApplication?: Application;
+  existingProfile?: Profile;
+  isEditMode?: boolean;
 }
 
 export interface BusinessInfoData {
@@ -53,7 +57,12 @@ const STEPS = [
   { id: 5, name: "Review & Submit" },
 ];
 
-export default function VettingWizard({ userId }: VettingWizardProps) {
+export default function VettingWizard({
+  userId,
+  existingApplication,
+  existingProfile,
+  isEditMode = false,
+}: VettingWizardProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [businessInfo, setBusinessInfo] = useState<BusinessInfoData | null>(null);
@@ -62,6 +71,34 @@ export default function VettingWizard({ userId }: VettingWizardProps) {
   const [tosAccepted, setTosAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Pre-populate with existing data in edit mode
+  useEffect(() => {
+    if (isEditMode && existingProfile) {
+      setBusinessInfo({
+        full_name: existingProfile.full_name || "",
+        company_name: existingProfile.company_name || "",
+        phone: existingProfile.phone || "",
+        business_type: existingProfile.business_type || "",
+        primary_trade: existingProfile.primary_trade || "",
+        service_areas: existingProfile.service_areas || [],
+        website: existingProfile.website || "",
+        linkedin_url: existingProfile.linkedin_url || "",
+        street_address: existingProfile.street_address || "",
+        city: existingProfile.city || "",
+        state: existingProfile.state || "",
+        zip_code: existingProfile.zip_code || "",
+        bio: existingProfile.bio || "",
+        years_in_business: existingProfile.years_in_business || 0,
+        team_size: existingProfile.team_size || "",
+        tin_number: existingProfile.tin_number || "",
+        is_public: existingProfile.is_public ?? true,
+      });
+    }
+    if (isEditMode && existingApplication) {
+      setTosAccepted(existingApplication.tos_accepted || false);
+    }
+  }, [isEditMode, existingProfile, existingApplication]);
 
   const handleStep1Complete = (data: BusinessInfoData) => {
     setBusinessInfo(data);
@@ -103,19 +140,50 @@ export default function VettingWizard({ userId }: VettingWizardProps) {
 
       if (profileError) throw profileError;
 
-      // 2. Create Application
-      const { data: application, error: applicationError } = await supabase
-        .from("applications")
-        .insert({
-          user_id: userId,
-          status: "pending",
-          tos_accepted: tosAccepted,
-          tos_accepted_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+      let application;
 
-      if (applicationError) throw applicationError;
+      if (isEditMode && existingApplication) {
+        // 2a. Update existing application - reset status to pending for re-review
+        const { data: updatedApp, error: updateError } = await supabase
+          .from("applications")
+          .update({
+            status: "pending",
+            tos_accepted: tosAccepted,
+            tos_accepted_at: new Date().toISOString(),
+            // Reset all rejected points to pending so they can be re-reviewed
+            point_1_business_reg: existingApplication.point_1_business_reg === "rejected" ? "pending" : existingApplication.point_1_business_reg,
+            point_2_prof_license: existingApplication.point_2_prof_license === "rejected" ? "pending" : existingApplication.point_2_prof_license,
+            point_3_liability_ins: existingApplication.point_3_liability_ins === "rejected" ? "pending" : existingApplication.point_3_liability_ins,
+            point_4_workers_comp: existingApplication.point_4_workers_comp === "rejected" ? "pending" : existingApplication.point_4_workers_comp,
+            point_5_contact_verify: existingApplication.point_5_contact_verify === "rejected" ? "pending" : existingApplication.point_5_contact_verify,
+            point_6_portfolio: existingApplication.point_6_portfolio === "rejected" ? "pending" : existingApplication.point_6_portfolio,
+            // Clear admin notes for fresh review
+            admin_notes: null,
+            reviewed_by: null,
+            reviewed_at: null,
+          })
+          .eq("id", existingApplication.id)
+          .select()
+          .single();
+
+        if (updateError) throw updateError;
+        application = updatedApp;
+      } else {
+        // 2b. Create new Application
+        const { data: newApp, error: applicationError } = await supabase
+          .from("applications")
+          .insert({
+            user_id: userId,
+            status: "pending",
+            tos_accepted: tosAccepted,
+            tos_accepted_at: new Date().toISOString(),
+          })
+          .select()
+          .single();
+
+        if (applicationError) throw applicationError;
+        application = newApp;
+      }
 
       // 3. Upload Tier 1 Documents (including W-9)
       const documentTypes: Array<keyof DocumentData> = [

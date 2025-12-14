@@ -130,6 +130,204 @@ This is an automated notification from Proclusive.
 /**
  * Send notification to member when they are matched to a referral
  */
+/**
+ * Verification point labels for emails
+ */
+const VERIFICATION_POINT_LABELS: Record<string, string> = {
+  point_1_business_reg: "Business Registration",
+  point_2_prof_license: "Professional License",
+  point_3_liability_ins: "Liability Insurance",
+  point_4_workers_comp: "Workers' Compensation",
+  point_5_contact_verify: "Contact Verification",
+  point_6_portfolio: "Portfolio/Tax Compliance",
+  point_7_references: "Client References",
+  point_8_certifications: "Professional Certifications",
+  point_9_financial: "Financial Stability",
+  point_10_legal_record: "Legal Record Check",
+  point_11_operating_history: "Operating History",
+  point_12_industry_awards: "Industry Recognition",
+  point_13_satisfaction: "Client Satisfaction Metrics",
+  point_14_network_contrib: "Network Contribution",
+  point_15_enterprise: "Enterprise Assessment",
+};
+
+interface VerificationPointStatus {
+  key: string;
+  status: 'not_submitted' | 'pending' | 'verified' | 'rejected';
+}
+
+interface ApplicantInfo {
+  email: string;
+  fullName: string;
+}
+
+/**
+ * Send rejection notification to applicant with summary of verification statuses
+ */
+export async function sendApplicationRejectionNotification(
+  applicant: ApplicantInfo,
+  verificationPoints: VerificationPointStatus[],
+  adminNotes: string
+): Promise<boolean> {
+  if (!process.env.SENDGRID_API_KEY) {
+    console.log('SendGrid API key not configured - skipping rejection email');
+    return false;
+  }
+
+  // Build the status table HTML
+  const statusRows = verificationPoints
+    .filter(point => point.status !== 'not_submitted')
+    .map(point => {
+      const label = VERIFICATION_POINT_LABELS[point.key] || point.key;
+      let statusIcon = '';
+      let statusText = '';
+      let statusColor = '';
+
+      switch (point.status) {
+        case 'verified':
+          statusIcon = '✅';
+          statusText = 'Approved';
+          statusColor = '#16a34a';
+          break;
+        case 'rejected':
+          statusIcon = '❌';
+          statusText = 'Needs Revision';
+          statusColor = '#dc2626';
+          break;
+        case 'pending':
+          statusIcon = '⏳';
+          statusText = 'Pending Review';
+          statusColor = '#ca8a04';
+          break;
+        default:
+          statusIcon = '○';
+          statusText = 'Not Submitted';
+          statusColor = '#6b7280';
+      }
+
+      return `
+        <tr>
+          <td style="padding: 10px 12px; border-bottom: 1px solid #e5e7eb;">${label}</td>
+          <td style="padding: 10px 12px; border-bottom: 1px solid #e5e7eb; color: ${statusColor}; font-weight: 500;">
+            ${statusIcon} ${statusText}
+          </td>
+        </tr>
+      `;
+    })
+    .join('');
+
+  // Build plain text version
+  const statusListText = verificationPoints
+    .filter(point => point.status !== 'not_submitted')
+    .map(point => {
+      const label = VERIFICATION_POINT_LABELS[point.key] || point.key;
+      let statusText = '';
+      switch (point.status) {
+        case 'verified': statusText = '✓ Approved'; break;
+        case 'rejected': statusText = '✗ Needs Revision'; break;
+        case 'pending': statusText = '⏳ Pending Review'; break;
+        default: statusText = '○ Not Submitted';
+      }
+      return `- ${label}: ${statusText}`;
+    })
+    .join('\n');
+
+  const msg = {
+    to: applicant.email,
+    from: FROM_EMAIL,
+    subject: 'Action Required: Your Proclusive Application Needs Updates',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1e40af;">Application Update Required</h2>
+
+        <p>Hi ${applicant.fullName},</p>
+
+        <p>Thank you for applying to join the Proclusive network. After reviewing your application, we've identified some items that need to be revised before we can proceed.</p>
+
+        <div style="background-color: #fef2f2; border: 1px solid #fecaca; padding: 16px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #991b1b; font-size: 14px;">What Needs To Be Fixed</h3>
+          <p style="color: #7f1d1d; font-size: 14px; margin-bottom: 0;">
+            ${adminNotes || 'Please review the items marked as "Needs Revision" below and upload corrected documents or information.'}
+          </p>
+        </div>
+
+        <h3 style="color: #374151; margin-top: 24px;">Verification Status Summary</h3>
+
+        <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+          <thead>
+            <tr style="background-color: #f9fafb;">
+              <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Verification Point</th>
+              <th style="padding: 12px; text-align: left; font-size: 13px; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Status</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 14px;">
+            ${statusRows}
+          </tbody>
+        </table>
+
+        <div style="background-color: #dbeafe; padding: 16px; border-radius: 8px; margin: 24px 0;">
+          <h3 style="margin-top: 0; color: #1e40af; font-size: 14px;">Next Steps</h3>
+          <ol style="color: #1e3a8a; font-size: 14px; margin-bottom: 0; padding-left: 20px;">
+            <li>Log in to your Proclusive account</li>
+            <li>Review the items that need revision</li>
+            <li>Upload new documents or update information</li>
+            <li>Resubmit your application for review</li>
+          </ol>
+        </div>
+
+        <a href="${APP_URL}/vetting"
+           style="display: inline-block; background-color: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 10px; font-weight: 500;">
+          Fix My Application
+        </a>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          If you have questions about what needs to be revised, please reply to this email and we'll be happy to help.
+        </p>
+
+        <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
+          Best regards,<br>
+          The Proclusive Team
+        </p>
+      </div>
+    `,
+    text: `
+Application Update Required
+
+Hi ${applicant.fullName},
+
+Thank you for applying to join the Proclusive network. After reviewing your application, we've identified some items that need to be revised before we can proceed.
+
+WHAT NEEDS TO BE FIXED:
+${adminNotes || 'Please review the items marked as "Needs Revision" below and upload corrected documents or information.'}
+
+VERIFICATION STATUS SUMMARY:
+${statusListText}
+
+NEXT STEPS:
+1. Log in to your Proclusive account
+2. Review the items that need revision
+3. Upload new documents or update information
+4. Resubmit your application for review
+
+Fix your application at: ${APP_URL}/vetting
+
+If you have questions about what needs to be revised, please reply to this email and we'll be happy to help.
+
+Best regards,
+The Proclusive Team
+    `,
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log('Application rejection notification email sent to:', applicant.email);
+    return true;
+  } catch (error) {
+    console.error('Failed to send rejection notification:', error);
+    return false;
+  }
+}
+
 export async function sendMatchedReferralNotification(
   referral: ReferralEmailData,
   member: MatchedMemberInfo,
