@@ -32,21 +32,42 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
       setLoading(false);
-    } else if (data.user) {
-      // Check if user is admin
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_admin, is_verified")
-        .eq("id", data.user.id)
-        .single();
+      return;
+    }
 
-      if (profile?.is_admin) {
-        router.push("/admin/dashboard");
-      } else if (profile?.is_verified) {
-        router.push("/dashboard");
-      } else {
-        router.push("/vetting");
+    if (data.user) {
+      try {
+        // Check if user is admin
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("is_admin, is_verified")
+          .eq("id", data.user.id)
+          .single();
+
+        if (profileError) {
+          console.error("Profile fetch error:", profileError);
+          // No profile yet, send to vetting
+          router.push("/vetting");
+          router.refresh();
+          return;
+        }
+
+        if (profile?.is_admin) {
+          router.push("/admin/dashboard");
+        } else if (profile?.is_verified) {
+          router.push("/dashboard");
+        } else {
+          router.push("/vetting");
+        }
+        router.refresh();
+      } catch (err) {
+        console.error("Login redirect error:", err);
+        setError("Login succeeded but failed to load profile. Please try again.");
+        setLoading(false);
       }
+    } else {
+      setError("Login failed. Please try again.");
+      setLoading(false);
     }
   };
 
