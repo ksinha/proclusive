@@ -1,11 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Profile, Application, ApplicationStatus, BadgeLevel } from "@/types/database.types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, GitBranch, Award, Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Users, GitBranch, Award, Clock, CheckCircle2, XCircle, AlertCircle, Pencil, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 interface MemberDashboardProps {
   profile: Profile | null;
@@ -55,11 +61,75 @@ const BADGE_LABELS: Record<BadgeLevel, string> = {
   enterprise: "Enterprise Badge",
 };
 
+interface EditFormData {
+  full_name: string;
+  phone: string;
+  company_name: string;
+  primary_trade: string;
+  city: string;
+  state: string;
+  years_in_business: number | null;
+  bio: string;
+  website: string;
+  is_public: boolean;
+}
+
 export default function MemberDashboard({
   profile,
   application,
   userId,
 }: MemberDashboardProps) {
+  const router = useRouter();
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<EditFormData>({
+    full_name: profile?.full_name || "",
+    phone: profile?.phone || "",
+    company_name: profile?.company_name || "",
+    primary_trade: profile?.primary_trade || "",
+    city: profile?.city || "",
+    state: profile?.state || "",
+    years_in_business: profile?.years_in_business || null,
+    bio: profile?.bio || "",
+    website: profile?.website || "",
+    is_public: profile?.is_public ?? true,
+  });
+
+  const handleSave = async () => {
+    setSaving(true);
+    setError(null);
+
+    try {
+      const supabase = createClient();
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({
+          full_name: formData.full_name,
+          phone: formData.phone || null,
+          company_name: formData.company_name,
+          primary_trade: formData.primary_trade,
+          city: formData.city || null,
+          state: formData.state || null,
+          years_in_business: formData.years_in_business,
+          bio: formData.bio || null,
+          website: formData.website || null,
+          is_public: formData.is_public,
+        })
+        .eq("id", userId);
+
+      if (updateError) throw updateError;
+
+      setIsEditing(false);
+      router.refresh();
+    } catch (err: any) {
+      console.error("Error updating profile:", err);
+      setError(err.message || "Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!profile) {
     return (
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -83,7 +153,6 @@ export default function MemberDashboard({
   }
 
   const statusConfig = application ? STATUS_CONFIG[application.status] : null;
-  const StatusIcon = statusConfig?.icon;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -185,42 +254,197 @@ export default function MemberDashboard({
         {/* Profile Summary */}
         <Card>
           <CardHeader>
-            <CardTitle>Profile Summary</CardTitle>
-            <CardDescription>Your membership information at a glance</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Profile Summary</CardTitle>
+                <CardDescription>Your membership information at a glance</CardDescription>
+              </div>
+              {!isEditing && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                  className="gap-2"
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit Profile
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-              <div className="space-y-1">
-                <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Email</p>
-                <p className="text-[14px] font-medium text-gray-900">{profile.email}</p>
+            {isEditing ? (
+              <div className="space-y-6">
+                {error && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-[13px] text-red-700">{error}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="full_name">Full Name</Label>
+                    <Input
+                      id="full_name"
+                      value={formData.full_name}
+                      onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company_name">Company Name</Label>
+                    <Input
+                      id="company_name"
+                      value={formData.company_name}
+                      onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="primary_trade">Primary Trade</Label>
+                    <Input
+                      id="primary_trade"
+                      value={formData.primary_trade}
+                      onChange={(e) => setFormData({ ...formData, primary_trade: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State</Label>
+                    <Input
+                      id="state"
+                      value={formData.state}
+                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="years_in_business">Years in Business</Label>
+                    <Input
+                      id="years_in_business"
+                      type="number"
+                      value={formData.years_in_business || ""}
+                      onChange={(e) => setFormData({ ...formData, years_in_business: e.target.value ? parseInt(e.target.value) : null })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="website">Website</Label>
+                    <Input
+                      id="website"
+                      value={formData.website}
+                      onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea
+                    id="bio"
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                    rows={4}
+                    placeholder="Tell us about your business..."
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="is_public"
+                    checked={formData.is_public}
+                    onChange={(e) => setFormData({ ...formData, is_public: e.target.checked })}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <Label htmlFor="is_public" className="text-[14px] font-normal">
+                    Make my profile visible in the member directory
+                  </Label>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditing(false);
+                      setFormData({
+                        full_name: profile.full_name,
+                        phone: profile.phone || "",
+                        company_name: profile.company_name,
+                        primary_trade: profile.primary_trade,
+                        city: profile.city || "",
+                        state: profile.state || "",
+                        years_in_business: profile.years_in_business,
+                        bio: profile.bio || "",
+                        website: profile.website || "",
+                        is_public: profile.is_public,
+                      });
+                      setError(null);
+                    }}
+                    disabled={saving}
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSave} disabled={saving}>
+                    <Save className="h-4 w-4 mr-2" />
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Phone</p>
-                <p className="text-[14px] font-medium text-gray-900">{profile.phone || "Not provided"}</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+                <div className="space-y-1">
+                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Email</p>
+                  <p className="text-[14px] font-medium text-gray-900">{profile.email}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Phone</p>
+                  <p className="text-[14px] font-medium text-gray-900">{profile.phone || "Not provided"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Primary Trade</p>
+                  <Badge variant="outline">{profile.primary_trade}</Badge>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Location</p>
+                  <p className="text-[14px] font-medium text-gray-900">
+                    {profile.city}
+                    {profile.city && profile.state && ", "}
+                    {profile.state}
+                    {!profile.city && !profile.state && "Not provided"}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Years in Business</p>
+                  <p className="text-[14px] font-medium text-gray-900">{profile.years_in_business || "Not provided"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Profile Visibility</p>
+                  <Badge variant={profile.is_public ? "success" : "secondary"}>
+                    {profile.is_public ? "Public" : "Private"}
+                  </Badge>
+                </div>
+                {profile.bio && (
+                  <div className="space-y-1 md:col-span-2 lg:col-span-3">
+                    <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Bio</p>
+                    <p className="text-[14px] text-gray-700">{profile.bio}</p>
+                  </div>
+                )}
               </div>
-              <div className="space-y-1">
-                <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Primary Trade</p>
-                <Badge variant="outline">{profile.primary_trade}</Badge>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Location</p>
-                <p className="text-[14px] font-medium text-gray-900">
-                  {profile.city}
-                  {profile.city && profile.state && ", "}
-                  {profile.state}
-                </p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Years in Business</p>
-                <p className="text-[14px] font-medium text-gray-900">{profile.years_in_business || "Not provided"}</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Profile Visibility</p>
-                <Badge variant={profile.is_public ? "success" : "secondary"}>
-                  {profile.is_public ? "Public" : "Private"}
-                </Badge>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
