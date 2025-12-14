@@ -68,18 +68,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     };
 
-    // Fetch user profile (admin status, verified status)
+    // Fetch user profile (admin status, verified status) with timeout
     const fetchUserProfile = async (userId: string) => {
       try {
         console.log("[AuthProvider] Fetching profile for:", userId);
-        const { data: profile, error: profileError } = await supabase
+
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("Profile fetch timeout")), 10000);
+        });
+
+        const fetchPromise = supabase
           .from("profiles")
           .select("is_admin, is_verified")
           .eq("id", userId)
           .single();
 
+        const { data: profile, error: profileError } = await Promise.race([
+          fetchPromise,
+          timeoutPromise,
+        ]) as Awaited<typeof fetchPromise>;
+
         if (profileError) {
           console.error("[AuthProvider] Profile fetch error:", profileError);
+          // Still set loading to false so app can proceed
           return;
         }
 
@@ -92,6 +104,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setIsVerified(profile?.is_verified || false);
       } catch (err) {
         console.error("[AuthProvider] Profile fetch error:", err);
+        // Don't block the app - allow it to proceed without profile data
       }
     };
 

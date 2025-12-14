@@ -42,36 +42,53 @@ export default function LoginPage() {
       if (data.user) {
         console.log("[LoginPage] User authenticated:", data.user.id);
 
-        // Check if user is admin
+        // Check if user is admin - with timeout to prevent hanging
         console.log("[LoginPage] Fetching profile...");
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("is_admin, is_verified")
-          .eq("id", data.user.id)
-          .single();
 
-        if (profileError) {
-          console.error("[LoginPage] Profile fetch error:", profileError);
-          // No profile yet, send to vetting
-          console.log("[LoginPage] Redirecting to vetting (no profile)");
+        try {
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error("Profile fetch timeout")), 10000);
+          });
+
+          const fetchPromise = supabase
+            .from("profiles")
+            .select("is_admin, is_verified")
+            .eq("id", data.user.id)
+            .single();
+
+          const { data: profile, error: profileError } = await Promise.race([
+            fetchPromise,
+            timeoutPromise,
+          ]) as Awaited<typeof fetchPromise>;
+
+          if (profileError) {
+            console.error("[LoginPage] Profile fetch error:", profileError);
+            // No profile yet, send to vetting
+            console.log("[LoginPage] Redirecting to vetting (no profile)");
+            window.location.href = "/vetting";
+            return;
+          }
+
+          console.log("[LoginPage] Profile loaded:", {
+            is_admin: profile?.is_admin,
+            is_verified: profile?.is_verified,
+          });
+
+          let redirectUrl = "/vetting";
+          if (profile?.is_admin) {
+            redirectUrl = "/admin/dashboard";
+          } else if (profile?.is_verified) {
+            redirectUrl = "/dashboard";
+          }
+
+          console.log("[LoginPage] Redirecting to:", redirectUrl);
+          window.location.href = redirectUrl;
+        } catch (timeoutErr) {
+          console.error("[LoginPage] Profile fetch timed out:", timeoutErr);
+          // On timeout, redirect to vetting as fallback
           window.location.href = "/vetting";
           return;
         }
-
-        console.log("[LoginPage] Profile loaded:", {
-          is_admin: profile?.is_admin,
-          is_verified: profile?.is_verified,
-        });
-
-        let redirectUrl = "/vetting";
-        if (profile?.is_admin) {
-          redirectUrl = "/admin/dashboard";
-        } else if (profile?.is_verified) {
-          redirectUrl = "/dashboard";
-        }
-
-        console.log("[LoginPage] Redirecting to:", redirectUrl);
-        window.location.href = redirectUrl;
       } else {
         console.error("[LoginPage] No user returned");
         setError("Login failed. Please try again.");
