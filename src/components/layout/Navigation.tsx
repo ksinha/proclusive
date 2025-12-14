@@ -109,18 +109,6 @@ export default function Navigation() {
                     >
                       Referrals
                     </Link>
-                    {isAdmin && (
-                      <Link
-                        href="/admin/dashboard"
-                        className={`text-[14px] font-medium transition-colors ${
-                          pathname === "/admin/dashboard"
-                            ? "text-gray-900"
-                            : "text-gray-600 hover:text-gray-900"
-                        }`}
-                      >
-                        Admin
-                      </Link>
-                    )}
                     <Button asChild variant="cta">
                       <Link href={dashboardLink}>Dashboard</Link>
                     </Button>
@@ -190,15 +178,6 @@ export default function Navigation() {
                     >
                       Referrals
                     </Link>
-                    {isAdmin && (
-                      <Link
-                        href="/admin/dashboard"
-                        className="block text-[14px] font-medium text-gray-600 hover:text-gray-900"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Admin
-                      </Link>
-                    )}
                     <Button asChild variant="cta" className="w-full">
                       <Link href={dashboardLink} onClick={() => setMobileMenuOpen(false)}>
                         Dashboard

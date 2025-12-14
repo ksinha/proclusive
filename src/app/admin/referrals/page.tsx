@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ReferralsList from "@/components/admin/ReferralsList";
+import { Profile } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -28,26 +29,48 @@ export default async function AdminReferralsPage() {
     redirect("/dashboard");
   }
 
-  // Get all referrals with submitter and matched member info
-  const { data: referrals, error } = await supabase
+  // Get all referrals
+  const { data: referrals, error: referralsError } = await supabase
     .from("referrals")
-    .select(`
-      *,
-      submitter:profiles!referrals_submitted_by_fkey(*),
-      matched_member:profiles!referrals_matched_to_fkey(*)
-    `)
+    .select("*")
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching referrals:", error);
+  if (referralsError) {
+    console.error("Error fetching referrals:", referralsError);
   }
 
-  // Get all approved members for matching
-  const { data: members } = await supabase
+  // Get all profiles for matching submitters and members
+  const { data: allProfiles } = await supabase
     .from("profiles")
-    .select("*")
-    .eq("is_verified", true)
-    .order("full_name");
+    .select("*");
+
+  // Create a map of profiles by ID for easy lookup
+  const profileMap = new Map<string, Profile>();
+  (allProfiles || []).forEach((p: Profile) => {
+    profileMap.set(p.id, p);
+  });
+
+  // Enrich referrals with submitter and matched_member data
+  const enrichedReferrals = (referrals || []).map((referral) => ({
+    ...referral,
+    submitter: profileMap.get(referral.submitted_by) || {
+      id: referral.submitted_by,
+      full_name: "Unknown",
+      company_name: "Unknown",
+      email: "",
+      primary_trade: "",
+      badge_level: "none",
+      is_admin: false,
+      is_verified: false,
+      is_public: false,
+      created_at: "",
+      updated_at: "",
+    },
+    matched_member: referral.matched_to ? profileMap.get(referral.matched_to) : null,
+  }));
+
+  // Get all verified members for matching dropdown
+  const members = (allProfiles || []).filter((p: Profile) => p.is_verified);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -62,13 +85,8 @@ export default async function AdminReferralsPage() {
 
         {/* Referrals List */}
         <ReferralsList
-          referrals={referrals || []}
-          members={members || []}
-          onRefresh={() => {
-            // Client-side refresh will be handled by the component
-            // For now, just reload the page
-            window.location.reload();
-          }}
+          referrals={enrichedReferrals}
+          members={members}
         />
       </div>
     </div>

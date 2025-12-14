@@ -23,7 +23,6 @@ interface ReferralWithProfile extends Referral {
 interface ReferralsListProps {
   referrals: ReferralWithProfile[];
   members: Profile[];
-  onRefresh: () => void;
 }
 
 const STATUS_CONFIG = {
@@ -56,7 +55,7 @@ const STATUS_CONFIG = {
 
 const ALL_STATUSES: ReferralStatus[] = ["SUBMITTED", "REVIEWED", "MATCHED", "ENGAGED", "COMPLETED"];
 
-export default function ReferralsList({ referrals, members, onRefresh }: ReferralsListProps) {
+export default function ReferralsList({ referrals, members }: ReferralsListProps) {
   const [selectedReferral, setSelectedReferral] = useState<ReferralWithProfile | null>(null);
   const [statusFilter, setStatusFilter] = useState<ReferralStatus | "ALL">("ALL");
 
@@ -76,8 +75,7 @@ export default function ReferralsList({ referrals, members, onRefresh }: Referra
         members={members}
         onClose={() => setSelectedReferral(null)}
         onUpdate={() => {
-          onRefresh();
-          setSelectedReferral(null);
+          window.location.reload();
         }}
       />
     );
