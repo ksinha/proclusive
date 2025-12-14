@@ -24,8 +24,20 @@ export default function AdminDashboardPage() {
   const [allApplications, setAllApplications] = useState<ApplicationWithProfile[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "under_review" | "approved" | "rejected">("pending");
   const [isViewingIndividual, setIsViewingIndividual] = useState(false);
+  const [loadStarted, setLoadStarted] = useState(false);
 
-  // Redirect logic based on auth state
+  // Optimistic data loading - start immediately on mount
+  // Supabase client uses stored session independently of React auth state
+  // RLS policies will return empty data if user is not admin
+  useEffect(() => {
+    if (!loadStarted) {
+      console.log("[AdminDashboard] Starting optimistic data load");
+      setLoadStarted(true);
+      loadApplications();
+    }
+  }, [loadStarted]);
+
+  // Auth validation and redirect (runs in parallel with data loading)
   useEffect(() => {
     if (!authLoading) {
       console.log("[AdminDashboard] Auth loaded:", { user: user?.id, isAdmin });
@@ -42,9 +54,7 @@ export default function AdminDashboardPage() {
         return;
       }
 
-      // User is authenticated and is admin, load applications
-      console.log("[AdminDashboard] Admin verified, loading applications");
-      loadApplications();
+      console.log("[AdminDashboard] Admin verified");
     }
   }, [authLoading, user, isAdmin]);
 
