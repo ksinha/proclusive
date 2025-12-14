@@ -36,26 +36,38 @@ export default function AdminDashboardPage() {
   }, [filter, loading]);
 
   const checkAdminAuth = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      console.log("Checking admin auth...");
+      const supabase = createClient();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log("Auth check result:", { userId: user?.id, authError });
 
-    if (!user) {
-      router.push("/auth/login");
-      return;
+      if (authError || !user) {
+        console.log("No user, redirecting to login");
+        window.location.href = "/auth/login";
+        return;
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", user.id)
+        .single();
+
+      console.log("Profile check result:", { profile, profileError });
+
+      if (profileError || !profile?.is_admin) {
+        console.log("Not admin, redirecting to dashboard");
+        window.location.href = "/dashboard";
+        return;
+      }
+
+      console.log("Admin verified, loading dashboard");
+      setLoading(false);
+    } catch (err) {
+      console.error("Admin auth check failed:", err);
+      window.location.href = "/auth/login";
     }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("is_admin")
-      .eq("id", user.id)
-      .single();
-
-    if (!profile?.is_admin) {
-      router.push("/dashboard");
-      return;
-    }
-
-    setLoading(false);
   };
 
   const loadApplications = async () => {
