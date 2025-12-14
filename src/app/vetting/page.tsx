@@ -15,31 +15,53 @@ export default function VettingPage() {
   }, []);
 
   const checkAuth = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      console.log("[VettingPage] Checking authentication...");
+      const supabase = createClient();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (!user) {
-      router.push("/auth/signup");
-      return;
-    }
+      if (authError) {
+        console.error("[VettingPage] Auth error:", authError);
+        window.location.href = "/auth/signup";
+        return;
+      }
 
-    // Check if user has already submitted application
-    const { data: application } = await supabase
-      .from("applications")
-      .select("id, status")
-      .eq("user_id", user.id)
-      .single();
+      if (!user) {
+        console.log("[VettingPage] No user found, redirecting to signup");
+        window.location.href = "/auth/signup";
+        return;
+      }
 
-    if (application) {
-      if (application.status === "approved") {
-        router.push("/dashboard");
+      console.log("[VettingPage] User authenticated:", user.id);
+
+      // Check if user has already submitted application
+      const { data: application, error: appError } = await supabase
+        .from("applications")
+        .select("id, status")
+        .eq("user_id", user.id)
+        .single();
+
+      if (appError && appError.code !== "PGRST116") {
+        console.error("[VettingPage] Application fetch error:", appError);
+      }
+
+      if (application) {
+        console.log("[VettingPage] Found application:", application.id, "status:", application.status);
+        if (application.status === "approved") {
+          console.log("[VettingPage] Application approved, redirecting to dashboard");
+          window.location.href = "/dashboard";
+        } else {
+          // Show application status
+          setUserId(user.id);
+          setLoading(false);
+        }
       } else {
-        // Show application status
+        console.log("[VettingPage] No application found, showing wizard");
         setUserId(user.id);
         setLoading(false);
       }
-    } else {
-      setUserId(user.id);
+    } catch (err) {
+      console.error("[VettingPage] Unexpected error in checkAuth:", err);
       setLoading(false);
     }
   };

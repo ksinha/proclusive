@@ -17,26 +17,49 @@ export default function Navigation() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      try {
+        console.log("[Navigation] Checking auth state...");
+        const supabase = createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-      if (user) {
-        setIsLoggedIn(true);
+        if (authError) {
+          console.error("[Navigation] Auth error:", authError);
+          setIsLoggedIn(false);
+          setIsAdmin(false);
+          setLoading(false);
+          return;
+        }
 
-        // Check if user is admin
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_admin")
-          .eq("id", user.id)
-          .single();
+        if (user) {
+          console.log("[Navigation] User found:", user.id);
+          setIsLoggedIn(true);
 
-        setIsAdmin(profile?.is_admin || false);
-      } else {
+          // Check if user is admin
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("is_admin")
+            .eq("id", user.id)
+            .single();
+
+          if (profileError) {
+            console.error("[Navigation] Profile fetch error:", profileError);
+            setIsAdmin(false);
+          } else {
+            console.log("[Navigation] Profile found, is_admin:", profile?.is_admin);
+            setIsAdmin(profile?.is_admin || false);
+          }
+        } else {
+          console.log("[Navigation] No user found");
+          setIsLoggedIn(false);
+          setIsAdmin(false);
+        }
+      } catch (err) {
+        console.error("[Navigation] Unexpected error in checkAuth:", err);
         setIsLoggedIn(false);
         setIsAdmin(false);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     checkAuth();
@@ -44,17 +67,30 @@ export default function Navigation() {
     // Listen for auth changes
     const supabase = createClient();
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setIsLoggedIn(!!session?.user);
+      try {
+        console.log("[Navigation] Auth state changed:", event);
+        setIsLoggedIn(!!session?.user);
 
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_admin")
-          .eq("id", session.user.id)
-          .single();
+        if (session?.user) {
+          console.log("[Navigation] Session user:", session.user.id);
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("is_admin")
+            .eq("id", session.user.id)
+            .single();
 
-        setIsAdmin(profile?.is_admin || false);
-      } else {
+          if (profileError) {
+            console.error("[Navigation] Profile fetch error in auth change:", profileError);
+            setIsAdmin(false);
+          } else {
+            setIsAdmin(profile?.is_admin || false);
+          }
+        } else {
+          console.log("[Navigation] No session user");
+          setIsAdmin(false);
+        }
+      } catch (err) {
+        console.error("[Navigation] Error in auth state change handler:", err);
         setIsAdmin(false);
       }
     });
@@ -63,11 +99,24 @@ export default function Navigation() {
   }, []);
 
   const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    setIsAdmin(false);
-    router.push("/");
-    router.refresh();
+    try {
+      console.log("[Navigation] Logging out...");
+      const supabase = createClient();
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error("[Navigation] Logout error:", error);
+      }
+
+      setIsAdmin(false);
+      setIsLoggedIn(false);
+      console.log("[Navigation] Logout successful, redirecting...");
+      window.location.href = "/";
+    } catch (err) {
+      console.error("[Navigation] Unexpected error in logout:", err);
+      // Force redirect even on error
+      window.location.href = "/";
+    }
   };
 
   // Determine the correct links based on role

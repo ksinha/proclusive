@@ -6,34 +6,53 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function NewReferralPage() {
-  const supabase = await createClient();
+  console.log("[NewReferralPage] Loading new referral page...");
 
-  // Check authentication
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
 
-  if (!user) {
-    redirect("/auth/login");
-  }
+    // Check authentication
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-  // Get user profile
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+    if (authError) {
+      console.error("[NewReferralPage] Auth error:", authError);
+      redirect("/auth/login");
+    }
 
-  if (!profile) {
-    redirect("/vetting");
-  }
+    if (!user) {
+      console.log("[NewReferralPage] No user found, redirecting to login");
+      redirect("/auth/login");
+    }
 
-  // Check if user is verified (optional - you may want to allow non-verified users to submit)
-  // if (!profile.is_verified) {
-  //   redirect("/dashboard?error=not_verified");
-  // }
+    console.log("[NewReferralPage] User authenticated:", user.id);
 
-  return (
+    // Get user profile
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("[NewReferralPage] Profile error:", profileError);
+    }
+
+    if (!profile) {
+      console.log("[NewReferralPage] No profile found, redirecting to vetting");
+      redirect("/vetting");
+    }
+
+    console.log("[NewReferralPage] Profile loaded:", profile.id);
+
+    // Check if user is verified (optional - you may want to allow non-verified users to submit)
+    // if (!profile.is_verified) {
+    //   redirect("/dashboard?error=not_verified");
+    // }
+
+    return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
@@ -55,4 +74,8 @@ export default async function NewReferralPage() {
       </div>
     </div>
   );
+  } catch (err) {
+    console.error("[NewReferralPage] Unexpected error:", err);
+    throw err;
+  }
 }

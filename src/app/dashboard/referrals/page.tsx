@@ -45,29 +45,43 @@ export default async function ReferralsPage({
 }: {
   searchParams: { success?: string };
 }) {
-  const supabase = await createClient();
+  console.log("[ReferralsPage] Loading referrals page...");
 
-  // Check authentication
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
 
-  if (!user) {
-    redirect("/auth/login");
-  }
+    // Check authentication
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-  // Get user's referrals
-  const { data: referrals, error } = await supabase
-    .from("referrals")
-    .select("*")
-    .eq("submitted_by", user.id)
-    .order("created_at", { ascending: false });
+    if (authError) {
+      console.error("[ReferralsPage] Auth error:", authError);
+      redirect("/auth/login");
+    }
 
-  if (error) {
-    console.error("Error fetching referrals:", error);
-  }
+    if (!user) {
+      console.log("[ReferralsPage] No user found, redirecting to login");
+      redirect("/auth/login");
+    }
 
-  const success = searchParams.success === "true";
+    console.log("[ReferralsPage] User authenticated:", user.id);
+
+    // Get user's referrals
+    const { data: referrals, error } = await supabase
+      .from("referrals")
+      .select("*")
+      .eq("submitted_by", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("[ReferralsPage] Error fetching referrals:", error);
+    } else {
+      console.log("[ReferralsPage] Fetched", referrals?.length || 0, "referrals");
+    }
+
+    const success = searchParams.success === "true";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -200,4 +214,8 @@ export default async function ReferralsPage({
       </div>
     </div>
   );
+  } catch (err) {
+    console.error("[ReferralsPage] Unexpected error:", err);
+    throw err;
+  }
 }

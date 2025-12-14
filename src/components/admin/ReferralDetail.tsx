@@ -88,13 +88,30 @@ export default function ReferralDetail({
   const [selectedMember, setSelectedMember] = useState<string>(referral.matched_to || "");
   const [showMemberSelect, setShowMemberSelect] = useState(false);
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleStatusTransition = async (newStatus: ReferralStatus, matchedTo?: string) => {
+    console.log("[ReferralDetail] Starting status transition to:", newStatus);
     setLoading(true);
     setSuccessMessage(null);
+    setError(null);
 
     try {
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      console.log("[ReferralDetail] Getting current user...");
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+      if (authError) {
+        console.error("[ReferralDetail] Auth error:", authError);
+        throw new Error("Authentication failed. Please try logging in again.");
+      }
+
+      if (!user) {
+        console.error("[ReferralDetail] No user found");
+        throw new Error("You must be logged in to perform this action.");
+      }
+
+      console.log("[ReferralDetail] User authenticated:", user.id);
 
       const updateData: any = {
         status: newStatus,
@@ -103,7 +120,7 @@ export default function ReferralDetail({
 
       // Set timestamps based on status
       if (newStatus === "REVIEWED") {
-        updateData.reviewed_by = user?.id;
+        updateData.reviewed_by = user.id;
         updateData.reviewed_at = new Date().toISOString();
       } else if (newStatus === "MATCHED") {
         updateData.matched_to = matchedTo || selectedMember;
@@ -114,25 +131,39 @@ export default function ReferralDetail({
         updateData.completed_at = new Date().toISOString();
       }
 
-      const { error } = await supabase
+      console.log("[ReferralDetail] Updating referral with data:", updateData);
+
+      const { error: updateError } = await supabase
         .from("referrals")
         .update(updateData)
         .eq("id", referral.id);
 
-      if (error) throw error;
+      if (updateError) {
+        console.error("[ReferralDetail] Update error:", updateError);
+        throw updateError;
+      }
+
+      console.log("[ReferralDetail] Referral updated successfully");
 
       // Log admin action
-      await supabase.from("admin_audit_log").insert({
-        admin_id: user?.id,
-        action: `referral_${newStatus.toLowerCase()}`,
-        entity_type: "referral",
-        entity_id: referral.id,
-        details: { new_status: newStatus, matched_to: matchedTo || selectedMember },
-      });
+      try {
+        await supabase.from("admin_audit_log").insert({
+          admin_id: user.id,
+          action: `referral_${newStatus.toLowerCase()}`,
+          entity_type: "referral",
+          entity_id: referral.id,
+          details: { new_status: newStatus, matched_to: matchedTo || selectedMember },
+        });
+        console.log("[ReferralDetail] Audit log created");
+      } catch (auditError) {
+        console.error("[ReferralDetail] Failed to create audit log:", auditError);
+        // Don't fail the operation if audit log fails
+      }
 
       // Send email notification if status is MATCHED
       if (newStatus === "MATCHED") {
         try {
+          console.log("[ReferralDetail] Sending member notification...");
           await fetch('/api/referrals/notify-member', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -141,9 +172,10 @@ export default function ReferralDetail({
               memberId: matchedTo || selectedMember,
             }),
           });
+          console.log("[ReferralDetail] Member notification sent");
         } catch (emailError) {
           // Log but don't fail the status update if email fails
-          console.error('Failed to send member notification:', emailError);
+          console.error('[ReferralDetail] Failed to send member notification:', emailError);
         }
       }
 
@@ -153,8 +185,8 @@ export default function ReferralDetail({
         onUpdate();
       }, 2000);
     } catch (err: any) {
-      console.error("Error updating referral:", err);
-      alert("Failed to update referral status");
+      console.error("[ReferralDetail] Error updating referral:", err);
+      setError(err.message || "Failed to update referral status");
     } finally {
       setLoading(false);
     }
@@ -174,6 +206,18 @@ export default function ReferralDetail({
             <div className="flex items-center gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
               <p className="text-[14px] font-medium text-green-700">{successMessage}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <Card className="bg-red-50 border-red-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <X className="h-5 w-5 text-red-600" />
+              <p className="text-[14px] font-medium text-red-700">{error}</p>
             </div>
           </CardContent>
         </Card>

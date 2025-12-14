@@ -92,6 +92,7 @@ export default function ReferralSubmissionForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("[ReferralSubmissionForm] Starting referral submission...");
     setLoading(true);
     setError(null);
 
@@ -99,10 +100,21 @@ export default function ReferralSubmissionForm() {
       const supabase = createClient();
 
       // Get current user
+      console.log("[ReferralSubmissionForm] Getting current user...");
       const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError || !user) {
+
+      if (authError) {
+        console.error("[ReferralSubmissionForm] Auth error:", authError);
         throw new Error("You must be logged in to submit a referral");
       }
+
+      if (!user) {
+        console.error("[ReferralSubmissionForm] No user found");
+        throw new Error("You must be logged in to submit a referral");
+      }
+
+      console.log("[ReferralSubmissionForm] User authenticated:", user.id);
+      console.log("[ReferralSubmissionForm] Form data:", formData);
 
       // Insert referral with status SUBMITTED
       const { data, error: insertError } = await supabase
@@ -125,25 +137,31 @@ export default function ReferralSubmissionForm() {
         .single();
 
       if (insertError) {
+        console.error("[ReferralSubmissionForm] Insert error:", insertError);
         throw insertError;
       }
 
+      console.log("[ReferralSubmissionForm] Referral created:", data.id);
+
       // Send email notification to admin
       try {
+        console.log("[ReferralSubmissionForm] Sending admin notification...");
         await fetch('/api/referrals/notify-admin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ referralId: data.id }),
         });
+        console.log("[ReferralSubmissionForm] Admin notification sent");
       } catch (emailError) {
         // Log but don't fail the submission if email fails
-        console.error('Failed to send admin notification:', emailError);
+        console.error('[ReferralSubmissionForm] Failed to send admin notification:', emailError);
       }
 
       // Redirect to success or referrals list
-      router.push("/dashboard/referrals?success=true");
+      console.log("[ReferralSubmissionForm] Redirecting to success page...");
+      window.location.href = "/dashboard/referrals?success=true";
     } catch (err: any) {
-      console.error("Error submitting referral:", err);
+      console.error("[ReferralSubmissionForm] Error submitting referral:", err);
       setError(err.message || "Failed to submit referral");
     } finally {
       setLoading(false);

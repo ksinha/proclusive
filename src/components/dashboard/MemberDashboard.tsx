@@ -97,12 +97,16 @@ export default function MemberDashboard({
   });
 
   const handleSave = async () => {
+    console.log("[MemberDashboard] Starting profile save...");
     setSaving(true);
     setError(null);
 
     try {
       const supabase = createClient();
-      const { error: updateError } = await supabase
+      console.log("[MemberDashboard] Updating profile for user:", userId);
+      console.log("[MemberDashboard] Form data:", formData);
+
+      const { data, error: updateError } = await supabase
         .from("profiles")
         .update({
           full_name: formData.full_name,
@@ -116,14 +120,19 @@ export default function MemberDashboard({
           website: formData.website || null,
           is_public: formData.is_public,
         })
-        .eq("id", userId);
+        .eq("id", userId)
+        .select();
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error("[MemberDashboard] Update error:", updateError);
+        throw updateError;
+      }
 
+      console.log("[MemberDashboard] Profile updated successfully:", data);
       setIsEditing(false);
       router.refresh();
     } catch (err: any) {
-      console.error("Error updating profile:", err);
+      console.error("[MemberDashboard] Error updating profile:", err);
       setError(err.message || "Failed to update profile");
     } finally {
       setSaving(false);
