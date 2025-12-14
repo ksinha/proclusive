@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Mail, CheckCircle2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function SignUpPage() {
@@ -17,30 +17,135 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("[SignUpPage] Starting signup...");
     setLoading(true);
     setError(null);
 
-    const supabase = createClient();
+    try {
+      const supabase = createClient();
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
 
-    if (error) {
-      setError(error.message);
+      if (signUpError) {
+        console.error("[SignUpPage] Signup error:", signUpError);
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        console.log("[SignUpPage] User created:", data.user.id);
+        // Check if email confirmation is required
+        // If identities is empty, it means the user needs to confirm their email
+        // Or if the user already exists but hasn't confirmed
+        if (data.user.identities?.length === 0) {
+          // User already exists
+          setError("An account with this email already exists. Please sign in instead.");
+          setLoading(false);
+          return;
+        }
+
+        // Show confirmation screen
+        console.log("[SignUpPage] Email confirmation sent to:", email);
+        setEmailSent(true);
+      }
+    } catch (err: any) {
+      console.error("[SignUpPage] Unexpected error:", err);
+      setError(err.message || "An unexpected error occurred");
+    } finally {
       setLoading(false);
-    } else if (data.user) {
-      // Redirect to vetting wizard
-      router.push("/vetting");
     }
   };
+
+  // Email confirmation sent screen
+  if (emailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-16 px-4">
+        <div className="max-w-md w-full space-y-6">
+          <Card className="bg-white border border-gray-200 rounded-lg shadow-md p-8">
+            <CardHeader className="space-y-4 text-center pb-6 px-0">
+              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <Mail className="h-8 w-8 text-green-600" />
+              </div>
+              <div>
+                <CardTitle className="text-[24px] font-semibold text-gray-900">
+                  Check your email
+                </CardTitle>
+                <CardDescription className="text-[14px] text-gray-600 mt-3">
+                  We've sent a confirmation link to
+                </CardDescription>
+                <p className="text-[16px] font-medium text-gray-900 mt-1">
+                  {email}
+                </p>
+              </div>
+            </CardHeader>
+
+            <CardContent className="px-0 pb-0 space-y-6">
+              {/* Instructions */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 className="text-[14px] font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Next Steps
+                </h3>
+                <ol className="text-[13px] text-blue-800 space-y-2 list-decimal list-inside">
+                  <li>Open the email from Proclusive</li>
+                  <li>Click the confirmation link</li>
+                  <li>You'll be redirected to complete your vetting application</li>
+                </ol>
+              </div>
+
+              {/* Tips */}
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h3 className="text-[13px] font-medium text-gray-700 mb-2">
+                  Didn't receive the email?
+                </h3>
+                <ul className="text-[13px] text-gray-600 space-y-1">
+                  <li>• Check your spam or junk folder</li>
+                  <li>• Make sure {email} is correct</li>
+                  <li>• Wait a few minutes and check again</li>
+                </ul>
+              </div>
+
+              {/* Actions */}
+              <div className="space-y-3 pt-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    setEmailSent(false);
+                    setEmail("");
+                    setPassword("");
+                  }}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Try a different email
+                </Button>
+
+                <div className="text-center">
+                  <Link
+                    href="/auth/login"
+                    className="text-[14px] text-blue-600 hover:text-blue-700 transition-colors underline-offset-4 hover:underline font-medium"
+                  >
+                    Already confirmed? Sign in
+                  </Link>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-16 px-4">
