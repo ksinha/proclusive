@@ -37,35 +37,52 @@ export default function AdminDashboardPage() {
 
   const checkAdminAuth = async () => {
     try {
-      console.log("Checking admin auth...");
+      console.log("[AdminDashboard] Checking admin auth...");
       const supabase = createClient();
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      console.log("Auth check result:", { userId: user?.id, authError });
 
-      if (authError || !user) {
-        console.log("No user, redirecting to login");
+      // Use getSession first (faster, uses cached data) then verify with getUser
+      console.log("[AdminDashboard] Getting session...");
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+      console.log("[AdminDashboard] Session result:", {
+        hasSession: !!session,
+        userId: session?.user?.id,
+        sessionError
+      });
+
+      if (sessionError || !session?.user) {
+        console.log("[AdminDashboard] No session, redirecting to login");
         window.location.href = "/auth/login";
         return;
       }
 
+      const user = session.user;
+
+      console.log("[AdminDashboard] Fetching profile for user:", user.id);
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("is_admin")
         .eq("id", user.id)
         .single();
 
-      console.log("Profile check result:", { profile, profileError });
+      console.log("[AdminDashboard] Profile check result:", { profile, profileError });
 
-      if (profileError || !profile?.is_admin) {
-        console.log("Not admin, redirecting to dashboard");
+      if (profileError) {
+        console.error("[AdminDashboard] Profile fetch error:", profileError);
+        window.location.href = "/auth/login";
+        return;
+      }
+
+      if (!profile?.is_admin) {
+        console.log("[AdminDashboard] Not admin, redirecting to member dashboard");
         window.location.href = "/dashboard";
         return;
       }
 
-      console.log("Admin verified, loading dashboard");
+      console.log("[AdminDashboard] Admin verified, loading dashboard");
       setLoading(false);
     } catch (err) {
-      console.error("Admin auth check failed:", err);
+      console.error("[AdminDashboard] Admin auth check failed:", err);
       window.location.href = "/auth/login";
     }
   };
