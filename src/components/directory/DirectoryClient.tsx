@@ -82,11 +82,7 @@ export default function DirectoryClient({
       }
 
       // Badge filter
-      if (
-        badgeFilter !== "all" &&
-        profile.badge_level !== badgeFilter &&
-        profile.badge_level !== "none"
-      ) {
+      if (badgeFilter !== "all" && profile.badge_level !== badgeFilter) {
         return false;
       }
 

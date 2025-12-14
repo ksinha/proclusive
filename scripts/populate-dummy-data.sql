@@ -109,8 +109,8 @@ BEGIN
       -- Insert profile based on email
       CASE email_address
       WHEN 'john.miller@acmeconstruction.com' THEN
-        INSERT INTO profiles (id, email, full_name, company_name, phone, business_type, primary_trade, service_areas, website, linkedin_url, street_address, city, state, zip_code, bio, years_in_business, team_size, tin_number, is_public)
-        VALUES (v_user_id, email_address, 'John Miller', 'Acme Construction Co.', '(555) 123-4567', 'LLC', 'General Contractor', ARRAY['San Francisco', 'Oakland', 'San Jose'], 'https://acmeconstruction.com', 'https://linkedin.com/in/johnmiller', '1234 Market Street', 'San Francisco', 'CA', '94102', 'Premier general contractor specializing in commercial construction projects. 15 years of experience delivering high-quality builds on time and within budget.', 15, '20-50', '12-3456789', true);
+        INSERT INTO profiles (id, email, full_name, company_name, phone, business_type, primary_trade, service_areas, website, linkedin_url, street_address, city, state, zip_code, bio, years_in_business, team_size, tin_number, is_public, is_verified, badge_level)
+        VALUES (v_user_id, email_address, 'John Miller', 'Acme Construction Co.', '(555) 123-4567', 'LLC', 'General Contractor', ARRAY['San Francisco', 'Oakland', 'San Jose'], 'https://acmeconstruction.com', 'https://linkedin.com/in/johnmiller', '1234 Market Street', 'San Francisco', 'CA', '94102', 'Premier general contractor specializing in commercial construction projects. 15 years of experience delivering high-quality builds on time and within budget.', 15, '20-50', '12-3456789', true, true, 'compliance');
         
 
       WHEN 'sarah.chen@electricpro.com' THEN
