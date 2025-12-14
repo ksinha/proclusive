@@ -85,15 +85,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-16 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 sm:py-16 px-4">
       <div className="max-w-md w-full space-y-6">
-        <Card className="bg-white border border-gray-200 rounded-lg shadow-md p-8">
+        <Card className="bg-white border border-gray-200 rounded-lg shadow-md p-6 sm:p-8">
           <CardHeader className="space-y-4 text-center pb-6 px-0">
             <div>
-              <div className="text-[24px] font-bold text-navy-800 mb-6">
+              <div className="text-xl sm:text-2xl font-bold text-navy-800 mb-4 sm:mb-6">
                 Proclusive
               </div>
-              <CardTitle className="text-[20px] font-semibold text-gray-900">
+              <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">
                 Sign in to your account
               </CardTitle>
             </div>
@@ -159,7 +159,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 variant="default"
-                className="w-full h-11"
+                className="w-full h-10 sm:h-11"
               >
                 {loading ? "Signing in..." : "Sign in"}
               </Button>
@@ -169,7 +169,7 @@ export default function LoginPage() {
 
         {/* Footer Link */}
         <div className="text-center">
-          <p className="text-[14px] text-gray-600">
+          <p className="text-sm text-gray-600">
             Don't have an account?{" "}
             <Link
               href="/auth/signup"

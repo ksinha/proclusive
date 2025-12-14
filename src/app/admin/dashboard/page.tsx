@@ -133,23 +133,23 @@ export default function AdminDashboardPage() {
     <div className="min-h-screen bg-white">
       {/* Navy Header */}
       <div className="bg-navy-800 border-b border-navy-700">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <LayoutDashboard className="h-6 w-6 text-blue-400" />
-              <div>
-                <h1 className="text-[28px] font-semibold text-white">Admin Dashboard</h1>
-                <p className="text-[14px] text-gray-400">Proclusive Vetting System</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <LayoutDashboard className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400 flex-shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-white truncate">Admin Dashboard</h1>
+                <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Proclusive Vetting System</p>
               </div>
             </div>
             <Button
               onClick={signOut}
               variant="outline"
               size="sm"
-              className="border-navy-600 bg-navy-700 hover:bg-navy-600 text-white"
+              className="border-navy-600 bg-navy-700 hover:bg-navy-600 text-white flex-shrink-0"
             >
-              <LogOut className="h-4 w-4" />
-              Sign Out
+              <LogOut className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Sign Out</span>
             </Button>
           </div>
         </div>
@@ -157,30 +157,30 @@ export default function AdminDashboardPage() {
 
       {/* Stats Section */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="grid grid-cols-4 gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {/* Total Applications */}
             <div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-gray-600" />
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                 </div>
-                <div>
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Total Applications</p>
-                  <p className="text-[32px] font-bold text-gray-900 font-tabular-nums">{applications.length}</p>
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Total Applications</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">{applications.length}</p>
                 </div>
               </div>
             </div>
 
             {/* Pending Review */}
             <div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-gray-600" />
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                 </div>
-                <div>
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Pending Review</p>
-                  <p className="text-[32px] font-bold text-gray-900 font-tabular-nums">
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Pending Review</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
                     {applications.filter((a) => a.status === "pending").length}
                   </p>
                 </div>
@@ -189,13 +189,13 @@ export default function AdminDashboardPage() {
 
             {/* Under Review */}
             <div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <ClipboardCheck className="h-6 w-6 text-gray-600" />
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <ClipboardCheck className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                 </div>
-                <div>
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Under Review</p>
-                  <p className="text-[32px] font-bold text-gray-900 font-tabular-nums">
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Under Review</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
                     {applications.filter((a) => a.status === "under_review").length}
                   </p>
                 </div>
@@ -204,13 +204,13 @@ export default function AdminDashboardPage() {
 
             {/* Approved */}
             <div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <CheckCircle2 className="h-6 w-6 text-gray-600" />
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                 </div>
-                <div>
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Approved</p>
-                  <p className="text-[32px] font-bold text-gray-900 font-tabular-nums">
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Approved</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
                     {applications.filter((a) => a.status === "approved").length}
                   </p>
                 </div>
@@ -222,8 +222,8 @@ export default function AdminDashboardPage() {
 
       {/* Filters Section */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex gap-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-wrap gap-2">
             {["all", "pending", "under_review", "approved", "rejected"].map((status) => (
               <Button
                 key={status}
@@ -239,7 +239,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Applications Table */}
-      <div className="max-w-7xl mx-auto px-6 py-6 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 bg-white">
         <ApplicationsList applications={applications} onUpdate={loadApplications} />
       </div>
     </div>

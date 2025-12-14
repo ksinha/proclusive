@@ -92,23 +92,23 @@ export default function DirectoryClient({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 -mx-6 px-6 py-6 mb-8">
-          <h1 className="text-[28px] font-semibold text-gray-900">
+        <div className="bg-white border-b border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-gray-900">
             Member Directory
           </h1>
-          <p className="text-[14px] text-gray-600 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Browse verified professionals in the Proclusive network
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white border-b border-gray-200 -mx-6 px-6 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white border-b border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div className="space-y-2">
-              <Label htmlFor="search" className="text-[12px] font-medium text-gray-700">Search</Label>
+              <Label htmlFor="search" className="text-xs sm:text-[12px] font-medium text-gray-700">Search</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
@@ -117,19 +117,19 @@ export default function DirectoryClient({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search members..."
-                  className="pl-9 h-9 text-[13px]"
+                  className="pl-9 h-10 sm:h-9 text-sm sm:text-[13px]"
                 />
               </div>
             </div>
 
             {/* Trade Filter */}
             <div className="space-y-2">
-              <Label htmlFor="trade" className="text-[12px] font-medium text-gray-700">Trade</Label>
+              <Label htmlFor="trade" className="text-xs sm:text-[12px] font-medium text-gray-700">Trade</Label>
               <select
                 id="trade"
                 value={tradeFilter}
                 onChange={(e) => setTradeFilter(e.target.value)}
-                className="flex h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-[13px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                className="flex h-10 sm:h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm sm:text-[13px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               >
                 {TRADE_OPTIONS.map((trade) => (
                   <option key={trade} value={trade}>
@@ -141,25 +141,25 @@ export default function DirectoryClient({
 
             {/* Location Filter */}
             <div className="space-y-2">
-              <Label htmlFor="location" className="text-[12px] font-medium text-gray-700">Location</Label>
+              <Label htmlFor="location" className="text-xs sm:text-[12px] font-medium text-gray-700">Location</Label>
               <Input
                 id="location"
                 type="text"
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
                 placeholder="City, State, or Area"
-                className="h-9 text-[13px]"
+                className="h-10 sm:h-9 text-sm sm:text-[13px]"
               />
             </div>
 
             {/* Badge Filter */}
             <div className="space-y-2">
-              <Label htmlFor="badge" className="text-[12px] font-medium text-gray-700">Verification Badge</Label>
+              <Label htmlFor="badge" className="text-xs sm:text-[12px] font-medium text-gray-700">Verification Badge</Label>
               <select
                 id="badge"
                 value={badgeFilter}
                 onChange={(e) => setBadgeFilter(e.target.value)}
-                className="flex h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-[13px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                className="flex h-10 sm:h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm sm:text-[13px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               >
                 {BADGE_FILTERS.map((badge) => (
                   <option key={badge.value} value={badge.value}>
@@ -171,8 +171,8 @@ export default function DirectoryClient({
           </div>
 
           {/* Active Filters Summary */}
-          <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-200">
-            <p className="text-[13px] text-gray-600">
+          <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-200">
+            <p className="text-xs sm:text-[13px] text-gray-600">
               Showing <span className="font-medium text-gray-900">{filteredProfiles.length}</span> of {profiles.length} members
             </p>
             {(searchQuery || tradeFilter !== "All Trades" || locationFilter || badgeFilter !== "all") && (
@@ -185,7 +185,7 @@ export default function DirectoryClient({
                   setLocationFilter("");
                   setBadgeFilter("all");
                 }}
-                className="gap-1"
+                className="gap-1 w-full sm:w-auto"
               >
                 <X className="h-4 w-4" />
                 Clear filters
@@ -196,19 +196,19 @@ export default function DirectoryClient({
 
         {/* Results Grid */}
         {filteredProfiles.length === 0 ? (
-          <Card className="p-12 text-center">
+          <Card className="p-8 sm:p-12 text-center">
             <CardContent>
-              <Search className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
+              <Search className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-4" />
+              <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
                 No members found
               </h3>
-              <p className="text-[13px] text-gray-600">
+              <p className="text-xs sm:text-[13px] text-gray-600">
                 Try adjusting your filters or search query
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredProfiles.map((profile) => (
               <ProfileCard
                 key={profile.id}

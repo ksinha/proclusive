@@ -165,13 +165,13 @@ export default function MemberDashboard({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 -mx-6 px-6 py-6 mb-8">
-          <h1 className="text-[28px] font-semibold text-gray-900">
+        <div className="bg-white border-b border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-gray-900">
             Welcome back, {profile.full_name.split(' ')[0]}
           </h1>
-          <p className="text-[14px] text-gray-600 mt-1">{profile.company_name}</p>
+          <p className="text-sm text-gray-600 mt-1">{profile.company_name}</p>
         </div>
 
         {/* Verification Status Card */}
@@ -180,19 +180,19 @@ export default function MemberDashboard({
             <CardContent className="pt-6">
               <div className="space-y-4">
                 <div>
-                  <div className="flex items-center gap-2 flex-wrap mb-2">
-                    <h2 className="text-[18px] font-semibold text-gray-900">Verification Status</h2>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-900">Verification Status</h2>
                     <Badge variant={statusConfig.variant}>
                       {application.status.replace("_", " ").toUpperCase()}
                     </Badge>
                   </div>
-                  <p className="text-[14px] text-gray-600">{statusConfig.message}</p>
+                  <p className="text-sm text-gray-600">{statusConfig.message}</p>
                 </div>
 
                 {application.status === "approved" && profile.badge_level !== "none" && (
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
-                    <Award className="h-5 w-5 text-blue-600" />
-                    <span className="text-[14px] font-medium text-gray-900">Badge Earned:</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
+                    <Award className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                    <span className="text-sm font-medium text-gray-900">Badge Earned:</span>
                     <Badge variant={BADGE_VARIANTS[profile.badge_level]}>
                       {BADGE_LABELS[profile.badge_level]}
                     </Badge>
@@ -200,9 +200,9 @@ export default function MemberDashboard({
                 )}
 
                 {application.admin_notes && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
-                    <p className="text-[13px] font-medium text-gray-900 mb-1">Admin Notes:</p>
-                    <p className="text-[13px] text-gray-600">{application.admin_notes}</p>
+                  <div className="bg-gray-50 border border-gray-200 rounded-md p-3 sm:p-4">
+                    <p className="text-xs sm:text-[13px] font-medium text-gray-900 mb-1">Admin Notes:</p>
+                    <p className="text-xs sm:text-[13px] text-gray-600">{application.admin_notes}</p>
                   </div>
                 )}
               </div>
@@ -212,17 +212,17 @@ export default function MemberDashboard({
 
         {/* Quick Actions */}
         <div>
-          <h2 className="text-[20px] font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {/* Directory Card */}
             <Link href="/directory" className="group">
               <Card hover className="h-full">
                 <CardContent className="pt-6">
-                  <Users className="h-6 w-6 text-blue-600 mb-4" />
-                  <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
+                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mb-3 sm:mb-4" />
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
                     Member Directory
                   </h3>
-                  <p className="text-[13px] text-gray-600">
+                  <p className="text-xs sm:text-[13px] text-gray-600">
                     Browse and connect with verified professionals
                   </p>
                 </CardContent>
@@ -233,11 +233,11 @@ export default function MemberDashboard({
             <Link href="/dashboard/referrals" className="group">
               <Card hover className="h-full">
                 <CardContent className="pt-6">
-                  <GitBranch className="h-6 w-6 text-blue-600 mb-4" />
-                  <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
+                  <GitBranch className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mb-3 sm:mb-4" />
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
                     Referrals
                   </h3>
-                  <p className="text-[13px] text-gray-600">
+                  <p className="text-xs sm:text-[13px] text-gray-600">
                     Submit and manage B2B referrals
                   </p>
                 </CardContent>
@@ -247,14 +247,14 @@ export default function MemberDashboard({
             {/* Badge Progress Card (Coming Soon) */}
             <Card className="opacity-60">
               <CardContent className="pt-6">
-                <Award className="h-6 w-6 text-blue-600 mb-4" />
-                <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
+                <Award className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mb-3 sm:mb-4" />
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
                   Advance Your Badge
                 </h3>
-                <p className="text-[13px] text-gray-600">
+                <p className="text-xs sm:text-[13px] text-gray-600">
                   Complete additional tiers to earn higher badges
                 </p>
-                <Badge variant="secondary" className="mt-3 bg-gray-100 text-gray-600">Coming Soon</Badge>
+                <Badge variant="secondary" className="mt-3 bg-gray-100 text-gray-600 text-xs">Coming Soon</Badge>
               </CardContent>
             </Card>
           </div>
@@ -263,17 +263,17 @@ export default function MemberDashboard({
         {/* Profile Summary */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div>
-                <CardTitle>Profile Summary</CardTitle>
-                <CardDescription>Your membership information at a glance</CardDescription>
+                <CardTitle className="text-base sm:text-lg">Profile Summary</CardTitle>
+                <CardDescription className="text-sm">Your membership information at a glance</CardDescription>
               </div>
               {!isEditing && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setIsEditing(true)}
-                  className="gap-2"
+                  className="gap-2 w-full sm:w-auto"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit Profile
@@ -290,7 +290,7 @@ export default function MemberDashboard({
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="full_name">Full Name</Label>
                     <Input
@@ -383,7 +383,7 @@ export default function MemberDashboard({
                   </Label>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t">
+                <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-4 border-t">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -403,33 +403,34 @@ export default function MemberDashboard({
                       setError(null);
                     }}
                     disabled={saving}
+                    className="w-full sm:w-auto"
                   >
                     <X className="h-4 w-4 mr-2" />
                     Cancel
                   </Button>
-                  <Button onClick={handleSave} disabled={saving}>
+                  <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
                     <Save className="h-4 w-4 mr-2" />
                     {saving ? "Saving..." : "Save Changes"}
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-4 sm:gap-y-6">
                 <div className="space-y-1">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Email</p>
-                  <p className="text-[14px] font-medium text-gray-900">{profile.email}</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Email</p>
+                  <p className="text-sm sm:text-[14px] font-medium text-gray-900 break-words">{profile.email}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Phone</p>
-                  <p className="text-[14px] font-medium text-gray-900">{profile.phone || "Not provided"}</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Phone</p>
+                  <p className="text-sm sm:text-[14px] font-medium text-gray-900">{profile.phone || "Not provided"}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Primary Trade</p>
-                  <Badge variant="outline">{profile.primary_trade}</Badge>
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Primary Trade</p>
+                  <Badge variant="outline" className="text-xs">{profile.primary_trade}</Badge>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Location</p>
-                  <p className="text-[14px] font-medium text-gray-900">
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Location</p>
+                  <p className="text-sm sm:text-[14px] font-medium text-gray-900">
                     {profile.city}
                     {profile.city && profile.state && ", "}
                     {profile.state}
@@ -437,19 +438,19 @@ export default function MemberDashboard({
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Years in Business</p>
-                  <p className="text-[14px] font-medium text-gray-900">{profile.years_in_business || "Not provided"}</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Years in Business</p>
+                  <p className="text-sm sm:text-[14px] font-medium text-gray-900">{profile.years_in_business || "Not provided"}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Profile Visibility</p>
-                  <Badge variant={profile.is_public ? "success" : "secondary"}>
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Profile Visibility</p>
+                  <Badge variant={profile.is_public ? "success" : "secondary"} className="text-xs">
                     {profile.is_public ? "Public" : "Private"}
                   </Badge>
                 </div>
                 {profile.bio && (
-                  <div className="space-y-1 md:col-span-2 lg:col-span-3">
-                    <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Bio</p>
-                    <p className="text-[14px] text-gray-700">{profile.bio}</p>
+                  <div className="space-y-1 sm:col-span-2 lg:col-span-3">
+                    <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Bio</p>
+                    <p className="text-sm sm:text-[14px] text-gray-700">{profile.bio}</p>
                   </div>
                 )}
               </div>

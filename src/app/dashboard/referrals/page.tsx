@@ -85,7 +85,7 @@ export default async function ReferralsPage({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Success Message */}
         {success && (
           <Card className="bg-green-50 border-green-200 mb-6">
@@ -101,15 +101,15 @@ export default async function ReferralsPage({
         )}
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-[36px] font-semibold text-gray-900">My Referrals</h1>
-            <p className="text-[15px] text-gray-600 mt-1">
+            <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-semibold text-gray-900">My Referrals</h1>
+            <p className="text-sm sm:text-[15px] text-gray-600 mt-1">
               Track the status of your submitted referrals
             </p>
           </div>
-          <Link href="/dashboard/referrals/new">
-            <Button variant="default" className="h-10">
+          <Link href="/dashboard/referrals/new" className="sm:flex-shrink-0">
+            <Button variant="default" className="h-10 w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               New Referral
             </Button>
@@ -121,8 +121,8 @@ export default async function ReferralsPage({
           <Card>
             <CardContent className="py-12 text-center">
               <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-[18px] font-semibold text-gray-900 mb-2">No referrals yet</h3>
-              <p className="text-[14px] text-gray-600 mb-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No referrals yet</h3>
+              <p className="text-sm text-gray-600 mb-6">
                 Start referring clients to the Proclusive network
               </p>
               <Link href="/dashboard/referrals/new">
@@ -142,30 +142,30 @@ export default async function ReferralsPage({
               return (
                 <Card key={referral.id} className="hover:shadow-md transition-shadow">
                   <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <CardTitle className="text-[20px] font-semibold text-gray-900">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                          <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
                             {referral.client_name}
                           </CardTitle>
-                          <Badge variant={statusConfig.variant}>
+                          <Badge variant={statusConfig.variant} className="self-start">
                             <StatusIcon className="h-3 w-3 mr-1" />
                             {statusConfig.label}
                           </Badge>
                         </div>
-                        <CardDescription className="text-[14px] text-gray-600">
+                        <CardDescription className="text-sm text-gray-600">
                           {referral.client_company && `${referral.client_company} • `}
                           {referral.project_type}
                         </CardDescription>
                       </div>
-                      <div className="text-right text-[13px] text-gray-500">
+                      <div className="text-left sm:text-right text-xs sm:text-[13px] text-gray-500 flex-shrink-0">
                         <div>Submitted</div>
                         <div>{new Date(referral.created_at).toLocaleDateString()}</div>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-3 gap-6 text-[13px]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 text-xs sm:text-[13px]">
                       <div>
                         <div className="font-medium text-gray-700 mb-1">Location</div>
                         <div className="text-gray-600">{referral.location}</div>
@@ -186,10 +186,10 @@ export default async function ReferralsPage({
 
                     {referral.project_description && (
                       <div className="mt-4 pt-4 border-t border-gray-100">
-                        <div className="font-medium text-gray-700 text-[13px] mb-1">
+                        <div className="font-medium text-gray-700 text-xs sm:text-[13px] mb-1">
                           Project Description
                         </div>
-                        <div className="text-gray-600 text-[13px]">
+                        <div className="text-gray-600 text-xs sm:text-[13px]">
                           {referral.project_description}
                         </div>
                       </div>
@@ -197,10 +197,10 @@ export default async function ReferralsPage({
 
                     {referral.admin_notes && (
                       <div className="mt-4 pt-4 border-t border-gray-100">
-                        <div className="font-medium text-gray-700 text-[13px] mb-1">
+                        <div className="font-medium text-gray-700 text-xs sm:text-[13px] mb-1">
                           Admin Notes
                         </div>
-                        <div className="text-gray-600 text-[13px] bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <div className="text-gray-600 text-xs sm:text-[13px] bg-blue-50 p-3 rounded-lg border border-blue-100">
                           {referral.admin_notes}
                         </div>
                       </div>
