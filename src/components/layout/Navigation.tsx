@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
@@ -18,7 +19,23 @@ export default function Navigation() {
     const checkAuth = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      setIsLoggedIn(!!user);
+
+      if (user) {
+        setIsLoggedIn(true);
+
+        // Check if user is admin
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", user.id)
+          .single();
+
+        setIsAdmin(profile?.is_admin || false);
+      } else {
+        setIsLoggedIn(false);
+        setIsAdmin(false);
+      }
+
       setLoading(false);
     };
 
@@ -26,8 +43,20 @@ export default function Navigation() {
 
     // Listen for auth changes
     const supabase = createClient();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setIsLoggedIn(!!session?.user);
+
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", session.user.id)
+          .single();
+
+        setIsAdmin(profile?.is_admin || false);
+      } else {
+        setIsAdmin(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -36,9 +65,14 @@ export default function Navigation() {
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
+    setIsAdmin(false);
     router.push("/");
     router.refresh();
   };
+
+  // Determine the correct links based on role
+  const dashboardLink = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const referralsLink = isAdmin ? "/admin/referrals" : "/dashboard/referrals";
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
@@ -66,17 +100,29 @@ export default function Navigation() {
                       Directory
                     </Link>
                     <Link
-                      href="/dashboard/referrals"
+                      href={referralsLink}
                       className={`text-[14px] font-medium transition-colors ${
-                        pathname.startsWith("/dashboard/referrals")
+                        pathname.includes("/referrals")
                           ? "text-gray-900"
                           : "text-gray-600 hover:text-gray-900"
                       }`}
                     >
                       Referrals
                     </Link>
+                    {isAdmin && (
+                      <Link
+                        href="/admin/dashboard"
+                        className={`text-[14px] font-medium transition-colors ${
+                          pathname === "/admin/dashboard"
+                            ? "text-gray-900"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        Admin
+                      </Link>
+                    )}
                     <Button asChild variant="cta">
-                      <Link href="/dashboard">Dashboard</Link>
+                      <Link href={dashboardLink}>Dashboard</Link>
                     </Button>
                     <Button
                       variant="ghost"
@@ -138,14 +184,23 @@ export default function Navigation() {
                       Directory
                     </Link>
                     <Link
-                      href="/dashboard/referrals"
+                      href={referralsLink}
                       className="block text-[14px] font-medium text-gray-600 hover:text-gray-900"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Referrals
                     </Link>
+                    {isAdmin && (
+                      <Link
+                        href="/admin/dashboard"
+                        className="block text-[14px] font-medium text-gray-600 hover:text-gray-900"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Admin
+                      </Link>
+                    )}
                     <Button asChild variant="cta" className="w-full">
-                      <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                      <Link href={dashboardLink} onClick={() => setMobileMenuOpen(false)}>
                         Dashboard
                       </Link>
                     </Button>
