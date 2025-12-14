@@ -11,7 +11,6 @@ import {
   Clock,
   ClipboardCheck,
   CheckCircle2,
-  LogOut,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -20,10 +19,11 @@ interface ApplicationWithProfile extends Application {
 }
 
 export default function AdminDashboardPage() {
-  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
-  const [applications, setApplications] = useState<ApplicationWithProfile[]>([]);
+  const [allApplications, setAllApplications] = useState<ApplicationWithProfile[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "under_review" | "approved" | "rejected">("pending");
+  const [isViewingIndividual, setIsViewingIndividual] = useState(false);
 
   // Redirect logic based on auth state
   useEffect(() => {
@@ -48,31 +48,19 @@ export default function AdminDashboardPage() {
     }
   }, [authLoading, user, isAdmin]);
 
-  // Reload applications when filter changes
-  useEffect(() => {
-    if (!authLoading && user && isAdmin) {
-      loadApplications();
-    }
-  }, [filter]);
 
   const loadApplications = async () => {
-    console.log("[AdminDashboard] Loading applications with filter:", filter);
+    console.log("[AdminDashboard] Loading all applications");
     setDataLoading(true);
 
     try {
       const supabase = createClient();
 
-      // First get applications
-      let appQuery = supabase
+      // Always fetch ALL applications (no filter applied at database level)
+      const { data: apps, error: appsError } = await supabase
         .from("applications")
         .select("*")
         .order("created_at", { ascending: false });
-
-      if (filter !== "all") {
-        appQuery = appQuery.eq("status", filter);
-      }
-
-      const { data: apps, error: appsError } = await appQuery;
 
       if (appsError) {
         console.error("[AdminDashboard] Error loading applications:", appsError);
@@ -82,7 +70,7 @@ export default function AdminDashboardPage() {
 
       if (!apps || apps.length === 0) {
         console.log("[AdminDashboard] No applications found");
-        setApplications([]);
+        setAllApplications([]);
         setDataLoading(false);
         return;
       }
@@ -109,13 +97,18 @@ export default function AdminDashboardPage() {
       }));
 
       console.log("[AdminDashboard] Loaded", combined.length, "applications");
-      setApplications(combined as any);
+      setAllApplications(combined as any);
     } catch (err) {
       console.error("[AdminDashboard] Error loading applications:", err);
     } finally {
       setDataLoading(false);
     }
   };
+
+  // Filter applications client-side based on selected filter
+  const filteredApplications = filter === "all"
+    ? allApplications
+    : allApplications.filter((app) => app.status === filter);
 
   // Show loading while auth is being checked
   if (authLoading) {
@@ -134,23 +127,12 @@ export default function AdminDashboardPage() {
       {/* Navy Header */}
       <div className="bg-navy-800 border-b border-navy-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <LayoutDashboard className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400 flex-shrink-0" />
-              <div className="min-w-0">
-                <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-white truncate">Admin Dashboard</h1>
-                <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Proclusive Vetting System</p>
-              </div>
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <LayoutDashboard className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400 flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-white truncate">Admin Dashboard</h1>
+              <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Proclusive Vetting System</p>
             </div>
-            <Button
-              onClick={signOut}
-              variant="outline"
-              size="sm"
-              className="border-navy-600 bg-navy-700 hover:bg-navy-600 text-white flex-shrink-0"
-            >
-              <LogOut className="h-4 w-4 sm:mr-1" />
-              <span className="hidden sm:inline">Sign Out</span>
-            </Button>
           </div>
         </div>
       </div>
@@ -167,7 +149,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Total Applications</p>
-                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">{applications.length}</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">{allApplications.length}</p>
                 </div>
               </div>
             </div>
@@ -181,7 +163,7 @@ export default function AdminDashboardPage() {
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Pending Review</p>
                   <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
-                    {applications.filter((a) => a.status === "pending").length}
+                    {allApplications.filter((a) => a.status === "pending").length}
                   </p>
                 </div>
               </div>
@@ -196,7 +178,7 @@ export default function AdminDashboardPage() {
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Under Review</p>
                   <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
-                    {applications.filter((a) => a.status === "under_review").length}
+                    {allApplications.filter((a) => a.status === "under_review").length}
                   </p>
                 </div>
               </div>
@@ -211,7 +193,7 @@ export default function AdminDashboardPage() {
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Approved</p>
                   <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
-                    {applications.filter((a) => a.status === "approved").length}
+                    {allApplications.filter((a) => a.status === "approved").length}
                   </p>
                 </div>
               </div>
@@ -220,27 +202,33 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Filters Section */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex flex-wrap gap-2">
-            {["all", "pending", "under_review", "approved", "rejected"].map((status) => (
-              <Button
-                key={status}
-                onClick={() => setFilter(status as any)}
-                variant={filter === status ? "default" : "outline"}
-                size="sm"
-              >
-                {status.replace("_", " ").charAt(0).toUpperCase() + status.slice(1).replace("_", " ")}
-              </Button>
-            ))}
+      {/* Filters Section - Only show when NOT viewing individual application */}
+      {!isViewingIndividual && (
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <div className="flex flex-wrap gap-2">
+              {["all", "pending", "under_review", "approved", "rejected"].map((status) => (
+                <Button
+                  key={status}
+                  onClick={() => setFilter(status as any)}
+                  variant={filter === status ? "default" : "outline"}
+                  size="sm"
+                >
+                  {status.replace("_", " ").charAt(0).toUpperCase() + status.slice(1).replace("_", " ")}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Applications Table */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 bg-white">
-        <ApplicationsList applications={applications} onUpdate={loadApplications} />
+        <ApplicationsList
+          applications={filteredApplications}
+          onUpdate={loadApplications}
+          onViewingChange={setIsViewingIndividual}
+        />
       </div>
     </div>
   );

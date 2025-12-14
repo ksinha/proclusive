@@ -20,7 +20,8 @@ import {
   Award,
   MessageSquare,
   Eye,
-  X
+  X,
+  ArrowLeft
 } from "lucide-react";
 
 interface ApplicationWithProfile extends Application {
@@ -203,6 +204,19 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
   return (
     <div className="space-y-6">
+      {/* Back to Dashboard Button */}
+      <div>
+        <Button
+          onClick={onClose}
+          variant="outline"
+          size="sm"
+          className="gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Button>
+      </div>
+
       {/* Success Message */}
       {successMessage && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">

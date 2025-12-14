@@ -15,10 +15,22 @@ interface ApplicationWithProfile extends Application {
 interface ApplicationsListProps {
   applications: ApplicationWithProfile[];
   onUpdate: () => void;
+  onViewingChange: (isViewing: boolean) => void;
 }
 
-export default function ApplicationsList({ applications, onUpdate }: ApplicationsListProps) {
+export default function ApplicationsList({ applications, onUpdate, onViewingChange }: ApplicationsListProps) {
   const [selectedApplication, setSelectedApplication] = useState<ApplicationWithProfile | null>(null);
+
+  const handleSelectApplication = (app: ApplicationWithProfile) => {
+    setSelectedApplication(app);
+    onViewingChange(true);
+  };
+
+  const handleCloseApplication = () => {
+    setSelectedApplication(null);
+    onViewingChange(false);
+    onUpdate();
+  };
 
   if (applications.length === 0) {
     return (
@@ -78,10 +90,7 @@ export default function ApplicationsList({ applications, onUpdate }: Application
       {selectedApplication ? (
         <ApplicationDetail
           application={selectedApplication}
-          onClose={() => {
-            setSelectedApplication(null);
-            onUpdate();
-          }}
+          onClose={handleCloseApplication}
         />
       ) : (
         <Table>
@@ -153,7 +162,7 @@ export default function ApplicationsList({ applications, onUpdate }: Application
                   {/* Actions Cell */}
                   <TableCell>
                     <button
-                      onClick={() => setSelectedApplication(app)}
+                      onClick={() => handleSelectApplication(app)}
                       className="text-blue-600 hover:text-blue-700 text-[13px] font-medium"
                     >
                       Review
