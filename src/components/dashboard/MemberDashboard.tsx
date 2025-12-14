@@ -151,19 +151,20 @@ export default function MemberDashboard({
               </Card>
             </Link>
 
-            {/* Referrals Card (Coming Soon) */}
-            <Card className="opacity-60">
-              <CardContent className="pt-6">
-                <GitBranch className="h-6 w-6 text-blue-600 mb-4" />
-                <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
-                  Referrals
-                </h3>
-                <p className="text-[13px] text-gray-600">
-                  Submit and manage B2B referrals
-                </p>
-                <Badge variant="secondary" className="mt-3 bg-gray-100 text-gray-600">Coming Soon</Badge>
-              </CardContent>
-            </Card>
+            {/* Referrals Card */}
+            <Link href="/dashboard/referrals" className="group">
+              <Card hover className="h-full">
+                <CardContent className="pt-6">
+                  <GitBranch className="h-6 w-6 text-blue-600 mb-4" />
+                  <h3 className="text-[16px] font-semibold text-gray-900 mb-2">
+                    Referrals
+                  </h3>
+                  <p className="text-[13px] text-gray-600">
+                    Submit and manage B2B referrals
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Badge Progress Card (Coming Soon) */}
             <Card className="opacity-60">
