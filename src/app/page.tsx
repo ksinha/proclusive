@@ -14,11 +14,37 @@ export default function Home() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-[#1a1d27] relative overflow-hidden">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1f2230] via-[#1a1d27] to-[#1a1d27] pointer-events-none"></div>
+        {/* Grid background effect */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Horizontal grid lines */}
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'linear-gradient(to bottom, transparent 0%, transparent 99%, rgba(201, 169, 98, 0.06) 100%)',
+            backgroundSize: '100% 80px'
+          }}></div>
+          {/* Vertical grid lines */}
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'linear-gradient(to right, transparent 0%, transparent 99%, rgba(201, 169, 98, 0.06) 100%)',
+            backgroundSize: '80px 100%'
+          }}></div>
+        </div>
 
-        {/* Decorative top border line */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-16 bg-gradient-to-b from-transparent via-[#6a6d78]/30 to-transparent"></div>
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1f2230]/50 via-transparent to-[#1a1d27] pointer-events-none"></div>
+
+        {/* Decorative corner lines - Top Left */}
+        <div className="absolute top-8 left-8 pointer-events-none">
+          <div className="w-24 h-[1px] bg-gradient-to-r from-[#c9a962]/40 to-transparent"></div>
+          <div className="w-[1px] h-24 bg-gradient-to-b from-[#c9a962]/40 to-transparent"></div>
+        </div>
+
+        {/* Decorative corner lines - Bottom Right */}
+        <div className="absolute bottom-8 right-8 pointer-events-none">
+          <div className="w-24 h-[1px] bg-gradient-to-l from-[#c9a962]/40 to-transparent absolute bottom-0 right-0"></div>
+          <div className="w-[1px] h-24 bg-gradient-to-t from-[#c9a962]/40 to-transparent absolute bottom-0 right-0"></div>
+        </div>
+
+        {/* Decorative top gold line */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/30 to-transparent"></div>
 
         <div className="max-w-4xl mx-auto px-6 pt-24 pb-16 relative z-10">
           <div className="text-center space-y-8">
@@ -46,7 +72,7 @@ export default function Home() {
 
             {/* CTA Button */}
             <div className="pt-4">
-              <Button asChild className="bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27] font-semibold px-8 py-6 text-[15px] rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(201,169,98,0.3)]">
+              <Button asChild className="bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27] font-semibold px-8 py-3 text-[14px] rounded-md transition-all duration-300 hover:shadow-[0_0_30px_rgba(201,169,98,0.3)]">
                 <Link href="/auth/signup">
                   Request an Invitation
                 </Link>
@@ -63,7 +89,7 @@ export default function Home() {
           <div className="mt-20 pt-12 border-t border-white/[0.06]">
             <div className="grid grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="text-[36px] md:text-[44px] font-display font-light text-[#f8f8fa] tracking-tight">
+                <div className="text-[32px] md:text-[40px] font-display font-light text-[#c9a962] tracking-tight">
                   15
                 </div>
                 <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
@@ -71,7 +97,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="text-center">
-                <div className="text-[36px] md:text-[44px] font-display font-light text-[#f8f8fa] tracking-tight">
+                <div className="text-[32px] md:text-[40px] font-display font-light text-[#c9a962] tracking-tight">
                   50
                 </div>
                 <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
@@ -79,7 +105,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="text-center">
-                <div className="text-[36px] md:text-[44px] font-display font-light text-[#c9a962] tracking-tight">
+                <div className="text-[32px] md:text-[40px] font-display font-light text-[#c9a962] tracking-tight">
                   78%
                 </div>
                 <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
