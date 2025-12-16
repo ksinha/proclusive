@@ -12,18 +12,26 @@ interface ProfileCardProps {
 
 const BADGE_LABELS: Record<BadgeLevel, string> = {
   none: "No Badge",
-  compliance: "Compliance",
-  capability: "Capability",
-  reputation: "Reputation",
-  enterprise: "Enterprise",
+  verified: "Verified",
+  vetted: "Vetted",
+  elite: "Elite",
+  // Legacy mappings
+  compliance: "Verified",
+  capability: "Vetted",
+  reputation: "Vetted",
+  enterprise: "Elite",
 };
 
 const BADGE_VARIANTS: Record<BadgeLevel, any> = {
   none: "secondary",
-  compliance: "compliance",
-  capability: "capability",
-  reputation: "reputation",
-  enterprise: "enterprise",
+  verified: "verified",
+  vetted: "vetted",
+  elite: "elite",
+  // Legacy mappings
+  compliance: "verified",
+  capability: "vetted",
+  reputation: "vetted",
+  enterprise: "elite",
 };
 
 export default function ProfileCard({ profile, onClick }: ProfileCardProps) {

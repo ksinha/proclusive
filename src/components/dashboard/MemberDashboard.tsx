@@ -47,18 +47,26 @@ const STATUS_CONFIG: Record<
 
 const BADGE_VARIANTS: Record<BadgeLevel, any> = {
   none: "secondary",
-  compliance: "compliance",
-  capability: "capability",
-  reputation: "reputation",
-  enterprise: "enterprise",
+  verified: "verified",
+  vetted: "vetted",
+  elite: "elite",
+  // Legacy mappings (for backward compatibility)
+  compliance: "verified",
+  capability: "vetted",
+  reputation: "vetted",
+  enterprise: "elite",
 };
 
 const BADGE_LABELS: Record<BadgeLevel, string> = {
   none: "No Badge",
-  compliance: "Compliance Badge",
-  capability: "Capability Badge",
-  reputation: "Reputation Badge",
-  enterprise: "Enterprise Badge",
+  verified: "Verified",
+  vetted: "Vetted",
+  elite: "Elite",
+  // Legacy mappings (for backward compatibility)
+  compliance: "Verified",
+  capability: "Vetted",
+  reputation: "Vetted",
+  enterprise: "Elite",
 };
 
 interface EditFormData {

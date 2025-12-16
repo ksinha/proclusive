@@ -31,10 +31,9 @@ const TRADE_OPTIONS = [
 
 const BADGE_FILTERS = [
   { value: "all", label: "All Badges" },
-  { value: "compliance", label: "Compliance" },
-  { value: "capability", label: "Capability" },
-  { value: "reputation", label: "Reputation" },
-  { value: "enterprise", label: "Enterprise" },
+  { value: "verified", label: "Verified" },
+  { value: "vetted", label: "Vetted" },
+  { value: "elite", label: "Elite" },
 ];
 
 export default function DirectoryClient({

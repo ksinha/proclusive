@@ -26,18 +26,26 @@ interface ProfileDetailModalProps {
 
 const BADGE_VARIANTS: Record<BadgeLevel, any> = {
   none: "secondary",
-  compliance: "compliance",
-  capability: "capability",
-  reputation: "reputation",
-  enterprise: "enterprise",
+  verified: "verified",
+  vetted: "vetted",
+  elite: "elite",
+  // Legacy mappings
+  compliance: "verified",
+  capability: "vetted",
+  reputation: "vetted",
+  enterprise: "elite",
 };
 
 const BADGE_LABELS: Record<BadgeLevel, string> = {
   none: "No Badge",
-  compliance: "Compliance Verified",
-  capability: "Capability Verified",
-  reputation: "Reputation Verified",
-  enterprise: "Enterprise Verified",
+  verified: "Verified Member",
+  vetted: "Vetted Member",
+  elite: "Elite Member",
+  // Legacy mappings
+  compliance: "Verified Member",
+  capability: "Vetted Member",
+  reputation: "Vetted Member",
+  enterprise: "Elite Member",
 };
 
 export default function ProfileDetailModal({

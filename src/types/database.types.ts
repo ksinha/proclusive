@@ -1,6 +1,11 @@
 // Database types generated from schema
 
-export type BadgeLevel = 'none' | 'compliance' | 'capability' | 'reputation' | 'enterprise';
+// VaaS Tier Badge Levels
+// - verified (blue): Basic verification complete
+// - vetted (green): Full vetting complete
+// - elite (gold): Top-tier founding member
+// Legacy values (compliance, capability, reputation, enterprise) kept for backward compatibility
+export type BadgeLevel = 'none' | 'verified' | 'vetted' | 'elite' | 'compliance' | 'capability' | 'reputation' | 'enterprise';
 
 export type ApplicationStatus = 'pending' | 'under_review' | 'approved' | 'rejected';
 

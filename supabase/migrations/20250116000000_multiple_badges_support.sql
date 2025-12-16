@@ -1,13 +1,41 @@
--- Migration: Add Multiple Badges Support
+-- Migration: Update Badge System to VaaS Tiers + Multiple Badges Support
 -- Date: 2025-01-16
--- Description: Convert single badge_level to support multiple badges per user via junction table
+-- Description:
+--   1. Add new VaaS tier values (verified, vetted, elite) to badge_level enum
+--   2. Migrate existing data from old values to new values
+--   3. Create user_badges junction table for multiple badges support
 
 -- =====================================================
--- CREATE USER_BADGES JUNCTION TABLE
+-- STEP 1: ADD NEW ENUM VALUES
+-- =====================================================
+
+-- Add new VaaS tier values to the existing enum
+-- (PostgreSQL allows adding values but not removing them easily)
+ALTER TYPE badge_level ADD VALUE IF NOT EXISTS 'verified';
+ALTER TYPE badge_level ADD VALUE IF NOT EXISTS 'vetted';
+ALTER TYPE badge_level ADD VALUE IF NOT EXISTS 'elite';
+
+-- =====================================================
+-- STEP 2: MIGRATE EXISTING DATA TO NEW VALUES
+-- =====================================================
+
+-- Map old badge levels to new VaaS tiers:
+-- compliance -> verified (blue, basic tier)
+-- capability -> vetted (green, mid tier)
+-- reputation -> vetted (green, mid tier)
+-- enterprise -> elite (gold, top tier)
+
+UPDATE profiles SET badge_level = 'verified' WHERE badge_level = 'compliance';
+UPDATE profiles SET badge_level = 'vetted' WHERE badge_level = 'capability';
+UPDATE profiles SET badge_level = 'vetted' WHERE badge_level = 'reputation';
+UPDATE profiles SET badge_level = 'elite' WHERE badge_level = 'enterprise';
+
+-- =====================================================
+-- STEP 3: CREATE USER_BADGES JUNCTION TABLE
 -- =====================================================
 
 -- Junction table to support many-to-many relationship between users and badges
-CREATE TABLE user_badges (
+CREATE TABLE IF NOT EXISTS user_badges (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   badge_level badge_level NOT NULL,
@@ -25,15 +53,15 @@ CREATE TABLE user_badges (
 );
 
 -- =====================================================
--- INDEXES
+-- STEP 4: INDEXES
 -- =====================================================
 
-CREATE INDEX idx_user_badges_user_id ON user_badges(user_id);
-CREATE INDEX idx_user_badges_badge_level ON user_badges(badge_level);
-CREATE INDEX idx_user_badges_awarded_at ON user_badges(awarded_at);
+CREATE INDEX IF NOT EXISTS idx_user_badges_user_id ON user_badges(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_badges_badge_level ON user_badges(badge_level);
+CREATE INDEX IF NOT EXISTS idx_user_badges_awarded_at ON user_badges(awarded_at);
 
 -- =====================================================
--- MIGRATE EXISTING DATA
+-- STEP 5: MIGRATE EXISTING BADGES TO JUNCTION TABLE
 -- =====================================================
 
 -- Migrate existing single badge_level to user_badges table
@@ -45,10 +73,12 @@ SELECT
   verification_completed_at,
   'Migrated from original badge_level column'
 FROM profiles
-WHERE badge_level != 'none' AND badge_level IS NOT NULL;
+WHERE badge_level NOT IN ('none', 'compliance', 'capability', 'reputation', 'enterprise')
+  AND badge_level IS NOT NULL
+ON CONFLICT (user_id, badge_level) DO NOTHING;
 
 -- =====================================================
--- ADD HELPER FUNCTIONS
+-- STEP 6: ADD HELPER FUNCTIONS
 -- =====================================================
 
 -- Function to get all badges for a user as an array
@@ -115,9 +145,9 @@ RETURNS UUID AS $$
 DECLARE
   v_badge_id UUID;
 BEGIN
-  -- Don't allow awarding 'none' badge
-  IF p_badge_level = 'none' THEN
-    RAISE EXCEPTION 'Cannot award a "none" badge';
+  -- Don't allow awarding 'none' or old badge values
+  IF p_badge_level IN ('none', 'compliance', 'capability', 'reputation', 'enterprise') THEN
+    RAISE EXCEPTION 'Cannot award badge type: %. Use verified, vetted, or elite.', p_badge_level;
   END IF;
 
   -- Insert badge (will fail if badge already exists due to unique constraint)
@@ -163,7 +193,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =====================================================
--- BACKWARD COMPATIBILITY TRIGGER
+-- STEP 7: BACKWARD COMPATIBILITY TRIGGER
 -- =====================================================
 
 -- Sync highest badge back to profiles.badge_level for backward compatibility
@@ -186,6 +216,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Drop triggers if they exist before recreating
+DROP TRIGGER IF EXISTS sync_badge_level_on_insert ON user_badges;
+DROP TRIGGER IF EXISTS sync_badge_level_on_delete ON user_badges;
+
 CREATE TRIGGER sync_badge_level_on_insert
 AFTER INSERT ON user_badges
 FOR EACH ROW EXECUTE FUNCTION sync_badge_level();
@@ -195,10 +229,18 @@ AFTER DELETE ON user_badges
 FOR EACH ROW EXECUTE FUNCTION sync_badge_level();
 
 -- =====================================================
--- ROW LEVEL SECURITY (RLS) POLICIES
+-- STEP 8: ROW LEVEL SECURITY (RLS) POLICIES
 -- =====================================================
 
 ALTER TABLE user_badges ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view own badges" ON user_badges;
+DROP POLICY IF EXISTS "Public can view verified user badges" ON user_badges;
+DROP POLICY IF EXISTS "Admins can view all badges" ON user_badges;
+DROP POLICY IF EXISTS "Admins can award badges" ON user_badges;
+DROP POLICY IF EXISTS "Admins can revoke badges" ON user_badges;
+DROP POLICY IF EXISTS "Admins can update badges" ON user_badges;
 
 -- Users can view their own badges
 CREATE POLICY "Users can view own badges"
@@ -236,11 +278,11 @@ CREATE POLICY "Admins can update badges"
   USING (is_admin());
 
 -- =====================================================
--- COMMENTS
+-- STEP 9: COMMENTS
 -- =====================================================
 
-COMMENT ON TABLE user_badges IS 'Junction table allowing users to have multiple badges';
-COMMENT ON COLUMN user_badges.badge_level IS 'The badge type awarded to the user';
+COMMENT ON TABLE user_badges IS 'Junction table allowing users to have multiple VaaS badges (verified, vetted, elite)';
+COMMENT ON COLUMN user_badges.badge_level IS 'The VaaS tier badge: verified (blue), vetted (green), or elite (gold)';
 COMMENT ON COLUMN user_badges.awarded_at IS 'Timestamp when the badge was awarded';
 COMMENT ON COLUMN user_badges.awarded_by IS 'Admin who awarded the badge';
 COMMENT ON COLUMN user_badges.notes IS 'Optional notes about why this badge was awarded';

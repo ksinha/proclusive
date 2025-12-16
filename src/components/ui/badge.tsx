@@ -29,15 +29,6 @@ const badgeVariants = cva(
           "bg-[rgba(74,222,128,0.15)] text-[#4ade80] border border-[rgba(74,222,128,0.25)]",
         elite:
           "bg-[rgba(201,169,98,0.15)] text-[#c9a962] border border-[rgba(201,169,98,0.25)]",
-        // Badge level variants (same as VaaS tiers)
-        compliance:
-          "bg-[rgba(96,165,250,0.15)] text-[#60a5fa] border border-[rgba(96,165,250,0.25)]",
-        capability:
-          "bg-[rgba(74,222,128,0.15)] text-[#4ade80] border border-[rgba(74,222,128,0.25)]",
-        reputation:
-          "bg-[rgba(74,222,128,0.15)] text-[#4ade80] border border-[rgba(74,222,128,0.25)]",
-        enterprise:
-          "bg-[rgba(201,169,98,0.15)] text-[#c9a962] border border-[rgba(201,169,98,0.25)]",
       },
       size: {
         sm: "px-2.5 py-1 text-[0.65rem]",

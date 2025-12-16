@@ -35,10 +35,9 @@ interface ApplicationDetailProps {
 
 const BADGE_LEVELS: { value: BadgeLevel; label: string; variant: any }[] = [
   { value: "none", label: "None", variant: "secondary" },
-  { value: "compliance", label: "Compliance (Blue)", variant: "compliance" },
-  { value: "capability", label: "Capability (Green)", variant: "capability" },
-  { value: "reputation", label: "Reputation (Purple)", variant: "reputation" },
-  { value: "enterprise", label: "Enterprise (Gold)", variant: "enterprise" },
+  { value: "verified", label: "Verified (Blue)", variant: "verified" },
+  { value: "vetted", label: "Vetted (Green)", variant: "vetted" },
+  { value: "elite", label: "Elite (Gold)", variant: "elite" },
 ];
 
 export default function ApplicationDetail({ application, onClose }: ApplicationDetailProps) {
