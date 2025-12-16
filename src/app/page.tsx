@@ -6,7 +6,8 @@ import {
   Shield,
   Building2,
   Users,
-  DollarSign
+  DollarSign,
+  Mail
 } from "lucide-react";
 
 export default function Home() {
@@ -137,7 +138,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-gold" />
+                  <Mail className="h-6 w-6 text-gold" />
                 </div>
                 <CardTitle className="text-[#f8f8fa]">Get Invited</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
