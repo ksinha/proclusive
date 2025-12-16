@@ -300,12 +300,6 @@ export default function ProfileDetailModal({
           </Card>
         </div>
 
-        {/* Footer */}
-        <div className="sticky bottom-0 bg-[#252833] border-t border-[rgba(255,255,255,0.08)] px-6 py-4 flex justify-end">
-          <Button onClick={onClose} variant="secondary" size="lg" className="bg-[#282c38] text-[#f8f8fa] hover:bg-[#31354a] border border-[rgba(255,255,255,0.08)]">
-            Close
-          </Button>
-        </div>
       </Card>
     </div>
   );

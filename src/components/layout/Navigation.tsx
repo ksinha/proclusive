@@ -35,7 +35,7 @@ export default function Navigation() {
                   <>
                     <Link
                       href="/directory"
-                      className={`text-[0.85rem] uppercase tracking-[0.08em] transition-colors duration-300 relative group ${
+                      className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
                         pathname === "/directory"
                           ? "text-[#c9a962]"
                           : "text-[#b0b2bc] hover:text-[#c9a962]"
@@ -49,7 +49,7 @@ export default function Navigation() {
                     </Link>
                     <Link
                       href={referralsLink}
-                      className={`text-[0.85rem] uppercase tracking-[0.08em] transition-colors duration-300 relative group ${
+                      className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
                         pathname.includes("/referrals")
                           ? "text-[#c9a962]"
                           : "text-[#b0b2bc] hover:text-[#c9a962]"
@@ -78,7 +78,7 @@ export default function Navigation() {
                   <>
                     <Link
                       href="/auth/login"
-                      className={`text-[0.85rem] uppercase tracking-[0.08em] transition-colors duration-300 relative group ${
+                      className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
                         pathname === "/auth/login"
                           ? "text-[#c9a962]"
                           : "text-[#b0b2bc] hover:text-[#c9a962]"
@@ -122,7 +122,7 @@ export default function Navigation() {
                   <>
                     <Link
                       href="/directory"
-                      className="block px-1 py-2 text-[0.85rem] uppercase tracking-[0.08em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                      className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                       style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
@@ -130,7 +130,7 @@ export default function Navigation() {
                     </Link>
                     <Link
                       href={referralsLink}
-                      className="block px-1 py-2 text-[0.85rem] uppercase tracking-[0.08em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                      className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                       style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
@@ -157,7 +157,7 @@ export default function Navigation() {
                   <>
                     <Link
                       href="/auth/login"
-                      className="block px-1 py-2 text-[0.85rem] uppercase tracking-[0.08em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                      className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                       style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
