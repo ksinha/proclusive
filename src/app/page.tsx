@@ -201,21 +201,9 @@ export default function Home() {
                 <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
                   <Building2 className="h-6 w-6 text-gold" />
                 </div>
-                <CardTitle className="text-[#f8f8fa]">Industry Experts Only</CardTitle>
+                <CardTitle className="text-[#f8f8fa]">Build Trust Together</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
-                  Connect with verified construction professionals who have passed our comprehensive 15-point verification process.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="bg-[#252833] border-white/[0.08] transition-all duration-300 hover:border-gold/25 hover:shadow-[0_0_20px_rgba(201,169,98,0.1)]">
-              <CardHeader>
-                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-gold" />
-                </div>
-                <CardTitle className="text-[#f8f8fa]">High-Quality Referrals</CardTitle>
-                <CardDescription className="text-[#b0b2bc]">
-                  Exchange B2B referrals with a 78% conversion rate, backed by our vetting-as-a-service platform.
+                  Connect with verified industry experts. By joining our vetted network, you become part of a trusted community that elevates professional standards.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -225,9 +213,21 @@ export default function Home() {
                 <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
                   <Award className="h-6 w-6 text-gold" />
                 </div>
-                <CardTitle className="text-[#f8f8fa]">Founding Member Benefits</CardTitle>
+                <CardTitle className="text-[#f8f8fa]">Earn Commissions</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
-                  Join the exclusive Founding 50 and shape the future of professional networking in construction.
+                  Get rewarded for your referrals. Earn commissions when you connect fellow members with quality business opportunities.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="bg-[#252833] border-white/[0.08] transition-all duration-300 hover:border-gold/25 hover:shadow-[0_0_20px_rgba(201,169,98,0.1)]">
+              <CardHeader>
+                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="h-6 w-6 text-gold" />
+                </div>
+                <CardTitle className="text-[#f8f8fa]">Expand Your Network</CardTitle>
+                <CardDescription className="text-[#b0b2bc]">
+                  Grow your business through strategic connections. Access our vetted directory of construction professionals and unlock new opportunities.
                 </CardDescription>
               </CardHeader>
             </Card>

@@ -21,7 +21,7 @@ const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn("bg-gray-50 border-b border-gray-200", className)}
+    className={cn("bg-[#282c38] border-b border-white/[0.08]", className)}
     {...props}
   />
 ))
@@ -33,7 +33,7 @@ const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn("bg-white divide-y divide-gray-100", className)}
+    className={cn("bg-[#252833] divide-y divide-white/[0.08]", className)}
     {...props}
   />
 ))
@@ -45,7 +45,7 @@ const TableFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn("bg-gray-50 border-t border-gray-200 font-medium", className)}
+    className={cn("bg-[#282c38] border-t border-white/[0.08] font-medium", className)}
     {...props}
   />
 ))
@@ -57,7 +57,7 @@ const TableRow = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tr
     ref={ref}
-    className={cn("hover:bg-gray-50 transition-colors duration-100", className)}
+    className={cn("hover:bg-[#2f3442] transition-colors duration-100", className)}
     {...props}
   />
 ))
@@ -70,7 +70,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "px-6 py-3 text-[12px] font-semibold text-gray-600 uppercase tracking-wider text-left",
+      "px-6 py-3 text-[12px] font-semibold text-[#6a6d78] uppercase tracking-wider text-left",
       className
     )}
     {...props}
@@ -84,7 +84,7 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("px-6 py-4 text-[14px] text-gray-900", className)}
+    className={cn("px-6 py-4 text-[14px] text-[#f8f8fa]", className)}
     {...props}
   />
 ))
@@ -96,7 +96,7 @@ const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn("mt-4 text-[14px] text-gray-600", className)}
+    className={cn("mt-4 text-[14px] text-[#6a6d78]", className)}
     {...props}
   />
 ))

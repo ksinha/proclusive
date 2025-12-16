@@ -426,7 +426,7 @@ export default function MemberDashboard({
                 </div>
                 <div className="space-y-1">
                   <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Years in Business</p>
-                  <p className="text-sm sm:text-[14px] font-medium" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2rem', fontWeight: 300, color: '#c9a962' }}>{profile.years_in_business || "Not provided"}</p>
+                  <p className="text-sm sm:text-[14px] font-medium" style={{ color: '#f8f8fa' }}>{profile.years_in_business || "Not provided"}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Profile Visibility</p>
