@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Profile, Application, ApplicationStatus } from "@/types/database.types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { VaasBadgeIcon } from "@/components/ui/vaas-badge";
+import { VaasBadgeIcon, VaasBadgeCard } from "@/components/ui/vaas-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -164,28 +164,31 @@ export default function MemberDashboard({
         {application && statusConfig && (
           <Card className="border-l-4 shadow-sm" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', borderLeft: '4px solid #60a5fa' }}>
             <CardContent className="pt-6">
-              <div className="space-y-4">
-                <div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                    <h2 className="text-base sm:text-lg" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Verification Status</h2>
-                    <Badge variant={statusConfig.variant}>
-                      {application.status.replace("_", " ").toUpperCase()}
-                    </Badge>
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                {/* Left side - Status info */}
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                      <h2 className="text-base sm:text-lg" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Verification Status</h2>
+                      <Badge variant={statusConfig.variant}>
+                        {application.status.replace("_", " ").toUpperCase()}
+                      </Badge>
+                    </div>
+                    <p className="text-sm" style={{ color: '#b0b2bc' }}>{statusConfig.message}</p>
                   </div>
-                  <p className="text-sm" style={{ color: '#b0b2bc' }}>{statusConfig.message}</p>
+
+                  {application.admin_notes && (
+                    <div className="rounded-md p-3 sm:p-4" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                      <p className="text-xs sm:text-[13px] font-medium mb-1" style={{ color: '#f8f8fa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Admin Notes:</p>
+                      <p className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>{application.admin_notes}</p>
+                    </div>
+                  )}
                 </div>
 
+                {/* Right side - Badge Card */}
                 {application.status === "approved" && profile.badge_level !== "none" && (
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-md" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                    <span className="text-sm font-medium" style={{ color: '#f8f8fa' }}>Badge Earned:</span>
-                    <VaasBadgeIcon level={profile.badge_level} size="sm" showLabel />
-                  </div>
-                )}
-
-                {application.admin_notes && (
-                  <div className="rounded-md p-3 sm:p-4" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                    <p className="text-xs sm:text-[13px] font-medium mb-1" style={{ color: '#f8f8fa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Admin Notes:</p>
-                    <p className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>{application.admin_notes}</p>
+                  <div className="flex-shrink-0">
+                    <VaasBadgeCard level={profile.badge_level} highlighted />
                   </div>
                 )}
               </div>
