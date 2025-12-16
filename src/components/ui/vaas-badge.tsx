@@ -177,7 +177,7 @@ export function VaasBadgeCard({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center p-6 rounded-xl border bg-[#1a1d27] transition-all duration-300",
+        "flex flex-col items-center justify-center p-6 rounded-xl border bg-[#1a1d27] transition-all duration-300 min-w-[140px]",
         highlighted
           ? cn(config.borderColor, config.glowColor, "border-2")
           : "border-[rgba(255,255,255,0.08)]",
