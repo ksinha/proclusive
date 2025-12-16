@@ -6,7 +6,7 @@ import {
   Shield,
   Building2,
   Users,
-  Award
+  DollarSign
 } from "lucide-react";
 
 export default function Home() {
@@ -211,7 +211,7 @@ export default function Home() {
             <Card className="bg-[#252833] border-white/[0.08] transition-all duration-300 hover:border-gold/25 hover:shadow-[0_0_20px_rgba(201,169,98,0.1)]">
               <CardHeader>
                 <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                  <Award className="h-6 w-6 text-gold" />
+                  <DollarSign className="h-6 w-6 text-gold" />
                 </div>
                 <CardTitle className="text-[#f8f8fa]">Earn Commissions</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
