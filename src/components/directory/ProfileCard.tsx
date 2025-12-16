@@ -1,42 +1,17 @@
 "use client";
 
-import { Profile, BadgeLevel } from "@/types/database.types";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Profile } from "@/types/database.types";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, ArrowRight } from "lucide-react";
+import { VaasBadgeInline } from "@/components/ui/vaas-badge";
+import { MapPin } from "lucide-react";
 
 interface ProfileCardProps {
   profile: Profile;
   onClick: () => void;
 }
 
-const BADGE_LABELS: Record<BadgeLevel, string> = {
-  none: "No Badge",
-  verified: "Verified",
-  vetted: "Vetted",
-  elite: "Elite",
-  // Legacy mappings
-  compliance: "Verified",
-  capability: "Vetted",
-  reputation: "Vetted",
-  enterprise: "Elite",
-};
-
-const BADGE_VARIANTS: Record<BadgeLevel, any> = {
-  none: "secondary",
-  verified: "verified",
-  vetted: "vetted",
-  elite: "elite",
-  // Legacy mappings
-  compliance: "verified",
-  capability: "vetted",
-  reputation: "vetted",
-  enterprise: "elite",
-};
-
 export default function ProfileCard({ profile, onClick }: ProfileCardProps) {
-  const badgeLabel = BADGE_LABELS[profile.badge_level];
-  const badgeVariant = BADGE_VARIANTS[profile.badge_level];
 
   return (
     <Card
@@ -57,9 +32,7 @@ export default function ProfileCard({ profile, onClick }: ProfileCardProps) {
             </p>
           </div>
           {profile.badge_level !== "none" && (
-            <Badge variant={badgeVariant} className="ml-2 sm:ml-3 flex-shrink-0 text-xs">
-              {badgeLabel}
-            </Badge>
+            <VaasBadgeInline level={profile.badge_level} size="sm" className="ml-2 sm:ml-3 flex-shrink-0" />
           )}
         </div>
 

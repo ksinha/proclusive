@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Profile, PortfolioItem, BadgeLevel } from "@/types/database.types";
+import { Profile, PortfolioItem } from "@/types/database.types";
 import { createClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { VaasBadgeIcon } from "@/components/ui/vaas-badge";
 import {
   X,
   Phone,
@@ -14,7 +15,6 @@ import {
   Globe,
   Linkedin,
   Briefcase,
-  Users,
   Building2,
   Loader2
 } from "lucide-react";
@@ -23,30 +23,6 @@ interface ProfileDetailModalProps {
   profile: Profile;
   onClose: () => void;
 }
-
-const BADGE_VARIANTS: Record<BadgeLevel, any> = {
-  none: "secondary",
-  verified: "verified",
-  vetted: "vetted",
-  elite: "elite",
-  // Legacy mappings
-  compliance: "verified",
-  capability: "vetted",
-  reputation: "vetted",
-  enterprise: "elite",
-};
-
-const BADGE_LABELS: Record<BadgeLevel, string> = {
-  none: "No Badge",
-  verified: "Verified Member",
-  vetted: "Vetted Member",
-  elite: "Elite Member",
-  // Legacy mappings
-  compliance: "Verified Member",
-  capability: "Vetted Member",
-  reputation: "Vetted Member",
-  enterprise: "Elite Member",
-};
 
 export default function ProfileDetailModal({
   profile,
@@ -100,9 +76,6 @@ export default function ProfileDetailModal({
     fetchPortfolio();
   }, [profile.id]);
 
-  const badgeVariant = BADGE_VARIANTS[profile.badge_level];
-  const badgeLabel = BADGE_LABELS[profile.badge_level];
-
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden bg-[#1a1d27] border border-[rgba(255,255,255,0.08)]">
@@ -124,13 +97,8 @@ export default function ProfileDetailModal({
           {/* Basic Info */}
           <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
             <CardContent className="pt-6 p-8">
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between gap-6 mb-4">
                 <div className="flex-1 min-w-0">
-                  {profile.badge_level !== "none" && (
-                    <Badge variant={badgeVariant} className="mb-3">
-                      {badgeLabel}
-                    </Badge>
-                  )}
                   <h3 className="text-[24px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa] mb-2">
                     {profile.full_name}
                   </h3>
@@ -141,6 +109,15 @@ export default function ProfileDetailModal({
                     {profile.primary_trade}
                   </Badge>
                 </div>
+                {profile.badge_level !== "none" && (
+                  <VaasBadgeIcon
+                    level={profile.badge_level}
+                    size="md"
+                    showLabel
+                    showSubtitle
+                    className="flex-shrink-0"
+                  />
+                )}
               </div>
 
               {/* Contact Info */}

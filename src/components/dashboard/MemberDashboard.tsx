@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Profile, Application, ApplicationStatus, BadgeLevel } from "@/types/database.types";
+import { Profile, Application, ApplicationStatus } from "@/types/database.types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { VaasBadgeIcon } from "@/components/ui/vaas-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,29 +46,6 @@ const STATUS_CONFIG: Record<
   },
 };
 
-const BADGE_VARIANTS: Record<BadgeLevel, any> = {
-  none: "secondary",
-  verified: "verified",
-  vetted: "vetted",
-  elite: "elite",
-  // Legacy mappings (for backward compatibility)
-  compliance: "verified",
-  capability: "vetted",
-  reputation: "vetted",
-  enterprise: "elite",
-};
-
-const BADGE_LABELS: Record<BadgeLevel, string> = {
-  none: "No Badge",
-  verified: "Verified",
-  vetted: "Vetted",
-  elite: "Elite",
-  // Legacy mappings (for backward compatibility)
-  compliance: "Verified",
-  capability: "Vetted",
-  reputation: "Vetted",
-  enterprise: "Elite",
-};
 
 interface EditFormData {
   full_name: string;
@@ -198,12 +176,9 @@ export default function MemberDashboard({
                 </div>
 
                 {application.status === "approved" && profile.badge_level !== "none" && (
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 rounded-md" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                    <Award className="h-5 w-5 flex-shrink-0" style={{ color: '#60a5fa' }} />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-md" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
                     <span className="text-sm font-medium" style={{ color: '#f8f8fa' }}>Badge Earned:</span>
-                    <Badge variant={BADGE_VARIANTS[profile.badge_level]}>
-                      {BADGE_LABELS[profile.badge_level]}
-                    </Badge>
+                    <VaasBadgeIcon level={profile.badge_level} size="sm" showLabel />
                   </div>
                 )}
 
