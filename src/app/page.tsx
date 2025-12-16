@@ -1,12 +1,9 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  CheckCircle2,
   TrendingUp,
   Shield,
-  ArrowRight,
   Building2,
   Users,
   Award
@@ -16,60 +13,80 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-primary relative overflow-hidden">
-        {/* Atmospheric gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/50 to-primary pointer-events-none"></div>
+      <section className="bg-[#1a1d27] relative overflow-hidden">
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1f2230] via-[#1a1d27] to-[#1a1d27] pointer-events-none"></div>
 
-        <div className="max-w-6xl mx-auto px-6 py-24 relative z-10">
-          <div className="max-w-4xl mx-auto space-y-12">
-            {/* Headline Section */}
-            <div className="space-y-6">
-              <h1 className="text-[72px] font-display font-light text-[#f8f8fa] tracking-[0.2em] leading-tight">
-                Proclusive
+        {/* Decorative top border line */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-16 bg-gradient-to-b from-transparent via-[#6a6d78]/30 to-transparent"></div>
+
+        <div className="max-w-4xl mx-auto px-6 pt-24 pb-16 relative z-10">
+          <div className="text-center space-y-8">
+            {/* Eyebrow */}
+            <p className="text-[12px] text-[#6a6d78] font-medium uppercase tracking-[0.25em]">
+              By invitation only
+            </p>
+
+            {/* Main Headline */}
+            <div className="space-y-2">
+              <h1 className="text-[42px] md:text-[52px] font-display font-normal text-[#f8f8fa] leading-tight">
+                Where trust builds
               </h1>
-              <p className="text-[14px] text-[#6a6d78] font-medium uppercase tracking-[0.15em]">
-                By invitation only
-              </p>
-              <p className="text-[32px] font-display font-semibold text-[#f8f8fa]">
-                Where trust builds <span className="italic text-gold">infrastructure</span>
-              </p>
-              <p className="text-[18px] text-[#b0b2bc] font-body">
-                Vetting-as-a-Service for the Construction Industry
+              <p className="text-[42px] md:text-[52px] font-display italic text-[#c9a962] leading-tight">
+                infrastructure
               </p>
             </div>
 
-            {/* CTA Card */}
-            <Card className="bg-[#252833] border border-white/[0.08] p-8 rounded-xl shadow-lg transition-all duration-300 hover:border-gold/25 hover:shadow-[0_0_30px_rgba(201,169,98,0.15)]">
-              <div className="space-y-6">
-                <div className="flex justify-center">
-                  <Badge variant="elite" size="lg">
-                    Founding 50 Exclusive
-                  </Badge>
+            {/* Subheadline */}
+            <p className="text-[16px] md:text-[18px] text-[#8a8d98] font-body leading-relaxed max-w-2xl mx-auto">
+              An exclusive network for the built environment. Verified professionals.
+              <br className="hidden md:block" />
+              Curated referrals. Fifty founding seats.
+            </p>
+
+            {/* CTA Button */}
+            <div className="pt-4">
+              <Button asChild className="bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27] font-semibold px-8 py-6 text-[15px] rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(201,169,98,0.3)]">
+                <Link href="/auth/signup">
+                  Request an Invitation
+                </Link>
+              </Button>
+            </div>
+
+            {/* Small note */}
+            <p className="text-[12px] text-[#6a6d78] tracking-wide">
+              Limited to 50 founding members · DC Metro professionals
+            </p>
+          </div>
+
+          {/* Stats Row */}
+          <div className="mt-20 pt-12 border-t border-white/[0.06]">
+            <div className="grid grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="text-[36px] md:text-[44px] font-display font-light text-[#f8f8fa] tracking-tight">
+                  15
                 </div>
-                <div className="text-center space-y-3">
-                  <h2 className="text-[24px] font-display font-semibold text-[#f8f8fa]">
-                    Join the Founding 50
-                  </h2>
-                  <p className="text-[14px] text-[#b0b2bc] font-body">
-                    Be part of the exclusive founding member network. Complete our comprehensive vetting
-                    process and start exchanging high-quality B2B referrals.
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  <Button asChild variant="cta" className="w-full h-12">
-                    <Link href="/auth/signup" className="gap-2">
-                      Request an Invitation
-                      <ArrowRight className="h-5 w-5" />
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="w-full h-12">
-                    <Link href="/auth/login">
-                      Member Login
-                    </Link>
-                  </Button>
-                </div>
+                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
+                  Point Verification
+                </p>
               </div>
-            </Card>
+              <div className="text-center">
+                <div className="text-[36px] md:text-[44px] font-display font-light text-[#f8f8fa] tracking-tight">
+                  50
+                </div>
+                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
+                  Founding Seats
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="text-[36px] md:text-[44px] font-display font-light text-[#c9a962] tracking-tight">
+                  78%
+                </div>
+                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
+                  Referral Conversion
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -142,43 +159,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-primary py-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="text-center space-y-3">
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center">
-                  <CheckCircle2 className="h-6 w-6 text-gold" />
-                </div>
-              </div>
-              <div className="text-[48px] font-display font-bold text-gold font-tabular-nums">15</div>
-              <p className="text-[14px] text-[#6a6d78] font-medium uppercase tracking-wide">VaaS Verification Points</p>
-            </div>
-
-            <div className="text-center space-y-3">
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-gold" />
-                </div>
-              </div>
-              <div className="text-[48px] font-display font-bold text-gold font-tabular-nums">70-80%</div>
-              <p className="text-[14px] text-[#6a6d78] font-medium uppercase tracking-wide">Referral Conversion Rate</p>
-            </div>
-
-            <div className="text-center space-y-3">
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center">
-                  <Shield className="h-6 w-6 text-gold" />
-                </div>
-              </div>
-              <div className="text-[48px] font-display font-bold text-gold font-tabular-nums">100%</div>
-              <p className="text-[14px] text-[#6a6d78] font-medium uppercase tracking-wide">Pre-Vetted Professionals</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section className="bg-[#21242f] py-20">
         <div className="max-w-6xl mx-auto px-6">
@@ -209,7 +189,7 @@ export default function Home() {
                 </div>
                 <CardTitle className="text-[#f8f8fa]">High-Quality Referrals</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
-                  Exchange B2B referrals with a 70-80% conversion rate, backed by our vetting-as-a-service platform.
+                  Exchange B2B referrals with a 78% conversion rate, backed by our vetting-as-a-service platform.
                 </CardDescription>
               </CardHeader>
             </Card>
