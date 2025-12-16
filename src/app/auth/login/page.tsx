@@ -102,15 +102,34 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 sm:py-16 px-4">
-      <div className="max-w-md w-full space-y-6">
-        <Card className="bg-white border border-gray-200 rounded-lg shadow-md p-6 sm:p-8">
+    <div className="min-h-screen flex items-center justify-center py-8 sm:py-16 px-4" style={{ background: '#1a1d27' }}>
+      <div className="w-full space-y-6" style={{ maxWidth: '420px' }}>
+        <Card className="rounded-xl p-10 sm:p-12" style={{
+          background: '#252833',
+          border: '1px solid rgba(255, 255, 255, 0.08)'
+        }}>
           <CardHeader className="space-y-4 text-center pb-6 px-0">
             <div>
-              <div className="text-xl sm:text-2xl font-bold text-navy-800 mb-4 sm:mb-6">
+              <div
+                className="text-2xl mb-6"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontWeight: 300,
+                  color: '#f8f8fa',
+                  letterSpacing: '0.1em'
+                }}
+              >
                 Proclusive
               </div>
-              <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">
+              <CardTitle
+                className="text-lg sm:text-xl"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontWeight: 300,
+                  color: '#f8f8fa',
+                  letterSpacing: '0.1em'
+                }}
+              >
                 Sign in to your account
               </CardTitle>
             </div>
@@ -120,7 +139,7 @@ export default function LoginPage() {
             <form onSubmit={handleLogin} className="space-y-5">
               {/* Email Field */}
               <div className="space-y-2">
-                <Label htmlFor="email">
+                <Label htmlFor="email" style={{ color: '#b0b2bc', fontSize: '0.9rem' }}>
                   Email address
                 </Label>
                 <Input
@@ -137,7 +156,7 @@ export default function LoginPage() {
 
               {/* Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="password">
+                <Label htmlFor="password" style={{ color: '#b0b2bc', fontSize: '0.9rem' }}>
                   Password
                 </Label>
                 <Input
@@ -154,15 +173,18 @@ export default function LoginPage() {
 
               {/* Error Display */}
               {error && (
-                <Card className="border-red-200 bg-red-50">
+                <Card style={{
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(248, 113, 113, 0.15)'
+                }}>
                   <CardContent className="py-3 px-4">
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                      <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#f87171' }} />
                       <div className="flex-1">
-                        <p className="text-[13px] font-medium text-red-900">
+                        <p className="text-[13px] font-medium" style={{ color: '#f87171' }}>
                           Authentication failed
                         </p>
-                        <p className="text-[13px] text-red-800 mt-1">
+                        <p className="text-[13px] mt-1" style={{ color: '#f87171' }}>
                           {error}
                         </p>
                       </div>
@@ -177,6 +199,11 @@ export default function LoginPage() {
                 disabled={loading}
                 variant="default"
                 className="w-full h-10 sm:h-11"
+                style={{
+                  background: '#c9a962',
+                  color: '#1a1d27',
+                  fontWeight: 500
+                }}
               >
                 {loading ? "Signing in..." : "Sign in"}
               </Button>
@@ -186,11 +213,12 @@ export default function LoginPage() {
 
         {/* Footer Link */}
         <div className="text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm" style={{ color: '#b0b2bc' }}>
             Don't have an account?{" "}
             <Link
               href="/auth/signup"
-              className="text-blue-600 hover:text-blue-700 transition-colors underline-offset-4 hover:underline font-medium"
+              className="transition-colors underline-offset-4 hover:underline font-medium"
+              style={{ color: '#c9a962', textDecoration: 'none' }}
             >
               Sign up
             </Link>

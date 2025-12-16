@@ -34,11 +34,11 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
 
   if (applications.length === 0) {
     return (
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardContent className="py-12 text-center">
-          <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-          <CardTitle className="mt-4">No applications</CardTitle>
-          <CardDescription className="mt-2">
+          <FileText className="mx-auto h-12 w-12 text-[#6a6d78]" />
+          <CardTitle className="mt-4 text-white">No applications</CardTitle>
+          <CardDescription className="mt-2 text-[#b0b2bc]">
             No applications match the selected filter.
           </CardDescription>
         </CardContent>
@@ -93,86 +93,88 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
           onClose={handleCloseApplication}
         />
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Applicant</TableHead>
-              <TableHead>Company / Trade</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Progress</TableHead>
-              <TableHead>Submitted</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {applications.map((app) => {
-              const progress = getTier1Progress(app);
-              return (
-                <TableRow key={app.id}>
-                  {/* Applicant Cell */}
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-navy-100 rounded-full flex items-center justify-center">
-                        <span className="text-[14px] font-semibold text-navy-700">
-                          {getInitials(app.profile.full_name)}
+        <div style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
+          <Table>
+            <TableHeader style={{ background: '#282c38' }}>
+              <TableRow style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Applicant</TableHead>
+                <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Company / Trade</TableHead>
+                <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Status</TableHead>
+                <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Progress</TableHead>
+                <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Submitted</TableHead>
+                <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {applications.map((app) => {
+                const progress = getTier1Progress(app);
+                return (
+                  <TableRow key={app.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }} className="hover:bg-[#2f3442] transition-colors">
+                    {/* Applicant Cell */}
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#282c38' }}>
+                          <span className="text-[14px] font-semibold text-[#c9a962]">
+                            {getInitials(app.profile.full_name)}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-[14px] font-medium text-white">
+                            {app.profile.full_name}
+                          </div>
+                          <div className="text-[12px] text-[#6a6d78]">
+                            {app.profile.email}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    {/* Company Cell */}
+                    <TableCell>
+                      <div className="text-[14px] font-medium text-white">{app.profile.company_name}</div>
+                      <Badge variant="outline" className="mt-1">{app.profile.primary_trade}</Badge>
+                    </TableCell>
+
+                    {/* Status Cell */}
+                    <TableCell>
+                      {getStatusBadge(app.status)}
+                    </TableCell>
+
+                    {/* Progress Cell */}
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 h-2 rounded-full" style={{ background: 'rgba(255, 255, 255, 0.08)' }}>
+                          <div
+                            className="h-2 rounded-full transition-all"
+                            style={{ background: '#c9a962', width: `${(progress.verified / progress.total) * 100}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-[12px] text-[#b0b2bc] font-tabular-nums">
+                          {progress.verified}/{progress.total}
                         </span>
                       </div>
-                      <div>
-                        <div className="text-[14px] font-medium text-gray-900">
-                          {app.profile.full_name}
-                        </div>
-                        <div className="text-[12px] text-gray-500">
-                          {app.profile.email}
-                        </div>
-                      </div>
-                    </div>
-                  </TableCell>
+                    </TableCell>
 
-                  {/* Company Cell */}
-                  <TableCell>
-                    <div className="text-[14px] font-medium text-gray-900">{app.profile.company_name}</div>
-                    <Badge variant="outline" className="mt-1">{app.profile.primary_trade}</Badge>
-                  </TableCell>
+                    {/* Submitted Cell */}
+                    <TableCell className="text-[#b0b2bc] font-tabular-nums">
+                      {new Date(app.created_at).toLocaleDateString()}
+                    </TableCell>
 
-                  {/* Status Cell */}
-                  <TableCell>
-                    {getStatusBadge(app.status)}
-                  </TableCell>
-
-                  {/* Progress Cell */}
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 bg-gray-200 rounded-full">
-                        <div
-                          className="h-2 bg-blue-600 rounded-full transition-all"
-                          style={{ width: `${(progress.verified / progress.total) * 100}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-[12px] text-gray-600 font-tabular-nums">
-                        {progress.verified}/{progress.total}
-                      </span>
-                    </div>
-                  </TableCell>
-
-                  {/* Submitted Cell */}
-                  <TableCell className="text-gray-600 font-tabular-nums">
-                    {new Date(app.created_at).toLocaleDateString()}
-                  </TableCell>
-
-                  {/* Actions Cell */}
-                  <TableCell>
-                    <button
-                      onClick={() => handleSelectApplication(app)}
-                      className="text-blue-600 hover:text-blue-700 text-[13px] font-medium"
-                    >
-                      Review
-                    </button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                    {/* Actions Cell */}
+                    <TableCell>
+                      <button
+                        onClick={() => handleSelectApplication(app)}
+                        className="text-[#c9a962] hover:text-[#d4b574] text-[13px] font-medium transition-colors"
+                      >
+                        Review
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </>
   );

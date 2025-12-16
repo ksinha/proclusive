@@ -201,11 +201,11 @@ export default function ReferralDetail({
     <div className="space-y-6">
       {/* Success Message */}
       {successMessage && (
-        <Card className="bg-green-50 border-green-200">
+        <Card style={{ background: 'rgba(74, 222, 128, 0.1)', border: '1px solid rgba(74, 222, 128, 0.3)', borderRadius: '10px' }}>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
-              <p className="text-[14px] font-medium text-green-700">{successMessage}</p>
+              <CheckCircle2 className="h-5 w-5 text-[#4ade80]" />
+              <p className="text-[14px] font-medium text-[#4ade80]">{successMessage}</p>
             </div>
           </CardContent>
         </Card>
@@ -213,23 +213,23 @@ export default function ReferralDetail({
 
       {/* Error Message */}
       {error && (
-        <Card className="bg-red-50 border-red-200">
+        <Card style={{ background: 'rgba(248, 113, 113, 0.1)', border: '1px solid rgba(248, 113, 113, 0.3)', borderRadius: '10px' }}>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <X className="h-5 w-5 text-red-600" />
-              <p className="text-[14px] font-medium text-red-700">{error}</p>
+              <X className="h-5 w-5 text-[#f87171]" />
+              <p className="text-[14px] font-medium text-[#f87171]">{error}</p>
             </div>
           </CardContent>
         </Card>
       )}
 
       {/* Header */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <CardTitle className="text-[24px] font-semibold text-gray-900">
+                <CardTitle className="text-[24px] font-semibold text-white">
                   {referral.client_name}
                 </CardTitle>
                 <Badge variant={statusConfig.variant}>
@@ -237,7 +237,7 @@ export default function ReferralDetail({
                   {statusConfig.label}
                 </Badge>
               </div>
-              <CardDescription className="text-[14px] text-gray-600">
+              <CardDescription className="text-[14px] text-[#b0b2bc]">
                 Submitted by {referral.submitter.full_name} ({referral.submitter.company_name}) on{" "}
                 {new Date(referral.created_at).toLocaleDateString()}
               </CardDescription>
@@ -250,9 +250,9 @@ export default function ReferralDetail({
       </Card>
 
       {/* Status Flow Timeline */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
-          <CardTitle className="text-[18px]">Referral Progress</CardTitle>
+          <CardTitle className="text-[18px] text-white">Referral Progress</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
@@ -266,23 +266,26 @@ export default function ReferralDetail({
                 <div key={status} className="flex items-center">
                   <div className="flex flex-col items-center">
                     <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                        isComplete ? config.color : "bg-gray-100 text-gray-400"
-                      }`}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center`}
+                      style={{
+                        background: isComplete ? (status === 'SUBMITTED' ? 'rgba(96, 165, 250, 0.2)' : status === 'MATCHED' ? 'rgba(201, 169, 98, 0.2)' : status === 'ENGAGED' ? 'rgba(251, 191, 36, 0.2)' : status === 'COMPLETED' ? 'rgba(74, 222, 128, 0.2)' : 'rgba(201, 169, 98, 0.2)') : '#282c38',
+                        color: isComplete ? (status === 'SUBMITTED' ? '#60a5fa' : status === 'MATCHED' ? '#c9a962' : status === 'ENGAGED' ? '#fbbf24' : status === 'COMPLETED' ? '#4ade80' : '#c9a962') : '#6a6d78'
+                      }}
                     >
                       <Icon className="h-6 w-6" />
                     </div>
-                    <div className="mt-2 text-[12px] font-medium text-gray-700">
+                    <div className="mt-2 text-[12px] font-medium text-white">
                       {config.label}
                     </div>
                     {isCurrent && statusConfig.nextAction && (
-                      <div className="mt-1 text-[11px] text-blue-600">Current</div>
+                      <div className="mt-1 text-[11px] text-[#c9a962]">Current</div>
                     )}
                   </div>
                   {index < STATUS_FLOW.length - 1 && (
                     <div className="mx-4">
                       <ChevronRight
-                        className={`h-5 w-5 ${isComplete ? "text-gray-400" : "text-gray-300"}`}
+                        className={`h-5 w-5`}
+                        style={{ color: isComplete ? '#6a6d78' : '#3a3d47' }}
                       />
                     </div>
                   )}
@@ -296,66 +299,66 @@ export default function ReferralDetail({
       {/* Client & Project Information */}
       <div className="grid grid-cols-2 gap-6">
         {/* Client Info */}
-        <Card>
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <User className="h-5 w-5 text-blue-600" />
-              <CardTitle className="text-[18px]">Client Information</CardTitle>
+              <User className="h-5 w-5 text-[#c9a962]" />
+              <CardTitle className="text-[18px] text-white">Client Information</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-3 text-[14px]">
             <div>
-              <div className="text-gray-500 text-[12px] mb-1">Name</div>
-              <div className="font-medium">{referral.client_name}</div>
+              <div className="text-[#6a6d78] text-[12px] mb-1">Name</div>
+              <div className="font-medium text-white">{referral.client_name}</div>
             </div>
             {referral.client_company && (
               <div>
-                <div className="text-gray-500 text-[12px] mb-1">Company</div>
-                <div className="font-medium">{referral.client_company}</div>
+                <div className="text-[#6a6d78] text-[12px] mb-1">Company</div>
+                <div className="font-medium text-white">{referral.client_company}</div>
               </div>
             )}
             {referral.client_email && (
               <div>
-                <div className="text-gray-500 text-[12px] mb-1">Email</div>
-                <div className="font-medium">{referral.client_email}</div>
+                <div className="text-[#6a6d78] text-[12px] mb-1">Email</div>
+                <div className="font-medium text-white">{referral.client_email}</div>
               </div>
             )}
             {referral.client_phone && (
               <div>
-                <div className="text-gray-500 text-[12px] mb-1">Phone</div>
-                <div className="font-medium">{referral.client_phone}</div>
+                <div className="text-[#6a6d78] text-[12px] mb-1">Phone</div>
+                <div className="font-medium text-white">{referral.client_phone}</div>
               </div>
             )}
           </CardContent>
         </Card>
 
         {/* Project Info */}
-        <Card>
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-blue-600" />
-              <CardTitle className="text-[18px]">Project Details</CardTitle>
+              <Briefcase className="h-5 w-5 text-[#c9a962]" />
+              <CardTitle className="text-[18px] text-white">Project Details</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-3 text-[14px]">
             <div>
-              <div className="text-gray-500 text-[12px] mb-1">Project Type</div>
-              <div className="font-medium">{referral.project_type}</div>
+              <div className="text-[#6a6d78] text-[12px] mb-1">Project Type</div>
+              <div className="font-medium text-white">{referral.project_type}</div>
             </div>
             <div>
-              <div className="text-gray-500 text-[12px] mb-1">Location</div>
-              <div className="font-medium">{referral.location}</div>
+              <div className="text-[#6a6d78] text-[12px] mb-1">Location</div>
+              <div className="font-medium text-white">{referral.location}</div>
             </div>
             {referral.value_range && (
               <div>
-                <div className="text-gray-500 text-[12px] mb-1">Value Range</div>
-                <div className="font-medium">{referral.value_range}</div>
+                <div className="text-[#6a6d78] text-[12px] mb-1">Value Range</div>
+                <div className="font-medium text-white">{referral.value_range}</div>
               </div>
             )}
             {referral.timeline && (
               <div>
-                <div className="text-gray-500 text-[12px] mb-1">Timeline</div>
-                <div className="font-medium">{referral.timeline}</div>
+                <div className="text-[#6a6d78] text-[12px] mb-1">Timeline</div>
+                <div className="font-medium text-white">{referral.timeline}</div>
               </div>
             )}
           </CardContent>
@@ -364,40 +367,41 @@ export default function ReferralDetail({
 
       {/* Project Description */}
       {referral.project_description && (
-        <Card>
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardHeader>
-            <CardTitle className="text-[18px]">Project Description</CardTitle>
+            <CardTitle className="text-[18px] text-white">Project Description</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-[14px] text-gray-700">{referral.project_description}</p>
+            <p className="text-[14px] text-[#b0b2bc]">{referral.project_description}</p>
           </CardContent>
         </Card>
       )}
 
       {/* Additional Notes */}
       {referral.notes && (
-        <Card>
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardHeader>
-            <CardTitle className="text-[18px]">Additional Context</CardTitle>
+            <CardTitle className="text-[18px] text-white">Additional Context</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-[14px] text-gray-700">{referral.notes}</p>
+            <p className="text-[14px] text-[#b0b2bc]">{referral.notes}</p>
           </CardContent>
         </Card>
       )}
 
       {/* Member Matching (Only show when status is REVIEWED) */}
       {referral.status === "REVIEWED" && (
-        <Card>
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardHeader>
-            <CardTitle className="text-[18px]">Match to Member</CardTitle>
-            <CardDescription>Select a member to assign this referral to</CardDescription>
+            <CardTitle className="text-[18px] text-white">Match to Member</CardTitle>
+            <CardDescription className="text-[#b0b2bc]">Select a member to assign this referral to</CardDescription>
           </CardHeader>
           <CardContent>
             <select
               value={selectedMember}
               onChange={(e) => setSelectedMember(e.target.value)}
-              className="w-full h-10 border-gray-300 rounded-md shadow-xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-[14px] border px-3 py-2"
+              className="w-full h-10 rounded-md shadow-xs text-[14px] border px-3 py-2 text-white"
+              style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
             >
               <option value="">Select a member...</option>
               {members.map((member) => (
@@ -412,16 +416,16 @@ export default function ReferralDetail({
 
       {/* Matched Member Info */}
       {referral.matched_member && (
-        <Card className="bg-blue-50 border-blue-200">
+        <Card style={{ background: 'rgba(201, 169, 98, 0.1)', border: '1px solid rgba(201, 169, 98, 0.3)', borderRadius: '10px' }}>
           <CardHeader>
-            <CardTitle className="text-[18px]">Matched Member</CardTitle>
+            <CardTitle className="text-[18px] text-white">Matched Member</CardTitle>
           </CardHeader>
           <CardContent className="text-[14px]">
-            <div className="font-semibold text-blue-900">
+            <div className="font-semibold text-[#c9a962]">
               {referral.matched_member.full_name}
             </div>
-            <div className="text-blue-700">{referral.matched_member.company_name}</div>
-            <div className="text-blue-600 text-[13px] mt-1">
+            <div className="text-white">{referral.matched_member.company_name}</div>
+            <div className="text-[#b0b2bc] text-[13px] mt-1">
               {referral.matched_member.primary_trade}
             </div>
           </CardContent>
@@ -429,27 +433,28 @@ export default function ReferralDetail({
       )}
 
       {/* Admin Notes */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px]">Admin Notes</CardTitle>
+            <MessageSquare className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] text-white">Admin Notes</CardTitle>
           </div>
-          <CardDescription>Internal notes about this referral</CardDescription>
+          <CardDescription className="text-[#b0b2bc]">Internal notes about this referral</CardDescription>
         </CardHeader>
         <CardContent>
           <textarea
             value={adminNotes}
             onChange={(e) => setAdminNotes(e.target.value)}
             rows={4}
-            className="w-full border-gray-300 rounded-md shadow-xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-[14px] border px-3 py-2"
+            className="w-full rounded-md shadow-xs text-[14px] border px-3 py-2 text-white"
+            style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
             placeholder="Add notes about this referral..."
           />
         </CardContent>
       </Card>
 
       {/* Action Buttons */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardContent className="pt-6">
           <div className="flex justify-end gap-3">
             {nextStatus && (

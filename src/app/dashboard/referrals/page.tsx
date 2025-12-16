@@ -84,15 +84,15 @@ export default async function ReferralsPage({
     const success = searchParams.success === "true";
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: '#1a1d27' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Success Message */}
         {success && (
-          <Card className="bg-green-50 border-green-200 mb-6">
+          <Card className="mb-6" style={{ background: 'rgba(74, 222, 128, 0.1)', border: '1px solid #4ade80', borderRadius: '10px' }}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                <p className="text-[14px] font-medium text-green-700">
+                <CheckCircle2 className="h-5 w-5" style={{ color: '#4ade80' }} />
+                <p className="text-[14px] font-medium" style={{ color: '#4ade80' }}>
                   Referral submitted successfully! Our admin team will review it shortly.
                 </p>
               </div>
@@ -103,8 +103,8 @@ export default async function ReferralsPage({
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-semibold text-gray-900">My Referrals</h1>
-            <p className="text-sm sm:text-[15px] text-gray-600 mt-1">
+            <h1 className="text-2xl sm:text-3xl lg:text-[36px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>My Referrals</h1>
+            <p className="text-sm sm:text-[15px] mt-1" style={{ color: '#b0b2bc' }}>
               Track the status of your submitted referrals
             </p>
           </div>
@@ -118,11 +118,11 @@ export default async function ReferralsPage({
 
         {/* Referrals List */}
         {!referrals || referrals.length === 0 ? (
-          <Card>
+          <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
             <CardContent className="py-12 text-center">
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No referrals yet</h3>
-              <p className="text-sm text-gray-600 mb-6">
+              <FileText className="h-12 w-12 mx-auto mb-4" style={{ color: '#6a6d78' }} />
+              <h3 className="text-base sm:text-lg mb-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>No referrals yet</h3>
+              <p className="text-sm mb-6" style={{ color: '#b0b2bc' }}>
                 Start referring clients to the Proclusive network
               </p>
               <Link href="/dashboard/referrals/new">
@@ -140,12 +140,12 @@ export default async function ReferralsPage({
               const StatusIcon = statusConfig.icon;
 
               return (
-                <Card key={referral.id} className="hover:shadow-md transition-shadow">
+                <Card key={referral.id} className="hover:shadow-md transition-shadow" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
                   <CardHeader>
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                          <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
+                          <CardTitle className="text-lg sm:text-xl truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
                             {referral.client_name}
                           </CardTitle>
                           <Badge variant={statusConfig.variant} className="self-start">
@@ -153,12 +153,12 @@ export default async function ReferralsPage({
                             {statusConfig.label}
                           </Badge>
                         </div>
-                        <CardDescription className="text-sm text-gray-600">
+                        <CardDescription className="text-sm" style={{ color: '#b0b2bc' }}>
                           {referral.client_company && `${referral.client_company} • `}
                           {referral.project_type}
                         </CardDescription>
                       </div>
-                      <div className="text-left sm:text-right text-xs sm:text-[13px] text-gray-500 flex-shrink-0">
+                      <div className="text-left sm:text-right text-xs sm:text-[13px] flex-shrink-0" style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                         <div>Submitted</div>
                         <div>{new Date(referral.created_at).toLocaleDateString()}</div>
                       </div>
@@ -167,40 +167,40 @@ export default async function ReferralsPage({
                   <CardContent>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 text-xs sm:text-[13px]">
                       <div>
-                        <div className="font-medium text-gray-700 mb-1">Location</div>
-                        <div className="text-gray-600">{referral.location}</div>
+                        <div className="font-medium mb-1" style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Location</div>
+                        <div style={{ color: '#b0b2bc' }}>{referral.location}</div>
                       </div>
                       {referral.value_range && (
                         <div>
-                          <div className="font-medium text-gray-700 mb-1">Value Range</div>
-                          <div className="text-gray-600">{referral.value_range}</div>
+                          <div className="font-medium mb-1" style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Value Range</div>
+                          <div style={{ color: '#b0b2bc' }}>{referral.value_range}</div>
                         </div>
                       )}
                       {referral.timeline && (
                         <div>
-                          <div className="font-medium text-gray-700 mb-1">Timeline</div>
-                          <div className="text-gray-600">{referral.timeline}</div>
+                          <div className="font-medium mb-1" style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Timeline</div>
+                          <div style={{ color: '#b0b2bc' }}>{referral.timeline}</div>
                         </div>
                       )}
                     </div>
 
                     {referral.project_description && (
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <div className="font-medium text-gray-700 text-xs sm:text-[13px] mb-1">
+                      <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                        <div className="font-medium text-xs sm:text-[13px] mb-1" style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                           Project Description
                         </div>
-                        <div className="text-gray-600 text-xs sm:text-[13px]">
+                        <div className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>
                           {referral.project_description}
                         </div>
                       </div>
                     )}
 
                     {referral.admin_notes && (
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <div className="font-medium text-gray-700 text-xs sm:text-[13px] mb-1">
+                      <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                        <div className="font-medium text-xs sm:text-[13px] mb-1" style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                           Admin Notes
                         </div>
-                        <div className="text-gray-600 text-xs sm:text-[13px] bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <div className="text-xs sm:text-[13px] p-3 rounded-lg" style={{ color: '#b0b2bc', background: 'rgba(96, 165, 250, 0.1)', border: '1px solid rgba(96, 165, 250, 0.2)' }}>
                           {referral.admin_notes}
                         </div>
                       </div>

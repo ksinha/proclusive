@@ -101,12 +101,12 @@ export default async function AdminReferralsPage() {
 
     console.log("[AdminReferralsPage] Rendering ReferralsList");
     return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: '#1a1d27' }}>
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-[36px] font-semibold text-gray-900">Referral Management</h1>
-          <p className="text-[15px] text-gray-600 mt-1">
+          <h1 className="text-[36px] font-semibold text-white">Referral Management</h1>
+          <p className="text-[15px] text-[#b0b2bc] mt-1">
             Review and manage member referrals through the 5-stage workflow
           </p>
         </div>

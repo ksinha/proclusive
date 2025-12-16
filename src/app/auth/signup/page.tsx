@@ -70,21 +70,32 @@ export default function SignUpPage() {
   // Email confirmation sent screen
   if (emailSent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 sm:py-16 px-4">
-        <div className="max-w-md w-full space-y-6">
-          <Card className="bg-white border border-gray-200 rounded-lg shadow-md p-6 sm:p-8">
+      <div className="min-h-screen flex items-center justify-center py-8 sm:py-16 px-4" style={{ background: '#1a1d27' }}>
+        <div className="w-full space-y-6" style={{ maxWidth: '420px' }}>
+          <Card className="rounded-xl p-10 sm:p-12" style={{
+            background: '#252833',
+            border: '1px solid rgba(255, 255, 255, 0.08)'
+          }}>
             <CardHeader className="space-y-4 text-center pb-6 px-0">
-              <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <Mail className="h-7 w-7 sm:h-8 sm:w-8 text-green-600" />
+              <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(201, 169, 98, 0.15)' }}>
+                <Mail className="h-7 w-7 sm:h-8 sm:w-8" style={{ color: '#c9a962' }} />
               </div>
               <div>
-                <CardTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
+                <CardTitle
+                  className="text-xl sm:text-2xl"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    fontWeight: 300,
+                    color: '#f8f8fa',
+                    letterSpacing: '0.1em'
+                  }}
+                >
                   Check your email
                 </CardTitle>
-                <CardDescription className="text-sm text-gray-600 mt-3">
+                <CardDescription className="text-sm mt-3" style={{ color: '#b0b2bc' }}>
                   We've sent a confirmation link to
                 </CardDescription>
-                <p className="text-sm sm:text-base font-medium text-gray-900 mt-1 break-words">
+                <p className="text-sm sm:text-base font-medium mt-1 break-words" style={{ color: '#f8f8fa' }}>
                   {email}
                 </p>
               </div>
@@ -92,12 +103,15 @@ export default function SignUpPage() {
 
             <CardContent className="px-0 pb-0 space-y-5 sm:space-y-6">
               {/* Instructions */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
-                <h3 className="text-sm sm:text-[14px] font-semibold text-blue-900 mb-3 flex items-center gap-2">
+              <div className="rounded-lg p-3 sm:p-4" style={{
+                background: 'rgba(201, 169, 98, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.08)'
+              }}>
+                <h3 className="text-sm sm:text-[14px] font-semibold mb-3 flex items-center gap-2" style={{ color: '#c9a962' }}>
                   <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
                   Next Steps
                 </h3>
-                <ol className="text-xs sm:text-[13px] text-blue-800 space-y-2 list-decimal list-inside">
+                <ol className="text-xs sm:text-[13px] space-y-2 list-decimal list-inside" style={{ color: '#b0b2bc' }}>
                   <li>Open the email from Proclusive</li>
                   <li>Click the confirmation link</li>
                   <li>You'll be redirected to complete your vetting application</li>
@@ -105,11 +119,14 @@ export default function SignUpPage() {
               </div>
 
               {/* Tips */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
-                <h3 className="text-xs sm:text-[13px] font-medium text-gray-700 mb-2">
+              <div className="rounded-lg p-3 sm:p-4" style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)'
+              }}>
+                <h3 className="text-xs sm:text-[13px] font-medium mb-2" style={{ color: '#f8f8fa' }}>
                   Didn't receive the email?
                 </h3>
-                <ul className="text-xs sm:text-[13px] text-gray-600 space-y-1">
+                <ul className="text-xs sm:text-[13px] space-y-1" style={{ color: '#b0b2bc' }}>
                   <li>• Check your spam or junk folder</li>
                   <li>• Make sure <span className="break-all">{email}</span> is correct</li>
                   <li>• Wait a few minutes and check again</li>
@@ -126,6 +143,11 @@ export default function SignUpPage() {
                     setEmail("");
                     setPassword("");
                   }}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    color: '#f8f8fa'
+                  }}
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Try a different email
@@ -134,7 +156,8 @@ export default function SignUpPage() {
                 <div className="text-center">
                   <Link
                     href="/auth/login"
-                    className="text-sm text-blue-600 hover:text-blue-700 transition-colors underline-offset-4 hover:underline font-medium"
+                    className="text-sm transition-colors underline-offset-4 hover:underline font-medium"
+                    style={{ color: '#c9a962', textDecoration: 'none' }}
                   >
                     Already confirmed? Sign in
                   </Link>
@@ -148,23 +171,51 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 sm:py-16 px-4">
-      <div className="max-w-md w-full space-y-6">
-        <Card className="bg-white border border-gray-200 rounded-lg shadow-md p-6 sm:p-8">
+    <div className="min-h-screen flex items-center justify-center py-8 sm:py-16 px-4" style={{ background: '#1a1d27' }}>
+      <div className="w-full space-y-6" style={{ maxWidth: '420px' }}>
+        <Card className="rounded-xl p-10 sm:p-12" style={{
+          background: '#252833',
+          border: '1px solid rgba(255, 255, 255, 0.08)'
+        }}>
           <CardHeader className="space-y-4 text-center pb-6 px-0">
             <div>
-              <div className="text-xl sm:text-2xl font-bold text-navy-800 mb-4 sm:mb-6">
+              <div
+                className="text-2xl mb-6"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontWeight: 300,
+                  color: '#f8f8fa',
+                  letterSpacing: '0.1em'
+                }}
+              >
                 Proclusive
               </div>
-              <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">
+              <CardTitle
+                className="text-lg sm:text-xl"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontWeight: 300,
+                  color: '#f8f8fa',
+                  letterSpacing: '0.1em'
+                }}
+              >
                 Create your account
               </CardTitle>
-              <CardDescription className="text-sm text-gray-600 mt-2">
+              <CardDescription className="text-sm mt-2" style={{ color: '#b0b2bc' }}>
                 High-Trust B2B Referral Network
               </CardDescription>
             </div>
             <div className="flex justify-center pt-2">
-              <Badge variant="warning" size="default" className="text-xs sm:text-sm">
+              <Badge
+                variant="warning"
+                size="default"
+                className="text-xs sm:text-sm"
+                style={{
+                  background: 'rgba(201, 169, 98, 0.15)',
+                  color: '#c9a962',
+                  border: '1px solid rgba(201, 169, 98, 0.3)'
+                }}
+              >
                 Invitation & Vetting Required
               </Badge>
             </div>
@@ -174,7 +225,7 @@ export default function SignUpPage() {
             <form onSubmit={handleSignUp} className="space-y-5">
               {/* Email Field */}
               <div className="space-y-2">
-                <Label htmlFor="email">
+                <Label htmlFor="email" style={{ color: '#b0b2bc', fontSize: '0.9rem' }}>
                   Email address
                 </Label>
                 <Input
@@ -191,7 +242,7 @@ export default function SignUpPage() {
 
               {/* Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="password">
+                <Label htmlFor="password" style={{ color: '#b0b2bc', fontSize: '0.9rem' }}>
                   Password
                 </Label>
                 <Input
@@ -208,15 +259,18 @@ export default function SignUpPage() {
 
               {/* Error Display */}
               {error && (
-                <Card className="border-red-200 bg-red-50">
+                <Card style={{
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(248, 113, 113, 0.15)'
+                }}>
                   <CardContent className="py-3 px-4">
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                      <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#f87171' }} />
                       <div className="flex-1">
-                        <p className="text-[13px] font-medium text-red-900">
+                        <p className="text-[13px] font-medium" style={{ color: '#f87171' }}>
                           Sign up failed
                         </p>
-                        <p className="text-[13px] text-red-800 mt-1">
+                        <p className="text-[13px] mt-1" style={{ color: '#f87171' }}>
                           {error}
                         </p>
                       </div>
@@ -231,6 +285,11 @@ export default function SignUpPage() {
                 disabled={loading}
                 variant="default"
                 className="w-full h-10 sm:h-11"
+                style={{
+                  background: '#c9a962',
+                  color: '#1a1d27',
+                  fontWeight: 500
+                }}
               >
                 {loading ? "Creating account..." : "Create account"}
               </Button>
@@ -240,11 +299,12 @@ export default function SignUpPage() {
 
         {/* Footer Link */}
         <div className="text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm" style={{ color: '#b0b2bc' }}>
             Already have an account?{" "}
             <Link
               href="/auth/login"
-              className="text-blue-600 hover:text-blue-700 transition-colors underline-offset-4 hover:underline font-medium"
+              className="transition-colors underline-offset-4 hover:underline font-medium"
+              style={{ color: '#c9a962', textDecoration: 'none' }}
             >
               Sign in
             </Link>

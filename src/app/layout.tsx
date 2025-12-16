@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
+import { BackgroundEffects } from "@/components/ui/background-effects";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,11 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="antialiased">
+      <body className="antialiased" style={{ background: '#1a1d27' }}>
         <Providers>
-          <Navigation />
-          <main>{children}</main>
-          <Footer />
+          <BackgroundEffects />
+          <div className="relative z-10">
+            <Navigation />
+            <main>{children}</main>
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

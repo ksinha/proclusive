@@ -53,18 +53,18 @@ export default async function NewReferralPage() {
     // }
 
     return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: '#1a1d27' }}>
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <Link href="/dashboard/referrals">
-            <Button variant="ghost" className="mb-4 -ml-2">
+            <Button variant="ghost" className="mb-4 -ml-2" style={{ color: '#b0b2bc' }}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Referrals
             </Button>
           </Link>
-          <h1 className="text-[36px] font-semibold text-gray-900">Submit a Referral</h1>
-          <p className="text-[15px] text-gray-600 mt-2">
+          <h1 className="text-[36px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Submit a Referral</h1>
+          <p className="text-[15px] mt-2" style={{ color: '#b0b2bc' }}>
             Refer a client to the Proclusive network. Our admin team will review and match the referral with the best-fit member.
           </p>
         </div>

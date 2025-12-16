@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Application, Profile } from "@/types/database.types";
 import ApplicationsList from "@/components/admin/ApplicationsList";
@@ -24,18 +24,24 @@ export default function AdminDashboardPage() {
   const [allApplications, setAllApplications] = useState<ApplicationWithProfile[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "under_review" | "approved" | "rejected">("pending");
   const [isViewingIndividual, setIsViewingIndividual] = useState(false);
-  const [loadStarted, setLoadStarted] = useState(false);
+
+  // Refs for preventing race conditions and memory leaks
+  const isMountedRef = useRef(true);
+  const isLoadingRef = useRef(false);
 
   // Optimistic data loading - start immediately on mount
   // Supabase client uses stored session independently of React auth state
   // RLS policies will return empty data if user is not admin
   useEffect(() => {
-    if (!loadStarted) {
-      console.log("[AdminDashboard] Starting optimistic data load");
-      setLoadStarted(true);
-      loadApplications();
-    }
-  }, [loadStarted]);
+    console.log("[AdminDashboard] Starting optimistic data load");
+    loadApplications();
+
+    // Cleanup: mark as unmounted to prevent state updates after unmount
+    return () => {
+      console.log("[AdminDashboard] Component unmounting");
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Auth validation and redirect (runs in parallel with data loading)
   useEffect(() => {
@@ -60,58 +66,57 @@ export default function AdminDashboardPage() {
 
 
   const loadApplications = async () => {
+    // Issue 3 fix: Prevent concurrent loads
+    if (isLoadingRef.current) {
+      console.log("[AdminDashboard] Load already in progress, skipping");
+      return;
+    }
+
     console.log("[AdminDashboard] Loading all applications");
-    setDataLoading(true);
+    isLoadingRef.current = true;
+
+    // Only update state if still mounted
+    if (isMountedRef.current) {
+      setDataLoading(true);
+    }
 
     try {
       const supabase = createClient();
 
-      // Always fetch ALL applications (no filter applied at database level)
+      // Single query with join - fetches applications with profiles in one request
+      // The foreign key relationship allows Supabase to join the data automatically
       const { data: apps, error: appsError } = await supabase
         .from("applications")
-        .select("*")
+        .select("*, profile:profiles!applications_user_id_fkey(*)")
         .order("created_at", { ascending: false });
+
+      // Issue 5 fix: Check if still mounted before state updates
+      if (!isMountedRef.current) {
+        console.log("[AdminDashboard] Component unmounted, skipping state update");
+        return;
+      }
 
       if (appsError) {
         console.error("[AdminDashboard] Error loading applications:", appsError);
-        setDataLoading(false);
         return;
       }
 
       if (!apps || apps.length === 0) {
         console.log("[AdminDashboard] No applications found");
         setAllApplications([]);
-        setDataLoading(false);
         return;
       }
 
-      // Get user IDs
-      const userIds = apps.map((app) => app.user_id);
-
-      // Get profiles for these users
-      const { data: profiles, error: profilesError } = await supabase
-        .from("profiles")
-        .select("*")
-        .in("id", userIds);
-
-      if (profilesError) {
-        console.error("[AdminDashboard] Error loading profiles:", profilesError);
-        setDataLoading(false);
-        return;
-      }
-
-      // Combine data
-      const combined = apps.map((app) => ({
-        ...app,
-        profile: profiles?.find((p) => p.id === app.user_id),
-      }));
-
-      console.log("[AdminDashboard] Loaded", combined.length, "applications");
-      setAllApplications(combined as any);
+      console.log("[AdminDashboard] Loaded", apps.length, "applications");
+      setAllApplications(apps as ApplicationWithProfile[]);
     } catch (err) {
       console.error("[AdminDashboard] Error loading applications:", err);
     } finally {
-      setDataLoading(false);
+      isLoadingRef.current = false;
+      // Only update loading state if still mounted
+      if (isMountedRef.current) {
+        setDataLoading(false);
+      }
     }
   };
 
@@ -123,56 +128,56 @@ export default function AdminDashboardPage() {
   // Show loading while auth is being checked
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a1d27' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-[14px] text-gray-600">Loading admin dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#c9a962] mx-auto"></div>
+          <p className="mt-4 text-[14px] text-[#b0b2bc]">Loading admin dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navy Header */}
-      <div className="bg-navy-800 border-b border-navy-700">
+    <div className="min-h-screen" style={{ background: '#1a1d27' }}>
+      {/* Header */}
+      <div style={{ background: '#252833', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <LayoutDashboard className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400 flex-shrink-0" />
+            <LayoutDashboard className="h-5 w-5 sm:h-6 sm:w-6 text-[#c9a962] flex-shrink-0" />
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-white truncate">Admin Dashboard</h1>
-              <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Proclusive Vetting System</p>
+              <p className="text-xs sm:text-sm text-[#6a6d78] hidden sm:block">Proclusive Vetting System</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Stats Section */}
-      <div className="bg-white border-b border-gray-200">
+      <div style={{ background: '#1a1d27', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {/* Total Applications */}
-            <div>
+            <div style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '16px' }}>
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#282c38' }}>
+                  <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-[#c9a962]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Total Applications</p>
-                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">{allApplications.length}</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Total Applications</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-white font-tabular-nums">{allApplications.length}</p>
                 </div>
               </div>
             </div>
 
             {/* Pending Review */}
-            <div>
+            <div style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '16px' }}>
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#282c38' }}>
+                  <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-[#60a5fa]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Pending Review</p>
-                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
+                  <p className="text-[10px] sm:text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Pending Review</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-white font-tabular-nums">
                     {allApplications.filter((a) => a.status === "pending").length}
                   </p>
                 </div>
@@ -180,14 +185,14 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Under Review */}
-            <div>
+            <div style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '16px' }}>
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <ClipboardCheck className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#282c38' }}>
+                  <ClipboardCheck className="h-5 w-5 sm:h-6 sm:w-6 text-[#fbbf24]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Under Review</p>
-                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
+                  <p className="text-[10px] sm:text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Under Review</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-white font-tabular-nums">
                     {allApplications.filter((a) => a.status === "under_review").length}
                   </p>
                 </div>
@@ -195,14 +200,14 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Approved */}
-            <div>
+            <div style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '16px' }}>
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#282c38' }}>
+                  <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-[#4ade80]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Approved</p>
-                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-gray-900 font-tabular-nums">
+                  <p className="text-[10px] sm:text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Approved</p>
+                  <p className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-white font-tabular-nums">
                     {allApplications.filter((a) => a.status === "approved").length}
                   </p>
                 </div>
@@ -214,7 +219,7 @@ export default function AdminDashboardPage() {
 
       {/* Filters Section - Only show when NOT viewing individual application */}
       {!isViewingIndividual && (
-        <div className="bg-white border-b border-gray-200">
+        <div style={{ background: '#1a1d27', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex flex-wrap gap-2">
               {["all", "pending", "under_review", "approved", "rejected"].map((status) => (
@@ -233,7 +238,7 @@ export default function AdminDashboardPage() {
       )}
 
       {/* Applications Table */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6" style={{ background: '#1a1d27' }}>
         <ApplicationsList
           applications={filteredApplications}
           onUpdate={loadApplications}

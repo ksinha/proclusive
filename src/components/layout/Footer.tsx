@@ -2,29 +2,29 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-navy-800 border-t border-navy-700">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+    <footer className="bg-[#21242f] border-t border-white/[0.08] px-[30px] py-[60px]">
+      <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Company */}
           <div>
-            <h3 className="text-[13px] font-semibold text-white uppercase tracking-wide mb-4">
+            <h3 className="text-[13px] font-semibold text-[#f8f8fa] uppercase tracking-[0.1em] mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
               Proclusive
             </h3>
-            <p className="text-[14px] text-gray-400">
+            <p className="text-[14px] text-[#b0b2bc]">
               High-Trust B2B Referral Network for the Construction Industry
             </p>
           </div>
 
           {/* Resources */}
           <div>
-            <h3 className="text-[13px] font-semibold text-white uppercase tracking-wide mb-4">
+            <h3 className="text-[13px] font-semibold text-[#f8f8fa] uppercase tracking-[0.1em] mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
               Resources
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/"
-                  className="text-[14px] text-gray-400 hover:text-white transition-colors py-2 inline-block"
+                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
                 >
                   How It Works
                 </Link>
@@ -32,7 +32,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/auth/login"
-                  className="text-[14px] text-gray-400 hover:text-white transition-colors py-2 inline-block"
+                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
                 >
                   Member Login
                 </Link>
@@ -40,7 +40,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/auth/signup"
-                  className="text-[14px] text-gray-400 hover:text-white transition-colors py-2 inline-block"
+                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
                 >
                   Apply to Join
                 </Link>
@@ -50,30 +50,30 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-[13px] font-semibold text-white uppercase tracking-wide mb-4">
+            <h3 className="text-[13px] font-semibold text-[#f8f8fa] uppercase tracking-[0.1em] mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
               Legal
             </h3>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#"
-                  className="text-[14px] text-gray-400 hover:text-white transition-colors py-2 inline-block"
+                <Link
+                  href="/terms"
+                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-[14px] text-gray-400 hover:text-white transition-colors py-2 inline-block"
+                <Link
+                  href="/privacy"
+                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
                 <a
                   href="mailto:support@proclusive.com"
-                  className="text-[14px] text-gray-400 hover:text-white transition-colors py-2 inline-block"
+                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
                 >
                   Contact Support
                 </a>
@@ -83,8 +83,8 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-navy-700">
-          <p className="text-[13px] text-gray-500 text-center">
+        <div className="mt-12 pt-8 border-t border-white/[0.08]">
+          <p className="text-[13px] text-[#6a6d78] text-center">
             © {new Date().getFullYear()} Proclusive. All rights reserved.
           </p>
         </div>

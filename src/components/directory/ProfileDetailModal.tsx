@@ -97,25 +97,25 @@ export default function ProfileDetailModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden bg-[#1a1d27] border border-[rgba(255,255,255,0.08)]">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-          <h2 className="text-[20px] font-semibold text-gray-900">Member Profile</h2>
+        <div className="sticky top-0 bg-[#252833] border-b border-[rgba(255,255,255,0.08)] px-6 py-4 flex items-center justify-between z-10">
+          <h2 className="text-[20px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa]">Member Profile</h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="h-8 w-8 p-0 rounded-full"
+            className="h-8 w-8 p-0 rounded-full hover:bg-[#282c38]"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5 text-[#b0b2bc]" />
           </Button>
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-8rem)] p-6 space-y-6">
+        <div className="overflow-y-auto max-h-[calc(90vh-8rem)] p-6 space-y-6 bg-[#1a1d27]">
           {/* Basic Info */}
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
+            <CardContent className="pt-6 p-8">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1 min-w-0">
                   {profile.badge_level !== "none" && (
@@ -123,29 +123,29 @@ export default function ProfileDetailModal({
                       {badgeLabel}
                     </Badge>
                   )}
-                  <h3 className="text-[24px] font-semibold text-gray-900 mb-2">
+                  <h3 className="text-[24px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa] mb-2">
                     {profile.full_name}
                   </h3>
-                  <p className="text-[16px] text-gray-600 mb-3">
+                  <p className="text-[16px] text-[#b0b2bc] mb-3">
                     {profile.company_name}
                   </p>
-                  <Badge variant="outline">
+                  <Badge variant="outline" className="border-[rgba(255,255,255,0.08)] text-[#b0b2bc]">
                     {profile.primary_trade}
                   </Badge>
                 </div>
               </div>
 
               {/* Contact Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pt-4 border-t border-[rgba(255,255,255,0.08)]">
                 {profile.phone && (
-                  <div className="flex items-center gap-2 text-gray-900">
-                    <Phone className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                  <div className="flex items-center gap-2 text-[#f8f8fa]">
+                    <Phone className="h-4 w-4 text-[#b0b2bc] flex-shrink-0" />
                     <span className="text-[13px]">{profile.phone}</span>
                   </div>
                 )}
                 {profile.email && (
-                  <div className="flex items-center gap-2 text-gray-900">
-                    <Mail className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                  <div className="flex items-center gap-2 text-[#f8f8fa]">
+                    <Mail className="h-4 w-4 text-[#b0b2bc] flex-shrink-0" />
                     <span className="text-[13px] truncate">{profile.email}</span>
                   </div>
                 )}
@@ -153,8 +153,8 @@ export default function ProfileDetailModal({
 
               {/* Location */}
               {(profile.city || profile.state) && (
-                <div className="flex items-start gap-2 text-gray-900 mb-4">
-                  <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2 text-[#f8f8fa] mb-4">
+                  <MapPin className="h-4 w-4 text-[#b0b2bc] flex-shrink-0 mt-0.5" />
                   <span className="text-[13px]">
                     {profile.street_address && `${profile.street_address}, `}
                     {profile.city}
@@ -171,7 +171,7 @@ export default function ProfileDetailModal({
                     href={profile.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#c9a962] hover:text-[#d4b674] transition-colors"
                   >
                     <Globe className="h-4 w-4" />
                     Website
@@ -182,7 +182,7 @@ export default function ProfileDetailModal({
                     href={profile.linkedin_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#c9a962] hover:text-[#d4b674] transition-colors"
                   >
                     <Linkedin className="h-4 w-4" />
                     LinkedIn
@@ -193,37 +193,37 @@ export default function ProfileDetailModal({
           </Card>
 
           {/* Business Details */}
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
+            <CardContent className="pt-6 p-8">
               <div className="flex items-center gap-2 mb-4">
-                <Building2 className="h-5 w-5 text-blue-600" />
-                <h4 className="text-[16px] font-semibold text-gray-900">Business Details</h4>
+                <Building2 className="h-5 w-5 text-[#c9a962]" />
+                <h4 className="text-[16px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa]">Business Details</h4>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {profile.business_type && (
                   <div className="space-y-1">
-                    <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Business Type</p>
-                    <p className="text-[14px] font-medium text-gray-900">{profile.business_type}</p>
+                    <p className="text-[12px] font-medium text-[#b0b2bc] uppercase tracking-wide">Business Type</p>
+                    <p className="text-[14px] font-medium text-[#f8f8fa]">{profile.business_type}</p>
                   </div>
                 )}
                 {profile.years_in_business !== null && (
                   <div className="space-y-1">
-                    <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Years in Business</p>
-                    <p className="text-[14px] font-medium text-gray-900">{profile.years_in_business}</p>
+                    <p className="text-[12px] font-medium text-[#b0b2bc] uppercase tracking-wide">Years in Business</p>
+                    <p className="text-[14px] font-medium text-[#f8f8fa]">{profile.years_in_business}</p>
                   </div>
                 )}
                 {profile.team_size && (
                   <div className="space-y-1">
-                    <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Team Size</p>
-                    <p className="text-[14px] font-medium text-gray-900">{profile.team_size}</p>
+                    <p className="text-[12px] font-medium text-[#b0b2bc] uppercase tracking-wide">Team Size</p>
+                    <p className="text-[14px] font-medium text-[#f8f8fa]">{profile.team_size}</p>
                   </div>
                 )}
                 {profile.service_areas && profile.service_areas.length > 0 && (
                   <div className="col-span-2 space-y-2">
-                    <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Service Areas</p>
+                    <p className="text-[12px] font-medium text-[#b0b2bc] uppercase tracking-wide">Service Areas</p>
                     <div className="flex flex-wrap gap-2">
                       {profile.service_areas.map((area, index) => (
-                        <Badge key={index} variant="secondary">
+                        <Badge key={index} variant="secondary" className="bg-[#282c38] text-[#b0b2bc] border-[rgba(255,255,255,0.08)]">
                           {area}
                         </Badge>
                       ))}
@@ -236,13 +236,13 @@ export default function ProfileDetailModal({
 
           {/* Bio */}
           {profile.bio && (
-            <Card>
-              <CardContent className="pt-6">
+            <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
+              <CardContent className="pt-6 p-8">
                 <div className="flex items-center gap-2 mb-3">
-                  <Briefcase className="h-5 w-5 text-blue-600" />
-                  <h4 className="text-[16px] font-semibold text-gray-900">About</h4>
+                  <Briefcase className="h-5 w-5 text-[#c9a962]" />
+                  <h4 className="text-[16px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa]">About</h4>
                 </div>
-                <p className="text-[14px] text-gray-900 leading-relaxed whitespace-pre-line">
+                <p className="text-[14px] text-[#b0b2bc] leading-relaxed whitespace-pre-line">
                   {profile.bio}
                 </p>
               </CardContent>
@@ -250,15 +250,15 @@ export default function ProfileDetailModal({
           )}
 
           {/* Portfolio */}
-          <Card>
-            <CardContent className="pt-6">
-              <h4 className="text-[16px] font-semibold text-gray-900 mb-4">Portfolio</h4>
+          <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
+            <CardContent className="pt-6 p-8">
+              <h4 className="text-[16px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa] mb-4">Portfolio</h4>
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                  <Loader2 className="h-8 w-8 animate-spin text-[#c9a962]" />
                 </div>
               ) : portfolioItems.length === 0 ? (
-                <p className="text-[13px] text-gray-600 text-center py-8">
+                <p className="text-[13px] text-[#b0b2bc] text-center py-8">
                   No portfolio items available
                 </p>
               ) : (
@@ -266,7 +266,7 @@ export default function ProfileDetailModal({
                   {portfolioItems.map((item) => (
                     <div
                       key={item.id}
-                      className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-200 hover:shadow-md group"
+                      className="bg-[#282c38] rounded-lg overflow-hidden border-2 border-[rgba(255,255,255,0.08)] hover:border-[#c9a962] transition-all duration-200 hover:shadow-lg group"
                     >
                       {portfolioImages[item.id] && (
                         <div className="relative overflow-hidden">
@@ -279,7 +279,7 @@ export default function ProfileDetailModal({
                       )}
                       {item.description && (
                         <div className="p-4">
-                          <p className="text-[13px] text-gray-900 leading-relaxed">
+                          <p className="text-[13px] text-[#b0b2bc] leading-relaxed">
                             {item.description}
                           </p>
                         </div>
@@ -293,8 +293,8 @@ export default function ProfileDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex justify-end">
-          <Button onClick={onClose} variant="secondary" size="lg">
+        <div className="sticky bottom-0 bg-[#252833] border-t border-[rgba(255,255,255,0.08)] px-6 py-4 flex justify-end">
+          <Button onClick={onClose} variant="secondary" size="lg" className="bg-[#282c38] text-[#f8f8fa] hover:bg-[#31354a] border border-[rgba(255,255,255,0.08)]">
             Close
           </Button>
         </div>

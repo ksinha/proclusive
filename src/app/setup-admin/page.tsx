@@ -66,31 +66,31 @@ export default function SetupAdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-16 px-4">
+    <div className="min-h-screen bg-[#1a1d27] flex items-center justify-center py-16 px-4">
       <div className="max-w-md w-full space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 bg-navy-100 rounded-lg flex items-center justify-center">
-              <Shield className="h-6 w-6 text-navy-800" />
+            <div className="w-12 h-12 bg-[#282c38] border-2 border-[rgba(255,255,255,0.08)] rounded-lg flex items-center justify-center">
+              <Shield className="h-6 w-6 text-[#c9a962]" />
             </div>
           </div>
-          <h1 className="text-[24px] font-semibold text-gray-900">
+          <h1 className="text-[24px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa]">
             Admin Bootstrap
           </h1>
-          <p className="text-[14px] text-gray-600">
+          <p className="text-[14px] text-[#b0b2bc]">
             Grant admin privileges to a user account
           </p>
         </div>
 
         {/* Warning Card */}
-        <Card className="bg-amber-50 border-amber-200">
+        <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
           <CardContent className="py-4">
             <div className="flex gap-3">
-              <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-[#c9a962] flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="text-[13px] font-semibold text-amber-900 mb-1">Security Notice</h3>
-                <p className="text-[13px] text-amber-800">
+                <h3 className="text-[13px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa] mb-1">Security Notice</h3>
+                <p className="text-[13px] text-[#b0b2bc]">
                   This page allows you to grant admin privileges. Only use this for trusted accounts.
                   In production, this should be restricted or removed.
                 </p>
@@ -100,17 +100,17 @@ export default function SetupAdminPage() {
         </Card>
 
         {/* Form Card */}
-        <Card>
+        <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
           <CardHeader>
-            <CardTitle>Grant Admin Access</CardTitle>
-            <CardDescription>
+            <CardTitle className="font-['Cormorant_Garamond',Georgia,serif] text-[#f8f8fa]">Grant Admin Access</CardTitle>
+            <CardDescription className="text-[#b0b2bc]">
               Enter the email of the user you want to make an admin. The user must have already signed up.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleMakeAdmin} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="email">User Email Address</Label>
+                <Label htmlFor="email" className="text-[#b0b2bc]">User Email Address</Label>
                 <Input
                   id="email"
                   name="email"
@@ -120,30 +120,31 @@ export default function SetupAdminPage() {
                   placeholder="admin@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="bg-[#282c38] border-[rgba(255,255,255,0.08)] text-[#f8f8fa] focus:border-[#c9a962] focus:ring-[#c9a962]"
                 />
               </div>
 
               {message && (
-                <Card className={message.type === "success" ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
+                <Card className={message.type === "success" ? "bg-[#282c38] border-[#c9a962]" : "bg-[#282c38] border-red-400"}>
                   <CardContent className="py-3 px-4">
                     <div className="flex gap-3">
                       {message.type === "success" ? (
-                        <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                        <CheckCircle className="h-5 w-5 text-[#c9a962] flex-shrink-0" />
                       ) : (
-                        <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                        <XCircle className="h-5 w-5 text-red-400 flex-shrink-0" />
                       )}
-                      <p className="text-[13px] text-gray-900">{message.text}</p>
+                      <p className="text-[13px] text-[#f8f8fa]">{message.text}</p>
                     </div>
                   </CardContent>
                 </Card>
               )}
 
-              <Button type="submit" disabled={loading} variant="default" className="w-full h-11">
+              <Button type="submit" disabled={loading} variant="default" className="w-full h-11 bg-[#c9a962] text-[#1a1d27] hover:bg-[#d4b674]">
                 {loading ? "Processing..." : "Grant Admin Privileges"}
               </Button>
 
               <div className="text-center pt-2">
-                <Link href="/" className="inline-flex items-center gap-2 text-[14px] font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                <Link href="/" className="inline-flex items-center gap-2 text-[14px] font-medium text-[#c9a962] hover:text-[#d4b674] transition-colors">
                   <ArrowLeft className="h-4 w-4" />
                   Back to Home
                 </Link>
@@ -153,13 +154,13 @@ export default function SetupAdminPage() {
         </Card>
 
         {/* Info Card */}
-        <Card className="bg-blue-50 border-blue-200">
+        <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
           <CardContent className="py-4">
-            <h3 className="text-[13px] font-semibold text-blue-900 mb-2">Alternative: Direct Database Method</h3>
-            <p className="text-[13px] text-blue-800 mb-3">
+            <h3 className="text-[13px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa] mb-2">Alternative: Direct Database Method</h3>
+            <p className="text-[13px] text-[#b0b2bc] mb-3">
               You can also grant admin privileges directly in Supabase:
             </p>
-            <ol className="text-[13px] text-blue-800 list-decimal list-inside space-y-1">
+            <ol className="text-[13px] text-[#b0b2bc] list-decimal list-inside space-y-1">
               <li>Go to your Supabase dashboard</li>
               <li>Open the Table Editor</li>
               <li>Navigate to the "profiles" table</li>

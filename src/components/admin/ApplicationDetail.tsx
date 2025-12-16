@@ -252,29 +252,29 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
       {/* Success Message */}
       {successMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="rounded-lg p-4" style={{ background: 'rgba(74, 222, 128, 0.1)', border: '1px solid rgba(74, 222, 128, 0.3)' }}>
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
-            <p className="text-[14px] font-medium text-green-700">{successMessage}</p>
+            <CheckCircle2 className="h-5 w-5 text-[#4ade80] flex-shrink-0" />
+            <p className="text-[14px] font-medium text-[#4ade80]">{successMessage}</p>
           </div>
         </div>
       )}
 
       {/* Header Card */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <span className="text-[16px] font-semibold text-primary">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(201, 169, 98, 0.15)' }}>
+                <span className="text-[16px] font-semibold text-[#c9a962]">
                   {getInitials(application.profile.full_name)}
                 </span>
               </div>
               <div>
-                <CardTitle className="text-[24px] font-semibold text-gray-900">
+                <CardTitle className="text-[24px] font-semibold text-white">
                   {application.profile.full_name}
                 </CardTitle>
-                <CardDescription className="text-[14px] text-gray-600">
+                <CardDescription className="text-[14px] text-[#b0b2bc]">
                   Submitted on {new Date(application.created_at).toLocaleString()}
                 </CardDescription>
               </div>
@@ -291,56 +291,56 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       </Card>
 
       {/* Profile Information */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-primary" />
-            <CardTitle>Profile Information</CardTitle>
+            <User className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-white">Profile Information</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-1">
-              <div className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Full Name</div>
-              <div className="text-[14px] font-medium text-gray-900">{application.profile.full_name}</div>
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Full Name</div>
+              <div className="text-[14px] font-medium text-white">{application.profile.full_name}</div>
             </div>
             <div className="space-y-1">
-              <div className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Email</div>
-              <div className="text-[14px] font-medium text-gray-900">{application.profile.email}</div>
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Email</div>
+              <div className="text-[14px] font-medium text-white">{application.profile.email}</div>
             </div>
             <div className="space-y-1">
-              <div className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Phone</div>
-              <div className="text-[14px] font-medium text-gray-900">{application.profile.phone || "N/A"}</div>
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Phone</div>
+              <div className="text-[14px] font-medium text-white">{application.profile.phone || "N/A"}</div>
             </div>
             <div className="space-y-1">
-              <div className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Company</div>
-              <div className="text-[14px] font-medium text-gray-900">{application.profile.company_name}</div>
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Company</div>
+              <div className="text-[14px] font-medium text-white">{application.profile.company_name}</div>
             </div>
             <div className="space-y-1">
-              <div className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Primary Trade</div>
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Primary Trade</div>
               <div><Badge variant="outline">{application.profile.primary_trade}</Badge></div>
             </div>
             <div className="space-y-1">
-              <div className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Business Type</div>
-              <div className="text-[14px] font-medium text-gray-900">{application.profile.business_type || "N/A"}</div>
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Business Type</div>
+              <div className="text-[14px] font-medium text-white">{application.profile.business_type || "N/A"}</div>
             </div>
             <div className="space-y-1">
-              <div className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Location</div>
-              <div className="text-[14px] font-medium text-gray-900">
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Location</div>
+              <div className="text-[14px] font-medium text-white">
                 {application.profile.city && application.profile.state
                   ? `${application.profile.city}, ${application.profile.state}`
                   : "N/A"}
               </div>
             </div>
             <div className="space-y-1">
-              <div className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Website</div>
-              <div className="text-[14px] font-medium text-gray-900">
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Website</div>
+              <div className="text-[14px] font-medium text-white">
                 {application.profile.website ? (
                   <a
                     href={application.profile.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-700"
+                    className="text-[#60a5fa] hover:text-[#7ab8ff]"
                   >
                     Visit Website
                   </a>
@@ -354,20 +354,20 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       </Card>
 
       {/* Tier 1 Verification Points */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <FileCheck className="h-5 w-5 text-primary" />
-            <CardTitle>Tier 1 Verification Points</CardTitle>
+            <FileCheck className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-white">Tier 1 Verification Points</CardTitle>
           </div>
-          <CardDescription>Review and verify submitted documentation</CardDescription>
+          <CardDescription className="text-[#b0b2bc]">Review and verify submitted documentation</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {tier1Points.map((point) => (
-              <div key={point.key} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border">
+              <div key={point.key} className="flex items-center justify-between p-4 rounded-lg" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
                 <div className="flex-1">
-                  <p className="text-[13px] font-medium">{point.label}</p>
+                  <p className="text-[13px] font-medium text-white">{point.label}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {getPointStatus(point.value)}
@@ -401,13 +401,13 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       </Card>
 
       {/* Documents */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <FileCheck className="h-5 w-5 text-primary" />
-            <CardTitle>Uploaded Documents ({documents.length})</CardTitle>
+            <FileCheck className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-white">Uploaded Documents ({documents.length})</CardTitle>
           </div>
-          <CardDescription>Review submitted documentation files</CardDescription>
+          <CardDescription className="text-[#b0b2bc]">Review submitted documentation files</CardDescription>
         </CardHeader>
         <CardContent>
           {documents.length > 0 ? (
@@ -415,13 +415,14 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
               {documents.map((doc) => (
                 <div
                   key={doc.id}
-                  className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border"
+                  className="flex items-center justify-between p-4 rounded-lg"
+                  style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
                 >
                   <div className="flex-1 space-y-1">
-                    <p className="text-[13px] font-medium">
+                    <p className="text-[13px] font-medium text-white">
                       {doc.document_type.replace(/_/g, " ").toUpperCase()}
                     </p>
-                    <p className="text-[12px] text-muted-foreground">{doc.file_name}</p>
+                    <p className="text-[12px] text-[#6a6d78]">{doc.file_name}</p>
                   </div>
                   <Button
                     onClick={() => handlePreviewDocument(doc)}
@@ -435,24 +436,24 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
               ))}
             </div>
           ) : (
-            <p className="text-[14px] text-muted-foreground text-center py-4">No documents uploaded</p>
+            <p className="text-[14px] text-[#6a6d78] text-center py-4">No documents uploaded</p>
           )}
         </CardContent>
       </Card>
 
       {/* Badge Assignment */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-primary" />
-            <CardTitle>Badge Assignment</CardTitle>
+            <Award className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-white">Badge Assignment</CardTitle>
           </div>
-          <CardDescription>Assign a badge level to this applicant</CardDescription>
+          <CardDescription className="text-[#b0b2bc]">Assign a badge level to this applicant</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {BADGE_LEVELS.map((badge) => (
-              <label key={badge.value} className="flex items-center p-3 hover:bg-muted/30 rounded-lg cursor-pointer border transition-colors">
+              <label key={badge.value} className="flex items-center p-3 rounded-lg cursor-pointer transition-colors" style={{ border: '1px solid rgba(255, 255, 255, 0.08)', background: selectedBadge === badge.value ? '#282c38' : 'transparent' }}>
                 <input
                   type="radio"
                   name="badge"
@@ -471,27 +472,28 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       </Card>
 
       {/* Admin Notes */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-primary" />
-            <CardTitle>Admin Notes</CardTitle>
+            <MessageSquare className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-white">Admin Notes</CardTitle>
           </div>
-          <CardDescription>Add internal notes about this application</CardDescription>
+          <CardDescription className="text-[#b0b2bc]">Add internal notes about this application</CardDescription>
         </CardHeader>
         <CardContent>
           <textarea
             value={adminNotes}
             onChange={(e) => setAdminNotes(e.target.value)}
             rows={4}
-            className="w-full border-gray-300 rounded-md shadow-xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-[14px] border px-3 py-2 bg-white"
+            className="w-full rounded-md shadow-xs text-[14px] border px-3 py-2 text-white"
+            style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
             placeholder="Add notes about this application..."
           />
         </CardContent>
       </Card>
 
       {/* Action Buttons */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardContent className="pt-6">
           <div className="flex justify-end gap-3">
             <Button
@@ -524,13 +526,13 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
       {/* Rejection Modal */}
       {showRejectModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <Card className="max-w-lg w-full">
-            <CardHeader className="border-b">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ background: 'rgba(0, 0, 0, 0.8)' }}>
+          <Card className="max-w-lg w-full" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+            <CardHeader style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle className="text-[20px] text-red-700">Reject Application</CardTitle>
-                  <CardDescription className="mt-1">
+                  <CardTitle className="text-[20px] text-[#f87171]">Reject Application</CardTitle>
+                  <CardDescription className="mt-1 text-[#b0b2bc]">
                     Send rejection email with instructions for the applicant
                   </CardDescription>
                 </div>
@@ -546,39 +548,40 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
             <CardContent className="pt-6 space-y-4">
               {/* Summary of verification points */}
               <div>
-                <h4 className="text-[13px] font-medium text-gray-700 mb-2">Verification Status Summary</h4>
-                <div className="bg-gray-50 border rounded-lg p-3 space-y-1 max-h-48 overflow-y-auto">
+                <h4 className="text-[13px] font-medium text-white mb-2">Verification Status Summary</h4>
+                <div className="rounded-lg p-3 space-y-1 max-h-48 overflow-y-auto" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
                   {tier1Points.map((point) => (
                     <div key={point.key} className="flex items-center justify-between text-[13px]">
-                      <span className="text-gray-600">{point.label}</span>
+                      <span className="text-[#b0b2bc]">{point.label}</span>
                       {getPointStatus(point.value)}
                     </div>
                   ))}
                 </div>
-                <p className="text-[12px] text-gray-500 mt-2">
+                <p className="text-[12px] text-[#6a6d78] mt-2">
                   This summary will be included in the rejection email.
                 </p>
               </div>
 
               {/* Rejection notes */}
               <div>
-                <h4 className="text-[13px] font-medium text-gray-700 mb-2">
-                  What needs to be fixed? <span className="text-red-500">*</span>
+                <h4 className="text-[13px] font-medium text-white mb-2">
+                  What needs to be fixed? <span className="text-[#f87171]">*</span>
                 </h4>
                 <textarea
                   value={rejectionNotes}
                   onChange={(e) => setRejectionNotes(e.target.value)}
                   rows={4}
-                  className="w-full border-gray-300 rounded-md shadow-xs focus:border-red-500 focus:ring-2 focus:ring-red-500 text-[14px] border px-3 py-2 bg-white"
+                  className="w-full rounded-md shadow-xs text-[14px] border px-3 py-2 text-white"
+                  style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
                   placeholder="Explain what documents or information need to be corrected or resubmitted..."
                 />
-                <p className="text-[12px] text-gray-500 mt-1">
+                <p className="text-[12px] text-[#6a6d78] mt-1">
                   This message will be sent to the applicant via email.
                 </p>
               </div>
 
               {/* Action buttons */}
-              <div className="flex justify-end gap-3 pt-4 border-t">
+              <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
                 <Button
                   onClick={() => setShowRejectModal(false)}
                   variant="outline"
@@ -601,13 +604,13 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
       {/* Document Preview Modal */}
       {previewUrl && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <Card className="max-w-4xl w-full max-h-[90vh] overflow-auto">
-            <CardHeader className="border-b">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
+          <Card className="max-w-4xl w-full max-h-[90vh] overflow-auto" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+            <CardHeader style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <Eye className="h-5 w-5 text-primary" />
-                  <CardTitle>Document Preview</CardTitle>
+                  <Eye className="h-5 w-5 text-[#c9a962]" />
+                  <CardTitle className="text-white">Document Preview</CardTitle>
                 </div>
                 <Button
                   onClick={() => setPreviewUrl(null)}

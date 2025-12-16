@@ -4,30 +4,30 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-outfit font-medium tracking-wide transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a962] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "bg-blue-500 text-white shadow-xs hover:bg-blue-600 hover:shadow-sm",
+          "bg-[#c9a962] text-[#1a1d27] border-none hover:bg-[#dfc07a] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(201,169,98,0.3)]",
         cta:
-          "bg-orange-500 text-white shadow-xs hover:bg-orange-600 hover:shadow-sm",
+          "bg-[#c9a962] text-[#1a1d27] border-none hover:bg-[#dfc07a] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(201,169,98,0.3)]",
         outline:
-          "bg-white border border-gray-300 text-gray-700 shadow-xs hover:bg-gray-50 hover:shadow-sm",
+          "bg-transparent text-[#c9a962] border border-[#c9a962] hover:bg-[rgba(201,169,98,0.15)]",
         ghost:
-          "bg-transparent text-gray-700 hover:bg-gray-100",
+          "bg-transparent text-[#b0b2bc] hover:bg-[rgba(255,255,255,0.05)] hover:text-[#f8f8fa]",
         destructive:
-          "bg-red-600 text-white shadow-xs hover:bg-red-700 hover:shadow-sm",
+          "bg-[#f87171] text-[#1a1d27] border-none hover:bg-[#ef4444]",
         secondary:
-          "bg-gray-100 text-gray-900 shadow-xs hover:bg-gray-200 hover:shadow-sm",
+          "bg-[#282c38] text-[#b0b2bc] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(201,169,98,0.25)] hover:text-[#f8f8fa]",
         link:
-          "text-blue-500 underline-offset-4 hover:underline",
+          "text-[#c9a962] underline-offset-4 hover:underline",
       },
       size: {
-        sm: "h-8 px-3 text-[13px]",
-        default: "h-10 px-4 text-[14px]",
-        lg: "h-11 px-6 text-[15px]",
-        icon: "h-10 w-10",
+        sm: "h-[42px] px-7 text-[13px] rounded-[4px]",
+        default: "h-[46px] px-9 text-[14px] rounded-[5px]",
+        lg: "h-[52px] px-12 text-[15px] rounded-[6px]",
+        icon: "h-10 w-10 rounded-[4px]",
       },
     },
     defaultVariants: {

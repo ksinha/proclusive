@@ -171,28 +171,28 @@ export default function ReferralSubmissionForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <Card className="bg-red-50 border-red-200">
+        <Card style={{ background: 'rgba(248, 113, 113, 0.1)', border: '1px solid #f87171', borderRadius: '10px' }}>
           <CardContent className="pt-6">
-            <p className="text-[14px] text-red-700">{error}</p>
+            <p className="text-[14px]" style={{ color: '#f87171' }}>{error}</p>
           </CardContent>
         </Card>
       )}
 
       {/* Client Information */}
-      <Card className="bg-white">
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Client Information</CardTitle>
+            <User className="h-5 w-5" style={{ color: '#60a5fa' }} />
+            <CardTitle className="text-[18px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Client Information</CardTitle>
           </div>
-          <CardDescription className="text-[14px] text-gray-600">
+          <CardDescription className="text-[14px]" style={{ color: '#b0b2bc' }}>
             Details about the client you're referring
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="client_name" className="text-[13px] font-medium text-gray-700">
+              <Label htmlFor="client_name" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 Client Name *
               </Label>
               <Input
@@ -208,7 +208,7 @@ export default function ReferralSubmissionForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="client_company" className="text-[13px] font-medium text-gray-700">
+              <Label htmlFor="client_company" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 Company Name
               </Label>
               <Input
@@ -225,7 +225,7 @@ export default function ReferralSubmissionForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="client_email" className="text-[13px] font-medium text-gray-700">
+              <Label htmlFor="client_email" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 Email
               </Label>
               <Input
@@ -240,7 +240,7 @@ export default function ReferralSubmissionForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="client_phone" className="text-[13px] font-medium text-gray-700">
+              <Label htmlFor="client_phone" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 Phone Number
               </Label>
               <Input
@@ -258,20 +258,20 @@ export default function ReferralSubmissionForm() {
       </Card>
 
       {/* Project Details */}
-      <Card className="bg-white">
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Project Details</CardTitle>
+            <Briefcase className="h-5 w-5" style={{ color: '#60a5fa' }} />
+            <CardTitle className="text-[18px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Project Details</CardTitle>
           </div>
-          <CardDescription className="text-[14px] text-gray-600">
+          <CardDescription className="text-[14px]" style={{ color: '#b0b2bc' }}>
             Information about the project opportunity
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="project_type" className="text-[13px] font-medium text-gray-700">
+              <Label htmlFor="project_type" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 Project Type *
               </Label>
               <Select
@@ -292,7 +292,7 @@ export default function ReferralSubmissionForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="value_range" className="text-[13px] font-medium text-gray-700">
+              <Label htmlFor="value_range" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 Project Value Range
               </Label>
               <Select
@@ -313,7 +313,7 @@ export default function ReferralSubmissionForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="project_description" className="text-[13px] font-medium text-gray-700">
+            <Label htmlFor="project_description" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
               Project Description
             </Label>
             <Textarea
@@ -328,7 +328,7 @@ export default function ReferralSubmissionForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="location" className="text-[13px] font-medium text-gray-700">
+              <Label htmlFor="location" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   Location *
@@ -347,7 +347,7 @@ export default function ReferralSubmissionForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="timeline" className="text-[13px] font-medium text-gray-700">
+              <Label htmlFor="timeline" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   Timeline
@@ -373,19 +373,19 @@ export default function ReferralSubmissionForm() {
       </Card>
 
       {/* Additional Context */}
-      <Card className="bg-white">
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Additional Context</CardTitle>
+            <FileText className="h-5 w-5" style={{ color: '#60a5fa' }} />
+            <CardTitle className="text-[18px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Additional Context</CardTitle>
           </div>
-          <CardDescription className="text-[14px] text-gray-600">
+          <CardDescription className="text-[14px]" style={{ color: '#b0b2bc' }}>
             Any additional information that would be helpful
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="notes" className="text-[13px] font-medium text-gray-700">
+            <Label htmlFor="notes" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
               Notes
             </Label>
             <Textarea
@@ -401,7 +401,7 @@ export default function ReferralSubmissionForm() {
       </Card>
 
       {/* Submit Button */}
-      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+      <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
         <Button
           type="button"
           variant="outline"

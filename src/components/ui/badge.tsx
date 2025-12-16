@@ -3,39 +3,46 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-md font-semibold transition-colors",
+  "inline-flex items-center rounded-[4px] font-medium transition-colors uppercase tracking-[0.08em] font-outfit",
   {
     variants: {
       variant: {
-        // Status variants (subtle)
+        // Status variants
         default:
-          "bg-blue-50 text-blue-700 border border-blue-200",
-        success:
-          "bg-green-50 text-green-700 border border-green-200",
-        warning:
-          "bg-amber-50 text-amber-700 border border-amber-200",
-        destructive:
-          "bg-red-50 text-red-700 border border-red-200",
-        secondary:
-          "bg-gray-100 text-gray-700 border border-gray-200",
-        outline:
-          "bg-white text-gray-700 border border-gray-300",
+          "bg-[rgba(96,165,250,0.15)] text-[#60a5fa] border border-[rgba(96,165,250,0.25)]",
         info:
-          "bg-blue-100 text-blue-800 border border-blue-300",
-        // VaaS variants (bold)
+          "bg-[rgba(96,165,250,0.15)] text-[#60a5fa] border border-[rgba(96,165,250,0.25)]",
+        success:
+          "bg-[rgba(74,222,128,0.15)] text-[#4ade80] border border-[rgba(74,222,128,0.25)]",
+        warning:
+          "bg-[rgba(251,191,36,0.15)] text-[#fbbf24] border border-[rgba(251,191,36,0.25)]",
+        destructive:
+          "bg-[rgba(248,113,113,0.15)] text-[#f87171] border border-[rgba(248,113,113,0.25)]",
+        secondary:
+          "bg-[#282c38] text-[#b0b2bc] border-none",
+        outline:
+          "bg-transparent text-[#b0b2bc] border border-[rgba(255,255,255,0.08)]",
+        // VaaS tier variants
+        verified:
+          "bg-[rgba(96,165,250,0.15)] text-[#60a5fa] border border-[rgba(96,165,250,0.25)]",
+        vetted:
+          "bg-[rgba(74,222,128,0.15)] text-[#4ade80] border border-[rgba(74,222,128,0.25)]",
+        elite:
+          "bg-[rgba(201,169,98,0.15)] text-[#c9a962] border border-[rgba(201,169,98,0.25)]",
+        // Badge level variants (same as VaaS tiers)
         compliance:
-          "bg-blue-500 text-white shadow-sm",
+          "bg-[rgba(96,165,250,0.15)] text-[#60a5fa] border border-[rgba(96,165,250,0.25)]",
         capability:
-          "bg-green-500 text-white shadow-sm",
+          "bg-[rgba(74,222,128,0.15)] text-[#4ade80] border border-[rgba(74,222,128,0.25)]",
         reputation:
-          "bg-purple-500 text-white shadow-sm",
+          "bg-[rgba(74,222,128,0.15)] text-[#4ade80] border border-[rgba(74,222,128,0.25)]",
         enterprise:
-          "bg-orange-500 text-white shadow-sm",
+          "bg-[rgba(201,169,98,0.15)] text-[#c9a962] border border-[rgba(201,169,98,0.25)]",
       },
       size: {
-        sm: "px-2 py-0.5 text-[11px]",
-        default: "px-2.5 py-0.5 text-[12px]",
-        lg: "px-3 py-1 text-[13px] rounded-lg",
+        sm: "px-2.5 py-1 text-[0.65rem]",
+        default: "px-[14px] py-[6px] text-[0.75rem]",
+        lg: "px-4 py-2 text-[0.8rem]",
       },
     },
     defaultVariants: {

@@ -95,19 +95,20 @@ export default function ReferralsList({ referrals, members }: ReferralsListProps
               key={status}
               className={`cursor-pointer transition-all ${
                 statusFilter === status
-                  ? "ring-2 ring-blue-500 shadow-md"
+                  ? "ring-2 ring-[#c9a962] shadow-md"
                   : "hover:shadow-md"
               }`}
+              style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}
               onClick={() => setStatusFilter(status)}
             >
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gray-50 rounded-lg">
-                    <Icon className="h-5 w-5 text-gray-600" />
+                  <div className="p-2 rounded-lg" style={{ background: '#282c38' }}>
+                    <Icon className="h-5 w-5 text-[#c9a962]" />
                   </div>
                   <div>
-                    <div className="text-[24px] font-bold text-gray-900">{count}</div>
-                    <div className="text-[12px] text-gray-600">{config.label}</div>
+                    <div className="text-[24px] font-bold text-white">{count}</div>
+                    <div className="text-[12px] text-[#b0b2bc]">{config.label}</div>
                   </div>
                 </div>
               </CardContent>
@@ -117,10 +118,10 @@ export default function ReferralsList({ referrals, members }: ReferralsListProps
       </div>
 
       {/* Filter Bar */}
-      <Card>
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-[14px] text-gray-700">
+            <div className="flex items-center gap-2 text-[14px] text-white">
               <Filter className="h-4 w-4" />
               <span className="font-medium">Filter by status:</span>
             </div>
@@ -152,13 +153,13 @@ export default function ReferralsList({ referrals, members }: ReferralsListProps
 
       {/* Referrals List */}
       {filteredReferrals.length === 0 ? (
-        <Card>
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardContent className="py-12 text-center">
-            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-[18px] font-semibold text-gray-900 mb-2">
+            <FileText className="h-12 w-12 text-[#6a6d78] mx-auto mb-4" />
+            <h3 className="text-[18px] font-semibold text-white mb-2">
               No referrals {statusFilter !== "ALL" ? `with status "${STATUS_CONFIG[statusFilter].label}"` : "yet"}
             </h3>
-            <p className="text-[14px] text-gray-600">
+            <p className="text-[14px] text-[#b0b2bc]">
               {statusFilter !== "ALL"
                 ? "Try adjusting your filter"
                 : "Referrals will appear here when members submit them"}
@@ -175,13 +176,14 @@ export default function ReferralsList({ referrals, members }: ReferralsListProps
               <Card
                 key={referral.id}
                 className="hover:shadow-md transition-shadow cursor-pointer"
+                style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}
                 onClick={() => setSelectedReferral(referral)}
               >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <CardTitle className="text-[20px] font-semibold text-gray-900">
+                        <CardTitle className="text-[20px] font-semibold text-white">
                           {referral.client_name}
                         </CardTitle>
                         <Badge variant={statusConfig.variant}>
@@ -189,12 +191,12 @@ export default function ReferralsList({ referrals, members }: ReferralsListProps
                           {statusConfig.label}
                         </Badge>
                       </div>
-                      <CardDescription className="text-[14px] text-gray-600">
+                      <CardDescription className="text-[14px] text-[#b0b2bc]">
                         Submitted by {referral.submitter.full_name} ({referral.submitter.company_name})
                         {referral.client_company && ` • ${referral.client_company}`}
                       </CardDescription>
                     </div>
-                    <div className="text-right text-[13px] text-gray-500">
+                    <div className="text-right text-[13px] text-[#6a6d78]">
                       <div>Submitted</div>
                       <div>{new Date(referral.created_at).toLocaleDateString()}</div>
                     </div>
@@ -203,33 +205,33 @@ export default function ReferralsList({ referrals, members }: ReferralsListProps
                 <CardContent>
                   <div className="grid grid-cols-4 gap-6 text-[13px]">
                     <div>
-                      <div className="font-medium text-gray-700 mb-1">Project Type</div>
-                      <div className="text-gray-600">{referral.project_type}</div>
+                      <div className="font-medium text-white mb-1">Project Type</div>
+                      <div className="text-[#b0b2bc]">{referral.project_type}</div>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-700 mb-1">Location</div>
-                      <div className="text-gray-600">{referral.location}</div>
+                      <div className="font-medium text-white mb-1">Location</div>
+                      <div className="text-[#b0b2bc]">{referral.location}</div>
                     </div>
                     {referral.value_range && (
                       <div>
-                        <div className="font-medium text-gray-700 mb-1">Value Range</div>
-                        <div className="text-gray-600">{referral.value_range}</div>
+                        <div className="font-medium text-white mb-1">Value Range</div>
+                        <div className="text-[#b0b2bc]">{referral.value_range}</div>
                       </div>
                     )}
                     {referral.timeline && (
                       <div>
-                        <div className="font-medium text-gray-700 mb-1">Timeline</div>
-                        <div className="text-gray-600">{referral.timeline}</div>
+                        <div className="font-medium text-white mb-1">Timeline</div>
+                        <div className="text-[#b0b2bc]">{referral.timeline}</div>
                       </div>
                     )}
                   </div>
 
                   {referral.matched_member && (
-                    <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
                       <div className="flex items-center gap-2 text-[13px]">
-                        <UserCheck className="h-4 w-4 text-blue-600" />
-                        <span className="font-medium text-gray-700">Matched to:</span>
-                        <span className="text-gray-900">
+                        <UserCheck className="h-4 w-4 text-[#c9a962]" />
+                        <span className="font-medium text-white">Matched to:</span>
+                        <span className="text-[#b0b2bc]">
                           {referral.matched_member.full_name} ({referral.matched_member.company_name})
                         </span>
                       </div>

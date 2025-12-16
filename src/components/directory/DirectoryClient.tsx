@@ -91,26 +91,26 @@ export default function DirectoryClient({
   }, [profiles, searchQuery, tradeFilter, locationFilter, badgeFilter]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: '#1a1d27' }}>
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-gray-900">
+        <div className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 mb-6 sm:mb-8" style={{ background: '#21242f', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+          <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#f8f8fa' }}>
             Member Directory
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm mt-1" style={{ color: '#b0b2bc' }}>
             Browse verified professionals in the Proclusive network
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white border-b border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6" style={{ background: '#21242f', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div className="space-y-2">
-              <Label htmlFor="search" className="text-xs sm:text-[12px] font-medium text-gray-700">Search</Label>
+              <Label htmlFor="search" className="text-xs sm:text-[12px] font-medium" style={{ color: '#b0b2bc' }}>Search</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: '#b0b2bc' }} />
                 <Input
                   id="search"
                   type="text"
@@ -118,21 +118,23 @@ export default function DirectoryClient({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search members..."
                   className="pl-9 h-10 sm:h-9 text-sm sm:text-[13px]"
+                  style={{ background: '#282c38', color: '#f8f8fa', border: '1px solid rgba(255, 255, 255, 0.08)' }}
                 />
               </div>
             </div>
 
             {/* Trade Filter */}
             <div className="space-y-2">
-              <Label htmlFor="trade" className="text-xs sm:text-[12px] font-medium text-gray-700">Trade</Label>
+              <Label htmlFor="trade" className="text-xs sm:text-[12px] font-medium" style={{ color: '#b0b2bc' }}>Trade</Label>
               <select
                 id="trade"
                 value={tradeFilter}
                 onChange={(e) => setTradeFilter(e.target.value)}
-                className="flex h-10 sm:h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm sm:text-[13px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                className="flex h-10 sm:h-9 w-full rounded-md px-3 py-2 text-sm sm:text-[13px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={{ background: '#282c38', color: '#f8f8fa', border: '1px solid rgba(255, 255, 255, 0.08)' }}
               >
                 {TRADE_OPTIONS.map((trade) => (
-                  <option key={trade} value={trade}>
+                  <option key={trade} value={trade} style={{ background: '#282c38', color: '#f8f8fa' }}>
                     {trade}
                   </option>
                 ))}
@@ -141,7 +143,7 @@ export default function DirectoryClient({
 
             {/* Location Filter */}
             <div className="space-y-2">
-              <Label htmlFor="location" className="text-xs sm:text-[12px] font-medium text-gray-700">Location</Label>
+              <Label htmlFor="location" className="text-xs sm:text-[12px] font-medium" style={{ color: '#b0b2bc' }}>Location</Label>
               <Input
                 id="location"
                 type="text"
@@ -149,20 +151,22 @@ export default function DirectoryClient({
                 onChange={(e) => setLocationFilter(e.target.value)}
                 placeholder="City, State, or Area"
                 className="h-10 sm:h-9 text-sm sm:text-[13px]"
+                style={{ background: '#282c38', color: '#f8f8fa', border: '1px solid rgba(255, 255, 255, 0.08)' }}
               />
             </div>
 
             {/* Badge Filter */}
             <div className="space-y-2">
-              <Label htmlFor="badge" className="text-xs sm:text-[12px] font-medium text-gray-700">Verification Badge</Label>
+              <Label htmlFor="badge" className="text-xs sm:text-[12px] font-medium" style={{ color: '#b0b2bc' }}>Verification Badge</Label>
               <select
                 id="badge"
                 value={badgeFilter}
                 onChange={(e) => setBadgeFilter(e.target.value)}
-                className="flex h-10 sm:h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm sm:text-[13px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                className="flex h-10 sm:h-9 w-full rounded-md px-3 py-2 text-sm sm:text-[13px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={{ background: '#282c38', color: '#f8f8fa', border: '1px solid rgba(255, 255, 255, 0.08)' }}
               >
                 {BADGE_FILTERS.map((badge) => (
-                  <option key={badge.value} value={badge.value}>
+                  <option key={badge.value} value={badge.value} style={{ background: '#282c38', color: '#f8f8fa' }}>
                     {badge.label}
                   </option>
                 ))}
@@ -171,9 +175,9 @@ export default function DirectoryClient({
           </div>
 
           {/* Active Filters Summary */}
-          <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-200">
-            <p className="text-xs sm:text-[13px] text-gray-600">
-              Showing <span className="font-medium text-gray-900">{filteredProfiles.length}</span> of {profiles.length} members
+          <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <p className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>
+              Showing <span className="font-medium" style={{ color: '#f8f8fa' }}>{filteredProfiles.length}</span> of {profiles.length} members
             </p>
             {(searchQuery || tradeFilter !== "All Trades" || locationFilter || badgeFilter !== "all") && (
               <Button
@@ -186,6 +190,7 @@ export default function DirectoryClient({
                   setBadgeFilter("all");
                 }}
                 className="gap-1 w-full sm:w-auto"
+                style={{ color: '#b0b2bc' }}
               >
                 <X className="h-4 w-4" />
                 Clear filters
@@ -196,13 +201,13 @@ export default function DirectoryClient({
 
         {/* Results Grid */}
         {filteredProfiles.length === 0 ? (
-          <Card className="p-8 sm:p-12 text-center">
+          <Card className="p-8 sm:p-12 text-center" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
             <CardContent>
-              <Search className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-4" />
-              <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
+              <Search className="mx-auto h-10 w-10 sm:h-12 sm:w-12 mb-4" style={{ color: '#b0b2bc' }} />
+              <h3 className="text-sm sm:text-base font-semibold mb-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: '#f8f8fa' }}>
                 No members found
               </h3>
-              <p className="text-xs sm:text-[13px] text-gray-600">
+              <p className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>
                 Try adjusting your filters or search query
               </p>
             </CardContent>

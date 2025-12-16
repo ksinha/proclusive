@@ -141,11 +141,11 @@ export default function MemberDashboard({
 
   if (!profile) {
     return (
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Card className="text-center py-12">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#1a1d27' }}>
+        <Card className="text-center py-12" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardHeader>
-            <CardTitle className="text-[24px]">Complete Your Profile</CardTitle>
-            <CardDescription className="text-[14px] mt-2">
+            <CardTitle className="text-[24px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Complete Your Profile</CardTitle>
+            <CardDescription className="text-[14px] mt-2" style={{ color: '#b0b2bc' }}>
               Get started by completing the vetting process to join the Proclusive network.
             </CardDescription>
           </CardHeader>
@@ -164,35 +164,35 @@ export default function MemberDashboard({
   const statusConfig = application ? STATUS_CONFIG[application.status] : null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: '#1a1d27' }}>
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-gray-900">
+        <div style={{ background: '#252833', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }} className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 mb-6 sm:mb-8 rounded-lg">
+          <h1 className="text-xl sm:text-2xl lg:text-[28px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
             Welcome back, {profile.full_name.split(' ')[0]}
           </h1>
-          <p className="text-sm text-gray-600 mt-1">{profile.company_name}</p>
+          <p className="text-sm mt-1" style={{ color: '#b0b2bc' }}>{profile.company_name}</p>
         </div>
 
         {/* Verification Status Card */}
         {application && statusConfig && (
-          <Card className="border-l-4 border-l-blue-500 shadow-sm">
+          <Card className="border-l-4 shadow-sm" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', borderLeft: '4px solid #60a5fa' }}>
             <CardContent className="pt-6">
               <div className="space-y-4">
                 <div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                    <h2 className="text-base sm:text-lg font-semibold text-gray-900">Verification Status</h2>
+                    <h2 className="text-base sm:text-lg" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Verification Status</h2>
                     <Badge variant={statusConfig.variant}>
                       {application.status.replace("_", " ").toUpperCase()}
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-600">{statusConfig.message}</p>
+                  <p className="text-sm" style={{ color: '#b0b2bc' }}>{statusConfig.message}</p>
                 </div>
 
                 {application.status === "approved" && profile.badge_level !== "none" && (
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
-                    <Award className="h-5 w-5 text-blue-600 flex-shrink-0" />
-                    <span className="text-sm font-medium text-gray-900">Badge Earned:</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 rounded-md" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <Award className="h-5 w-5 flex-shrink-0" style={{ color: '#60a5fa' }} />
+                    <span className="text-sm font-medium" style={{ color: '#f8f8fa' }}>Badge Earned:</span>
                     <Badge variant={BADGE_VARIANTS[profile.badge_level]}>
                       {BADGE_LABELS[profile.badge_level]}
                     </Badge>
@@ -200,9 +200,9 @@ export default function MemberDashboard({
                 )}
 
                 {application.admin_notes && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-md p-3 sm:p-4">
-                    <p className="text-xs sm:text-[13px] font-medium text-gray-900 mb-1">Admin Notes:</p>
-                    <p className="text-xs sm:text-[13px] text-gray-600">{application.admin_notes}</p>
+                  <div className="rounded-md p-3 sm:p-4" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <p className="text-xs sm:text-[13px] font-medium mb-1" style={{ color: '#f8f8fa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Admin Notes:</p>
+                    <p className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>{application.admin_notes}</p>
                   </div>
                 )}
               </div>
@@ -212,17 +212,17 @@ export default function MemberDashboard({
 
         {/* Quick Actions */}
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <h2 className="text-lg sm:text-xl mb-4" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {/* Directory Card */}
             <Link href="/directory" className="group">
-              <Card hover className="h-full">
+              <Card hover className="h-full" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '24px' }}>
                 <CardContent className="pt-6">
-                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mb-3 sm:mb-4" />
-                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
+                  <Users className="h-5 w-5 sm:h-6 sm:w-6 mb-3 sm:mb-4" style={{ color: '#60a5fa' }} />
+                  <h3 className="text-sm sm:text-base mb-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
                     Member Directory
                   </h3>
-                  <p className="text-xs sm:text-[13px] text-gray-600">
+                  <p className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>
                     Browse and connect with verified professionals
                   </p>
                 </CardContent>
@@ -231,13 +231,13 @@ export default function MemberDashboard({
 
             {/* Referrals Card */}
             <Link href="/dashboard/referrals" className="group">
-              <Card hover className="h-full">
+              <Card hover className="h-full" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '24px' }}>
                 <CardContent className="pt-6">
-                  <GitBranch className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mb-3 sm:mb-4" />
-                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
+                  <GitBranch className="h-5 w-5 sm:h-6 sm:w-6 mb-3 sm:mb-4" style={{ color: '#60a5fa' }} />
+                  <h3 className="text-sm sm:text-base mb-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
                     Referrals
                   </h3>
-                  <p className="text-xs sm:text-[13px] text-gray-600">
+                  <p className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>
                     Submit and manage B2B referrals
                   </p>
                 </CardContent>
@@ -245,28 +245,28 @@ export default function MemberDashboard({
             </Link>
 
             {/* Badge Progress Card (Coming Soon) */}
-            <Card className="opacity-60">
+            <Card className="opacity-60" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '24px' }}>
               <CardContent className="pt-6">
-                <Award className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mb-3 sm:mb-4" />
-                <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
+                <Award className="h-5 w-5 sm:h-6 sm:w-6 mb-3 sm:mb-4" style={{ color: '#60a5fa' }} />
+                <h3 className="text-sm sm:text-base mb-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
                   Advance Your Badge
                 </h3>
-                <p className="text-xs sm:text-[13px] text-gray-600">
+                <p className="text-xs sm:text-[13px]" style={{ color: '#b0b2bc' }}>
                   Complete additional tiers to earn higher badges
                 </p>
-                <Badge variant="secondary" className="mt-3 bg-gray-100 text-gray-600 text-xs">Coming Soon</Badge>
+                <Badge variant="secondary" className="mt-3 text-xs" style={{ background: '#282c38', color: '#6a6d78' }}>Coming Soon</Badge>
               </CardContent>
             </Card>
           </div>
         </div>
 
         {/* Profile Summary */}
-        <Card>
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div>
-                <CardTitle className="text-base sm:text-lg">Profile Summary</CardTitle>
-                <CardDescription className="text-sm">Your membership information at a glance</CardDescription>
+                <CardTitle className="text-base sm:text-lg" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Profile Summary</CardTitle>
+                <CardDescription className="text-sm" style={{ color: '#b0b2bc' }}>Your membership information at a glance</CardDescription>
               </div>
               {!isEditing && (
                 <Button
@@ -285,8 +285,8 @@ export default function MemberDashboard({
             {isEditing ? (
               <div className="space-y-6">
                 {error && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                    <p className="text-[13px] text-red-700">{error}</p>
+                  <div className="p-3 rounded-md" style={{ background: 'rgba(248, 113, 113, 0.1)', border: '1px solid #f87171' }}>
+                    <p className="text-[13px]" style={{ color: '#f87171' }}>{error}</p>
                   </div>
                 )}
 
@@ -383,7 +383,7 @@ export default function MemberDashboard({
                   </Label>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-4 border-t">
+                <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -404,11 +404,12 @@ export default function MemberDashboard({
                     }}
                     disabled={saving}
                     className="w-full sm:w-auto"
+                    style={{ background: '#282c38', color: '#f8f8fa', border: '1px solid rgba(255, 255, 255, 0.08)' }}
                   >
                     <X className="h-4 w-4 mr-2" />
                     Cancel
                   </Button>
-                  <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
+                  <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto" style={{ background: '#c9a962', color: '#1a1d27' }}>
                     <Save className="h-4 w-4 mr-2" />
                     {saving ? "Saving..." : "Save Changes"}
                   </Button>
@@ -417,20 +418,20 @@ export default function MemberDashboard({
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 gap-y-4 sm:gap-y-6">
                 <div className="space-y-1">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Email</p>
-                  <p className="text-sm sm:text-[14px] font-medium text-gray-900 break-words">{profile.email}</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Email</p>
+                  <p className="text-sm sm:text-[14px] font-medium break-words" style={{ color: '#f8f8fa' }}>{profile.email}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Phone</p>
-                  <p className="text-sm sm:text-[14px] font-medium text-gray-900">{profile.phone || "Not provided"}</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Phone</p>
+                  <p className="text-sm sm:text-[14px] font-medium" style={{ color: '#f8f8fa' }}>{profile.phone || "Not provided"}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Primary Trade</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Primary Trade</p>
                   <Badge variant="outline" className="text-xs">{profile.primary_trade}</Badge>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Location</p>
-                  <p className="text-sm sm:text-[14px] font-medium text-gray-900">
+                  <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Location</p>
+                  <p className="text-sm sm:text-[14px] font-medium" style={{ color: '#f8f8fa' }}>
                     {profile.city}
                     {profile.city && profile.state && ", "}
                     {profile.state}
@@ -438,19 +439,19 @@ export default function MemberDashboard({
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Years in Business</p>
-                  <p className="text-sm sm:text-[14px] font-medium text-gray-900">{profile.years_in_business || "Not provided"}</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Years in Business</p>
+                  <p className="text-sm sm:text-[14px] font-medium" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2rem', fontWeight: 300, color: '#c9a962' }}>{profile.years_in_business || "Not provided"}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Profile Visibility</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Profile Visibility</p>
                   <Badge variant={profile.is_public ? "success" : "secondary"} className="text-xs">
                     {profile.is_public ? "Public" : "Private"}
                   </Badge>
                 </div>
                 {profile.bio && (
                   <div className="space-y-1 sm:col-span-2 lg:col-span-3">
-                    <p className="text-[10px] sm:text-[12px] font-medium text-gray-500 uppercase tracking-wide">Bio</p>
-                    <p className="text-sm sm:text-[14px] text-gray-700">{profile.bio}</p>
+                    <p className="text-[10px] sm:text-[12px] font-medium uppercase tracking-wide" style={{ color: '#6a6d78', letterSpacing: '0.08em' }}>Bio</p>
+                    <p className="text-sm sm:text-[14px]" style={{ color: '#b0b2bc' }}>{profile.bio}</p>
                   </div>
                 )}
               </div>
