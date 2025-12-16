@@ -6,6 +6,7 @@ import { Application, Profile, Document, BadgeLevel } from "@/types/database.typ
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { VaasBadgeCard } from "@/components/ui/vaas-badge";
 import {
   User,
   Building2,
@@ -33,16 +34,14 @@ interface ApplicationDetailProps {
   onClose: () => void;
 }
 
-const BADGE_LEVELS: { value: BadgeLevel; label: string; variant: any }[] = [
-  { value: "none", label: "None", variant: "secondary" },
-  { value: "verified", label: "Verified (Blue)", variant: "verified" },
-  { value: "vetted", label: "Vetted (Green)", variant: "vetted" },
-  { value: "elite", label: "Elite (Gold)", variant: "elite" },
-];
+const BADGE_OPTIONS: BadgeLevel[] = ["verified", "vetted", "elite"];
 
 export default function ApplicationDetail({ application, onClose }: ApplicationDetailProps) {
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [selectedBadge, setSelectedBadge] = useState<BadgeLevel>(application.profile.badge_level);
+  const [selectedBadges, setSelectedBadges] = useState<BadgeLevel[]>(
+    application.profile.badge_level !== "none" ? [application.profile.badge_level] : []
+  );
+  const [profileVerified, setProfileVerified] = useState<boolean | null>(null);
   const [adminNotes, setAdminNotes] = useState(application.admin_notes || "");
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -121,13 +120,31 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       reviewed_at: new Date().toISOString(),
     };
 
-    // If approving, also update profile
+    // If approving, also update profile with highest badge
     if (newStatus === "approved") {
+      // Determine highest badge for backward compatibility
+      const badgePriority: Record<BadgeLevel, number> = {
+        elite: 3,
+        vetted: 2,
+        verified: 1,
+        none: 0,
+        compliance: 1,
+        capability: 2,
+        reputation: 2,
+        enterprise: 3,
+      };
+
+      const highestBadge = selectedBadges.length > 0
+        ? selectedBadges.reduce((highest, badge) =>
+            badgePriority[badge] > badgePriority[highest] ? badge : highest
+          )
+        : "none" as BadgeLevel;
+
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
           is_verified: true,
-          badge_level: selectedBadge,
+          badge_level: highestBadge,
           verification_completed_at: new Date().toISOString(),
         })
         .eq("id", application.user_id);
@@ -136,6 +153,18 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
         console.error("Error updating profile:", profileError);
         setLoading(false);
         return;
+      }
+
+      // Also insert into user_badges table for multiple badges support
+      if (selectedBadges.length > 0) {
+        for (const badge of selectedBadges) {
+          await supabase.from("user_badges").upsert({
+            user_id: application.user_id,
+            badge_level: badge,
+            awarded_by: user?.id,
+            notes: `Awarded during application approval`,
+          }, { onConflict: "user_id,badge_level" });
+        }
       }
     }
 
@@ -151,7 +180,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
         action: newStatus === "approved" ? "approved_application" : "updated_application_status",
         entity_type: "application",
         entity_id: application.id,
-        details: { new_status: newStatus, badge_assigned: selectedBadge },
+        details: { new_status: newStatus, badges_assigned: selectedBadges },
       });
 
       onClose();
@@ -292,9 +321,39 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       {/* Profile Information */}
       <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-[#c9a962]" />
-            <CardTitle className="text-white">Profile Information</CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5 text-[#c9a962]" />
+              <CardTitle className="text-white">Profile Information</CardTitle>
+            </div>
+            <div className="flex items-center gap-2">
+              {profileVerified === null ? (
+                <>
+                  <Button
+                    onClick={() => setProfileVerified(true)}
+                    size="sm"
+                    variant="default"
+                    className="gap-1"
+                  >
+                    <CheckCircle2 className="h-3 w-3" />
+                    Verify Profile
+                  </Button>
+                  <Button
+                    onClick={() => setProfileVerified(false)}
+                    size="sm"
+                    variant="destructive"
+                    className="gap-1"
+                  >
+                    <XCircle className="h-3 w-3" />
+                    Reject Profile
+                  </Button>
+                </>
+              ) : (
+                <Badge variant={profileVerified ? "success" : "destructive"} size="lg">
+                  {profileVerified ? "Profile Verified" : "Profile Rejected"}
+                </Badge>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -447,26 +506,36 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
             <Award className="h-5 w-5 text-[#c9a962]" />
             <CardTitle className="text-white">Badge Assignment</CardTitle>
           </div>
-          <CardDescription className="text-[#b0b2bc]">Assign a badge level to this applicant</CardDescription>
+          <CardDescription className="text-[#b0b2bc]">Select one or more badges to assign to this applicant</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            {BADGE_LEVELS.map((badge) => (
-              <label key={badge.value} className="flex items-center p-3 rounded-lg cursor-pointer transition-colors" style={{ border: '1px solid rgba(255, 255, 255, 0.08)', background: selectedBadge === badge.value ? '#282c38' : 'transparent' }}>
-                <input
-                  type="radio"
-                  name="badge"
-                  value={badge.value}
-                  checked={selectedBadge === badge.value}
-                  onChange={(e) => setSelectedBadge(e.target.value as BadgeLevel)}
-                  className="mr-3"
-                />
-                <Badge variant={badge.variant} size="lg">
-                  {badge.label}
-                </Badge>
-              </label>
-            ))}
+          <div className="flex flex-wrap gap-4 justify-center">
+            {BADGE_OPTIONS.map((badge) => {
+              const isSelected = selectedBadges.includes(badge);
+              return (
+                <div
+                  key={badge}
+                  onClick={() => {
+                    if (isSelected) {
+                      setSelectedBadges(selectedBadges.filter(b => b !== badge));
+                    } else {
+                      setSelectedBadges([...selectedBadges, badge]);
+                    }
+                  }}
+                  className="cursor-pointer transition-transform hover:scale-105"
+                >
+                  <VaasBadgeCard level={badge} highlighted={isSelected} />
+                </div>
+              );
+            })}
           </div>
+          {selectedBadges.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-white/[0.08]">
+              <p className="text-[12px] text-[#6a6d78] text-center">
+                Selected: {selectedBadges.map(b => b.charAt(0).toUpperCase() + b.slice(1)).join(", ")}
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
