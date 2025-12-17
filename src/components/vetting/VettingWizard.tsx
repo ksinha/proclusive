@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -12,6 +12,8 @@ import Step3DocumentUploads from "./Step2DocumentUploads";
 import Step4TermsOfService from "./Step3TermsOfService";
 import Step5Review from "./Step4Review";
 import { Application, Profile } from "@/types/database.types";
+
+const VETTING_PROGRESS_KEY = "proclusive_vetting_progress";
 
 interface VettingWizardProps {
   userId: string;
@@ -71,53 +73,175 @@ export default function VettingWizard({
   const [tosAccepted, setTosAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [progressRestored, setProgressRestored] = useState(false);
 
-  // Pre-populate with existing data in edit mode
+  // Save progress to localStorage
+  const saveProgress = useCallback((step: number, tos: boolean) => {
+    try {
+      const progress = {
+        userId,
+        currentStep: step,
+        tosAccepted: tos,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(VETTING_PROGRESS_KEY, JSON.stringify(progress));
+    } catch (err) {
+      console.error("[VettingWizard] Error saving progress:", err);
+    }
+  }, [userId]);
+
+  // Load saved progress on mount
   useEffect(() => {
-    if (isEditMode && existingProfile) {
-      setBusinessInfo({
-        full_name: existingProfile.full_name || "",
-        company_name: existingProfile.company_name || "",
-        phone: existingProfile.phone || "",
-        business_type: existingProfile.business_type || "",
-        primary_trade: existingProfile.primary_trade || "",
-        service_areas: existingProfile.service_areas || [],
-        website: existingProfile.website || "",
-        linkedin_url: existingProfile.linkedin_url || "",
-        street_address: existingProfile.street_address || "",
-        city: existingProfile.city || "",
-        state: existingProfile.state || "",
-        zip_code: existingProfile.zip_code || "",
-        bio: existingProfile.bio || "",
-        years_in_business: existingProfile.years_in_business || 0,
-        team_size: existingProfile.team_size || "",
-        tin_number: existingProfile.tin_number || "",
-        is_public: existingProfile.is_public ?? true,
-      });
-    }
-    if (isEditMode && existingApplication) {
-      setTosAccepted(existingApplication.tos_accepted || false);
-    }
-  }, [isEditMode, existingProfile, existingApplication]);
+    // Only load progress for new applications (not edit mode)
+    if (isEditMode) return;
 
-  const handleStep1Complete = (data: BusinessInfoData) => {
+    try {
+      const saved = localStorage.getItem(VETTING_PROGRESS_KEY);
+      if (saved) {
+        const progress = JSON.parse(saved);
+        // Only restore if same user and saved within last 7 days
+        const savedAt = new Date(progress.savedAt);
+        const daysSinceSave = (Date.now() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
+
+        if (progress.userId === userId && daysSinceSave < 7) {
+          console.log("[VettingWizard] Restoring progress to step", progress.currentStep);
+          setCurrentStep(progress.currentStep);
+          setTosAccepted(progress.tosAccepted || false);
+          if (progress.currentStep > 1) {
+            setProgressRestored(true);
+          }
+        } else {
+          // Clear stale progress
+          localStorage.removeItem(VETTING_PROGRESS_KEY);
+        }
+      }
+    } catch (err) {
+      console.error("[VettingWizard] Error loading progress:", err);
+    }
+  }, [userId, isEditMode]);
+
+  // Load profile data if exists (for resuming)
+  useEffect(() => {
+    const loadExistingProfile = async () => {
+      if (isEditMode && existingProfile) {
+        // Edit mode - use provided profile
+        setBusinessInfo({
+          full_name: existingProfile.full_name || "",
+          company_name: existingProfile.company_name || "",
+          phone: existingProfile.phone || "",
+          business_type: existingProfile.business_type || "",
+          primary_trade: existingProfile.primary_trade || "",
+          service_areas: existingProfile.service_areas || [],
+          website: existingProfile.website || "",
+          linkedin_url: existingProfile.linkedin_url || "",
+          street_address: existingProfile.street_address || "",
+          city: existingProfile.city || "",
+          state: existingProfile.state || "",
+          zip_code: existingProfile.zip_code || "",
+          bio: existingProfile.bio || "",
+          years_in_business: existingProfile.years_in_business || 0,
+          team_size: existingProfile.team_size || "",
+          tin_number: existingProfile.tin_number || "",
+          is_public: existingProfile.is_public ?? true,
+        });
+        if (existingApplication) {
+          setTosAccepted(existingApplication.tos_accepted || false);
+        }
+        return;
+      }
+
+      // New application - check if profile data exists (for resume)
+      try {
+        const supabase = createClient();
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", userId)
+          .single();
+
+        if (profile && profile.company_name) {
+          // Profile has been partially filled - restore it
+          console.log("[VettingWizard] Restoring profile data");
+          setBusinessInfo({
+            full_name: profile.full_name || "",
+            company_name: profile.company_name || "",
+            phone: profile.phone || "",
+            business_type: profile.business_type || "",
+            primary_trade: profile.primary_trade || "",
+            service_areas: profile.service_areas || [],
+            website: profile.website || "",
+            linkedin_url: profile.linkedin_url || "",
+            street_address: profile.street_address || "",
+            city: profile.city || "",
+            state: profile.state || "",
+            zip_code: profile.zip_code || "",
+            bio: profile.bio || "",
+            years_in_business: profile.years_in_business || 0,
+            team_size: profile.team_size || "",
+            tin_number: profile.tin_number || "",
+            is_public: profile.is_public ?? true,
+          });
+        }
+      } catch (err) {
+        console.error("[VettingWizard] Error loading profile:", err);
+      }
+    };
+
+    loadExistingProfile();
+  }, [isEditMode, existingProfile, existingApplication, userId]);
+
+  // Save profile data to database (for progress persistence)
+  const saveProfileDraft = async (data: BusinessInfoData) => {
+    try {
+      setSavingDraft(true);
+      const supabase = createClient();
+      const { data: userData } = await supabase.auth.getUser();
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .upsert({
+          id: userId,
+          email: userData.user?.email || "",
+          ...data,
+        });
+
+      if (profileError) {
+        console.error("[VettingWizard] Error saving profile draft:", profileError);
+      } else {
+        console.log("[VettingWizard] Profile draft saved");
+      }
+    } catch (err) {
+      console.error("[VettingWizard] Error saving profile draft:", err);
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
+  const handleStep1Complete = async (data: BusinessInfoData) => {
     setBusinessInfo(data);
+    // Save profile immediately so progress is persisted
+    await saveProfileDraft(data);
     setCurrentStep(2);
+    saveProgress(2, tosAccepted);
   };
 
   const handleStep2Complete = (items: PortfolioItem[]) => {
     setPortfolioItems(items);
     setCurrentStep(3);
+    saveProgress(3, tosAccepted);
   };
 
   const handleStep3Complete = (data: DocumentData) => {
     setDocuments(data);
     setCurrentStep(4);
+    saveProgress(4, tosAccepted);
   };
 
   const handleStep4Complete = (accepted: boolean) => {
     setTosAccepted(accepted);
     setCurrentStep(5);
+    saveProgress(5, accepted);
   };
 
   const handleFinalSubmit = async () => {
@@ -269,7 +393,10 @@ export default function VettingWizard({
       // 5. Update profile with TIN number (already included in businessInfo)
       // TIN is saved with the profile in step 1 above
 
-      // 6. Redirect to success page
+      // 6. Clear saved progress since submission is complete
+      localStorage.removeItem(VETTING_PROGRESS_KEY);
+
+      // 7. Redirect to success page
       router.push("/vetting/success");
     } catch (err: any) {
       setError(err.message || "An error occurred");
@@ -328,6 +455,39 @@ export default function VettingWizard({
 
       {/* Form Content */}
       <div className="container max-w-3xl mx-auto px-6 py-8">
+        {/* Progress Restored Notice */}
+        {progressRestored && (
+          <Card className="border-[rgba(34,197,94,0.3)] bg-[rgba(34,197,94,0.1)] mb-6">
+            <div className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="h-5 w-5 text-[#22c55e]" />
+                <p className="text-[#22c55e] font-medium text-[14px]">
+                  Welcome back! Your progress has been restored.
+                </p>
+              </div>
+              <button
+                onClick={() => setProgressRestored(false)}
+                className="text-[#22c55e] hover:text-[#4ade80] text-[13px]"
+              >
+                Dismiss
+              </button>
+            </div>
+          </Card>
+        )}
+
+        {/* Note about file uploads if resuming after step 2 */}
+        {progressRestored && currentStep > 2 && (
+          <Card className="border-[rgba(201,169,98,0.3)] bg-[rgba(201,169,98,0.1)] mb-6">
+            <div className="p-4 flex items-start gap-3">
+              <span className="text-[#c9a962] text-lg">⚠️</span>
+              <p className="text-[#c9a962] text-[13px]">
+                Note: Portfolio images and documents cannot be saved between sessions.
+                You may need to re-upload them before submitting.
+              </p>
+            </div>
+          </Card>
+        )}
+
         {/* Error Display */}
         {error && (
           <Card className="border-[rgba(248,113,113,0.3)] bg-[rgba(248,113,113,0.1)] mb-6">
@@ -335,6 +495,15 @@ export default function VettingWizard({
               <p className="text-[#f87171] font-medium text-[14px]">{error}</p>
             </div>
           </Card>
+        )}
+
+        {/* Saving Draft Indicator */}
+        {savingDraft && (
+          <div className="fixed bottom-4 right-4 bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-lg px-4 py-2 shadow-lg">
+            <p className="text-[#b0b2bc] text-[13px] flex items-center gap-2">
+              <span className="animate-spin">⏳</span> Saving progress...
+            </p>
+          </div>
         )}
 
         <Card className="bg-[#252833] border-[rgba(255,255,255,0.08)] p-8">

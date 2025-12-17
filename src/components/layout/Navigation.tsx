@@ -10,9 +10,11 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, isVerified, signOut } = useAuth();
 
   const isLoggedIn = !!user;
+  // Only show Directory and Referrals to verified/approved users or admins
+  const canAccessMemberFeatures = isVerified || isAdmin;
 
   // Determine the correct links based on role
   const dashboardLink = isAdmin ? "/admin/dashboard" : "/dashboard";
@@ -31,34 +33,38 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-6">
             {isLoggedIn ? (
               <>
-                <Link
-                  href="/directory"
-                  className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
-                    pathname === "/directory"
-                      ? "text-[#c9a962]"
-                      : "text-[#b0b2bc] hover:text-[#c9a962]"
-                  }`}
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                >
-                  Directory
-                  <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
-                    pathname === "/directory" ? "w-full" : "w-0 group-hover:w-full"
-                  }`}></span>
-                </Link>
-                <Link
-                  href={referralsLink}
-                  className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
-                    pathname.includes("/referrals")
-                      ? "text-[#c9a962]"
-                      : "text-[#b0b2bc] hover:text-[#c9a962]"
-                  }`}
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                >
-                  Referrals
-                  <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
-                    pathname.includes("/referrals") ? "w-full" : "w-0 group-hover:w-full"
-                  }`}></span>
-                </Link>
+                {canAccessMemberFeatures && (
+                  <>
+                    <Link
+                      href="/directory"
+                      className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
+                        pathname === "/directory"
+                          ? "text-[#c9a962]"
+                          : "text-[#b0b2bc] hover:text-[#c9a962]"
+                      }`}
+                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      Directory
+                      <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
+                        pathname === "/directory" ? "w-full" : "w-0 group-hover:w-full"
+                      }`}></span>
+                    </Link>
+                    <Link
+                      href={referralsLink}
+                      className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
+                        pathname.includes("/referrals")
+                          ? "text-[#c9a962]"
+                          : "text-[#b0b2bc] hover:text-[#c9a962]"
+                      }`}
+                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      Referrals
+                      <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
+                        pathname.includes("/referrals") ? "w-full" : "w-0 group-hover:w-full"
+                      }`}></span>
+                    </Link>
+                  </>
+                )}
                 <Button asChild variant="cta">
                   <Link href={dashboardLink}>Dashboard</Link>
                 </Button>
@@ -114,22 +120,26 @@ export default function Navigation() {
           <div className="md:hidden bg-[#21242f] border-t border-white/[0.08] py-3 space-y-3">
             {isLoggedIn ? (
               <>
-                <Link
-                  href="/directory"
-                  className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                >
-                  Directory
-                </Link>
-                <Link
-                  href={referralsLink}
-                  className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                >
-                  Referrals
-                </Link>
+                {canAccessMemberFeatures && (
+                  <>
+                    <Link
+                      href="/directory"
+                      className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                      onClick={() => setMobileMenuOpen(false)}
+                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      Directory
+                    </Link>
+                    <Link
+                      href={referralsLink}
+                      className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                      onClick={() => setMobileMenuOpen(false)}
+                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      Referrals
+                    </Link>
+                  </>
+                )}
                 <Button asChild variant="cta" className="w-full h-10">
                   <Link href={dashboardLink} onClick={() => setMobileMenuOpen(false)}>
                     Dashboard
