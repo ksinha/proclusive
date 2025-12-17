@@ -29,20 +29,20 @@ export default function Step4Review({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-[24px] font-semibold text-gray-900 mb-2">Review & Submit</h2>
-        <p className="text-[14px] text-gray-600">
+        <h2 className="text-[24px] font-semibold text-[#f8f8fa] mb-2">Review & Submit</h2>
+        <p className="text-[14px] text-[#b0b2bc]">
           Please review all information before submitting your application
         </p>
       </div>
 
       {/* Info Card */}
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <Info className="h-5 w-5 text-[#c9a962] mt-0.5 flex-shrink-0" />
             <div className="space-y-1">
-              <h3 className="text-[14px] font-medium text-blue-900">Review Your Application</h3>
-              <p className="text-[13px] text-blue-800">
+              <h3 className="text-[14px] font-medium text-[#c9a962]">Review Your Application</h3>
+              <p className="text-[13px] text-[#b0b2bc]">
                 Please review all information before submitting. Once submitted, your application will be
                 reviewed by our admin team within 48 hours.
               </p>
@@ -52,67 +52,67 @@ export default function Step4Review({
       </Card>
 
       {/* Business Information */}
-      <Card className="bg-white">
+      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Business Information</CardTitle>
+            <Building2 className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Business Information</CardTitle>
           </div>
-          <CardDescription className="text-[13px] text-gray-600">Your company details</CardDescription>
+          <CardDescription className="text-[13px] text-[#b0b2bc]">Your company details</CardDescription>
         </CardHeader>
         <CardContent>
           <dl className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <dt className="text-[12px] font-medium text-gray-500 uppercase">Full Name</dt>
-              <dd className="text-[14px] font-semibold text-gray-900">{businessInfo.full_name}</dd>
+              <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Full Name</dt>
+              <dd className="text-[14px] font-semibold text-[#f8f8fa]">{businessInfo.full_name}</dd>
             </div>
             <div className="space-y-1">
-              <dt className="text-[12px] font-medium text-gray-500 uppercase">Phone</dt>
-              <dd className="text-[14px] font-semibold text-gray-900">{businessInfo.phone}</dd>
+              <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Phone</dt>
+              <dd className="text-[14px] font-semibold text-[#f8f8fa]">{businessInfo.phone}</dd>
             </div>
             <div className="space-y-1">
-              <dt className="text-[12px] font-medium text-gray-500 uppercase">Company Name</dt>
-              <dd className="text-[14px] font-semibold text-gray-900">{businessInfo.company_name}</dd>
+              <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Company Name</dt>
+              <dd className="text-[14px] font-semibold text-[#f8f8fa]">{businessInfo.company_name}</dd>
             </div>
             <div className="space-y-1">
-              <dt className="text-[12px] font-medium text-gray-500 uppercase">Primary Trade</dt>
+              <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Primary Trade</dt>
               <dd><Badge variant="outline" className="text-[12px]">{businessInfo.primary_trade}</Badge></dd>
             </div>
             {businessInfo.business_type && (
               <div className="space-y-1">
-                <dt className="text-[12px] font-medium text-gray-500 uppercase">Business Type</dt>
-                <dd className="text-[14px] font-semibold text-gray-900">{businessInfo.business_type}</dd>
+                <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Business Type</dt>
+                <dd className="text-[14px] font-semibold text-[#f8f8fa]">{businessInfo.business_type}</dd>
               </div>
             )}
             {businessInfo.years_in_business > 0 && (
               <div className="space-y-1">
-                <dt className="text-[12px] font-medium text-gray-500 uppercase">Years in Business</dt>
-                <dd className="text-[14px] font-semibold text-gray-900">{businessInfo.years_in_business}</dd>
+                <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Years in Business</dt>
+                <dd className="text-[14px] font-semibold text-[#f8f8fa]">{businessInfo.years_in_business}</dd>
               </div>
             )}
             {businessInfo.team_size && (
               <div className="space-y-1">
-                <dt className="text-[12px] font-medium text-gray-500 uppercase">Team Size</dt>
-                <dd className="text-[14px] font-semibold text-gray-900">{businessInfo.team_size}</dd>
+                <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Team Size</dt>
+                <dd className="text-[14px] font-semibold text-[#f8f8fa]">{businessInfo.team_size}</dd>
               </div>
             )}
             {businessInfo.service_areas.length > 0 && (
               <div className="col-span-2 space-y-1">
-                <dt className="text-[12px] font-medium text-gray-500 uppercase">Service Areas</dt>
-                <dd className="text-[14px] font-semibold text-gray-900">
+                <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Service Areas</dt>
+                <dd className="text-[14px] font-semibold text-[#f8f8fa]">
                   {businessInfo.service_areas.join(", ")}
                 </dd>
               </div>
             )}
             {businessInfo.website && (
               <div className="space-y-1">
-                <dt className="text-[12px] font-medium text-gray-500 uppercase">Website</dt>
+                <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Website</dt>
                 <dd className="text-[14px]">
                   <a
                     href={businessInfo.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-[#c9a962] hover:underline"
                   >
                     {businessInfo.website}
                   </a>
@@ -121,13 +121,13 @@ export default function Step4Review({
             )}
             {businessInfo.linkedin_url && (
               <div className="space-y-1">
-                <dt className="text-[12px] font-medium text-gray-500 uppercase">LinkedIn</dt>
+                <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">LinkedIn</dt>
                 <dd className="text-[14px]">
                   <a
                     href={businessInfo.linkedin_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-[#c9a962] hover:underline"
                   >
                     View Profile
                   </a>
@@ -136,19 +136,19 @@ export default function Step4Review({
             )}
             {businessInfo.bio && (
               <div className="col-span-2 space-y-1">
-                <dt className="text-[12px] font-medium text-gray-500 uppercase">Company Bio</dt>
-                <dd className="text-[14px] text-gray-700">{businessInfo.bio}</dd>
+                <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Company Bio</dt>
+                <dd className="text-[14px] text-[#b0b2bc]">{businessInfo.bio}</dd>
               </div>
             )}
           </dl>
 
           {(businessInfo.street_address || businessInfo.city || businessInfo.state) && (
-            <div className="mt-6 pt-6 border-t border-gray-200 space-y-2">
+            <div className="mt-6 pt-6 border-t border-[rgba(255,255,255,0.08)] space-y-2">
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-gray-500" />
-                <h4 className="text-[13px] font-medium text-gray-700">Business Address</h4>
+                <MapPin className="h-4 w-4 text-[#6a6d78]" />
+                <h4 className="text-[13px] font-medium text-[#b0b2bc]">Business Address</h4>
               </div>
-              <p className="text-[14px] text-gray-600">
+              <p className="text-[14px] text-[#b0b2bc]">
                 {businessInfo.street_address && <>{businessInfo.street_address}<br /></>}
                 {businessInfo.city && businessInfo.state && (
                   <>
@@ -162,49 +162,49 @@ export default function Step4Review({
       </Card>
 
       {/* Uploaded Documents */}
-      <Card className="bg-white">
+      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Uploaded Documents</CardTitle>
+            <FileText className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Uploaded Documents</CardTitle>
           </div>
-          <CardDescription className="text-[13px] text-gray-600">{documentCount} documents uploaded</CardDescription>
+          <CardDescription className="text-[13px] text-[#b0b2bc]">{documentCount} documents uploaded</CardDescription>
         </CardHeader>
         <CardContent>
           <ul className="space-y-3">
             {documents.business_registration && documents.business_registration.length > 0 && (
               <li className="flex items-center gap-2 text-[14px]">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-medium text-gray-900">Business Registration:</span>
-                <span className="text-gray-600">{documents.business_registration.map(f => f.name).join(', ')}</span>
+                <CheckCircle className="h-5 w-5 text-[#22c55e] flex-shrink-0" />
+                <span className="font-medium text-[#f8f8fa]">Business Registration:</span>
+                <span className="text-[#b0b2bc]">{documents.business_registration.map(f => f.name).join(', ')}</span>
               </li>
             )}
             {documents.professional_license && documents.professional_license.length > 0 && (
               <li className="flex items-center gap-2 text-[14px]">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-medium text-gray-900">Professional License:</span>
-                <span className="text-gray-600">{documents.professional_license.map(f => f.name).join(', ')}</span>
+                <CheckCircle className="h-5 w-5 text-[#22c55e] flex-shrink-0" />
+                <span className="font-medium text-[#f8f8fa]">Professional License:</span>
+                <span className="text-[#b0b2bc]">{documents.professional_license.map(f => f.name).join(', ')}</span>
               </li>
             )}
             {documents.liability_insurance && documents.liability_insurance.length > 0 && (
               <li className="flex items-center gap-2 text-[14px]">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-medium text-gray-900">Liability Insurance:</span>
-                <span className="text-gray-600">{documents.liability_insurance.map(f => f.name).join(', ')}</span>
+                <CheckCircle className="h-5 w-5 text-[#22c55e] flex-shrink-0" />
+                <span className="font-medium text-[#f8f8fa]">Liability Insurance:</span>
+                <span className="text-[#b0b2bc]">{documents.liability_insurance.map(f => f.name).join(', ')}</span>
               </li>
             )}
             {documents.workers_comp && documents.workers_comp.length > 0 && (
               <li className="flex items-center gap-2 text-[14px]">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-medium text-gray-900">Workers' Compensation:</span>
-                <span className="text-gray-600">{documents.workers_comp.map(f => f.name).join(', ')}</span>
+                <CheckCircle className="h-5 w-5 text-[#22c55e] flex-shrink-0" />
+                <span className="font-medium text-[#f8f8fa]">Workers' Compensation:</span>
+                <span className="text-[#b0b2bc]">{documents.workers_comp.map(f => f.name).join(', ')}</span>
               </li>
             )}
             {documents.contact_verification && documents.contact_verification.length > 0 && (
               <li className="flex items-center gap-2 text-[14px]">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="font-medium text-gray-900">Contact Verification:</span>
-                <span className="text-gray-600">{documents.contact_verification.map(f => f.name).join(', ')}</span>
+                <CheckCircle className="h-5 w-5 text-[#22c55e] flex-shrink-0" />
+                <span className="font-medium text-[#f8f8fa]">Contact Verification:</span>
+                <span className="text-[#b0b2bc]">{documents.contact_verification.map(f => f.name).join(', ')}</span>
               </li>
             )}
           </ul>
@@ -212,11 +212,11 @@ export default function Step4Review({
       </Card>
 
       {/* Terms Acceptance */}
-      <Card className="bg-green-50 border-green-200">
+      <Card className="bg-[rgba(34,197,94,0.1)] border-[rgba(34,197,94,0.3)]">
         <CardContent className="pt-6">
           <div className="flex items-center gap-3">
-            <CheckCircle className="h-6 w-6 text-green-600" />
-            <span className="text-[14px] font-medium text-green-900">
+            <CheckCircle className="h-6 w-6 text-[#22c55e]" />
+            <span className="text-[14px] font-medium text-[#22c55e]">
               Terms of Service accepted
             </span>
           </div>
@@ -224,7 +224,7 @@ export default function Step4Review({
       </Card>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+      <div className="flex items-center justify-between mt-8 pt-6 border-t border-[rgba(255,255,255,0.08)]">
         <Button
           type="button"
           variant="outline"
@@ -238,7 +238,7 @@ export default function Step4Review({
           type="button"
           onClick={onSubmit}
           disabled={loading}
-          className="bg-green-600 hover:bg-green-700 text-white h-10 text-[14px]"
+          className="bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27] h-10 text-[14px]"
         >
           {loading ? (
             <>

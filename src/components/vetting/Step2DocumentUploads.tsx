@@ -162,13 +162,13 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Header Info */}
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <Info className="h-5 w-5 text-[#c9a962] mt-0.5 flex-shrink-0" />
             <div className="space-y-1">
-              <h3 className="text-[14px] font-medium text-blue-900">Tier 1 Verification Documents</h3>
-              <p className="text-[13px] text-blue-800">
+              <h3 className="text-[14px] font-medium text-[#c9a962]">Tier 1 Verification Documents</h3>
+              <p className="text-[13px] text-[#b0b2bc]">
                 Upload the following documents to complete your Tier 1 verification. These are the foundational
                 requirements for joining the Proclusive network.
               </p>
@@ -180,17 +180,17 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
       {/* Document Upload Cards */}
       <div className="space-y-4">
         {DOCUMENT_FIELDS.map((field) => (
-          <Card key={field.key} className="bg-white">
+          <Card key={field.key} className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1">
-                  <FileText className="h-5 w-5 text-blue-600 mt-1" />
+                  <FileText className="h-5 w-5 text-[#c9a962] mt-1" />
                   <div className="flex-1">
-                    <CardTitle className="text-[16px] font-semibold text-gray-900 flex items-center gap-2">
+                    <CardTitle className="text-[16px] font-semibold text-[#f8f8fa] flex items-center gap-2">
                       {field.label}
                       {field.required && <Badge variant="destructive" className="text-[11px] px-2 py-0.5">Required</Badge>}
                     </CardTitle>
-                    <CardDescription className="mt-1 text-[13px] text-gray-600">{field.description}</CardDescription>
+                    <CardDescription className="mt-1 text-[13px] text-[#b0b2bc]">{field.description}</CardDescription>
                   </div>
                 </div>
               </div>
@@ -200,20 +200,20 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
               <div
                 className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
                   dragOver === field.key
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-300 hover:border-blue-400'
+                    ? 'border-[#c9a962] bg-[rgba(201,169,98,0.1)]'
+                    : 'border-[rgba(255,255,255,0.15)] hover:border-[#c9a962]'
                 }`}
                 onDragOver={(e) => handleDragOver(e, field.key)}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, field.key)}
               >
                 <div className="flex flex-col items-center gap-3">
-                  <Upload className="h-8 w-8 text-gray-400" />
+                  <Upload className="h-8 w-8 text-[#6a6d78]" />
                   <div className="text-center">
-                    <label htmlFor={`file-${field.key}`} className="text-[14px] text-gray-700 font-medium cursor-pointer hover:text-blue-600">
+                    <label htmlFor={`file-${field.key}`} className="text-[14px] text-[#b0b2bc] font-medium cursor-pointer hover:text-[#c9a962]">
                       Choose files or drag and drop
                     </label>
-                    <p className="text-[12px] text-gray-500 mt-1">
+                    <p className="text-[12px] text-[#6a6d78] mt-1">
                       Accepted: {field.acceptedFormats.replace(/\./g, '').toUpperCase()} • Multiple files allowed
                     </p>
                   </div>
@@ -237,15 +237,15 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
               {documents[field.key] && documents[field.key]!.length > 0 && (
                 <div className="space-y-2">
                   {documents[field.key]!.map((file, index) => (
-                    <div key={index} className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div key={index} className="bg-[rgba(34,197,94,0.1)] border border-[rgba(34,197,94,0.3)] rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                          <CheckCircle className="h-5 w-5 text-[#22c55e] flex-shrink-0" />
                           <div>
-                            <p className="text-[13px] font-medium text-green-700">
+                            <p className="text-[13px] font-medium text-[#22c55e]">
                               {file.name}
                             </p>
-                            <p className="text-[12px] text-green-600">
+                            <p className="text-[12px] text-[#b0b2bc]">
                               {(file.size / 1024 / 1024).toFixed(2)} MB
                             </p>
                           </div>
@@ -255,7 +255,7 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
                           variant="ghost"
                           size="sm"
                           onClick={() => handleFileRemove(field.key, index)}
-                          className="text-[12px] text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className="text-[12px] text-[#f87171] hover:text-[#f87171] hover:bg-[rgba(248,113,113,0.1)]"
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -267,7 +267,7 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
                           <img
                             src={previews[field.key][index]}
                             alt={`${field.label} ${index + 1}`}
-                            className="max-w-xs rounded-lg border border-gray-200"
+                            className="max-w-xs rounded-lg border border-[rgba(255,255,255,0.08)]"
                           />
                         </div>
                       )}
@@ -281,30 +281,30 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
       </div>
 
       {/* Guidelines */}
-      <Card className="bg-white">
+      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
-          <CardTitle className="text-[16px] font-semibold text-gray-900">Document Upload Guidelines</CardTitle>
+          <CardTitle className="text-[16px] font-semibold text-[#f8f8fa]">Document Upload Guidelines</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="text-[13px] text-gray-600 space-y-2">
+          <ul className="text-[13px] text-[#b0b2bc] space-y-2">
             <li className="flex items-start gap-2">
-              <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="h-4 w-4 text-[#c9a962] mt-0.5 flex-shrink-0" />
               <span>Accepted formats: PDF, JPG, JPEG, PNG</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="h-4 w-4 text-[#c9a962] mt-0.5 flex-shrink-0" />
               <span>Maximum file size: 10MB per document</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="h-4 w-4 text-[#c9a962] mt-0.5 flex-shrink-0" />
               <span>Documents must be current and legible</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="h-4 w-4 text-[#c9a962] mt-0.5 flex-shrink-0" />
               <span>Ensure all information is clearly visible</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="h-4 w-4 text-[#c9a962] mt-0.5 flex-shrink-0" />
               <span>Documents will be reviewed by admin within 48 hours</span>
             </li>
           </ul>
@@ -312,11 +312,11 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
       </Card>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+      <div className="flex items-center justify-between mt-8 pt-6 border-t border-[rgba(255,255,255,0.08)]">
         <Button type="button" variant="outline" onClick={onBack} className="h-10 text-[14px]">
           Back
         </Button>
-        <Button type="submit" variant="default" className="h-10 text-[14px]">
+        <Button type="submit" variant="default" className="h-10 text-[14px] bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27]">
           Continue to Terms
         </Button>
       </div>
