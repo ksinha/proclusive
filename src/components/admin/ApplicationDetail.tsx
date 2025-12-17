@@ -22,7 +22,8 @@ import {
   MessageSquare,
   Eye,
   X,
-  ArrowLeft
+  ArrowLeft,
+  ImageIcon
 } from "lucide-react";
 
 interface ApplicationWithProfile extends Application {
@@ -34,10 +35,19 @@ interface ApplicationDetailProps {
   onClose: () => void;
 }
 
+interface PortfolioItem {
+  id: string;
+  image_url: string;
+  description: string | null;
+  display_order: number;
+}
+
 const BADGE_OPTIONS: BadgeLevel[] = ["verified", "vetted", "elite"];
 
 export default function ApplicationDetail({ application, onClose }: ApplicationDetailProps) {
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
+  const [portfolioUrls, setPortfolioUrls] = useState<Record<string, string>>({});
   const [selectedBadges, setSelectedBadges] = useState<BadgeLevel[]>(
     application.profile.badge_level !== "none" ? [application.profile.badge_level] : []
   );
@@ -52,6 +62,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
   useEffect(() => {
     loadDocuments();
+    loadPortfolioItems();
   }, []);
 
   const loadDocuments = async () => {
@@ -64,6 +75,32 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
     if (!error && data) {
       setDocuments(data);
+    }
+  };
+
+  const loadPortfolioItems = async () => {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("portfolio_items")
+      .select("*")
+      .eq("profile_id", application.user_id)
+      .order("display_order", { ascending: true });
+
+    if (!error && data) {
+      setPortfolioItems(data);
+
+      // Load signed URLs for each portfolio image
+      const urls: Record<string, string> = {};
+      for (const item of data) {
+        const { data: signedData } = await supabase.storage
+          .from("portfolio")
+          .createSignedUrl(item.image_url, 3600);
+
+        if (signedData) {
+          urls[item.id] = signedData.signedUrl;
+        }
+      }
+      setPortfolioUrls(urls);
     }
   };
 
@@ -495,6 +532,53 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
             </div>
           ) : (
             <p className="text-[14px] text-[#6a6d78] text-center py-4">No documents uploaded</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Portfolio Items */}
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <ImageIcon className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-white">Portfolio ({portfolioItems.length})</CardTitle>
+          </div>
+          <CardDescription className="text-[#b0b2bc]">Review submitted portfolio images</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {portfolioItems.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {portfolioItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="space-y-2"
+                >
+                  <div
+                    className="aspect-video rounded-lg overflow-hidden flex items-center justify-center"
+                    style={{ background: '#1a1d27', border: '1px solid rgba(255, 255, 255, 0.08)' }}
+                  >
+                    {portfolioUrls[item.id] ? (
+                      <img
+                        src={portfolioUrls[item.id]}
+                        alt={`Portfolio ${item.display_order + 1}`}
+                        className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => setPreviewUrl(portfolioUrls[item.id])}
+                      />
+                    ) : (
+                      <div className="text-[#6a6d78] text-center p-4">
+                        <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-[12px]">Loading...</p>
+                      </div>
+                    )}
+                  </div>
+                  {item.description && (
+                    <p className="text-[12px] text-[#b0b2bc] line-clamp-2">{item.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-[14px] text-[#6a6d78] text-center py-4">No portfolio items uploaded</p>
           )}
         </CardContent>
       </Card>
