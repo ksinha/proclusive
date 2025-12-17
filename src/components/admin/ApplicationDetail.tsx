@@ -48,9 +48,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const [documents, setDocuments] = useState<Document[]>([]);
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
   const [portfolioUrls, setPortfolioUrls] = useState<Record<string, string>>({});
-  const [selectedBadges, setSelectedBadges] = useState<BadgeLevel[]>(
-    application.profile.badge_level !== "none" ? [application.profile.badge_level] : []
-  );
+  const [selectedBadges, setSelectedBadges] = useState<BadgeLevel[]>([]);
   const [adminNotes, setAdminNotes] = useState(application.admin_notes || "");
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -62,7 +60,25 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   useEffect(() => {
     loadDocuments();
     loadPortfolioItems();
+    loadUserBadges();
   }, []);
+
+  const loadUserBadges = async () => {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("user_badges")
+      .select("badge_level")
+      .eq("user_id", application.user_id);
+
+    if (!error && data && data.length > 0) {
+      // Load badges from user_badges table
+      const badges = data.map(b => b.badge_level as BadgeLevel);
+      setSelectedBadges(badges);
+    } else if (application.profile.badge_level !== "none") {
+      // Fallback to profile.badge_level if no user_badges found
+      setSelectedBadges([application.profile.badge_level]);
+    }
+  };
 
   const loadDocuments = async () => {
     const supabase = createClient();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Profile, PortfolioItem } from "@/types/database.types";
+import { Profile, PortfolioItem, BadgeLevel } from "@/types/database.types";
 import { createClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,10 +33,25 @@ export default function ProfileDetailModal({
     Record<string, string>
   >({});
   const [loading, setLoading] = useState(true);
+  const [userBadges, setUserBadges] = useState<BadgeLevel[]>([]);
 
   useEffect(() => {
-    async function fetchPortfolio() {
+    async function fetchData() {
       const supabase = createClient();
+
+      // Fetch user badges
+      const { data: badgesData } = await supabase
+        .from("user_badges")
+        .select("badge_level")
+        .eq("user_id", profile.id);
+
+      if (badgesData && badgesData.length > 0) {
+        const badges = badgesData.map(b => b.badge_level as BadgeLevel);
+        setUserBadges(badges);
+      } else if (profile.badge_level !== "none") {
+        // Fallback to profile.badge_level if no user_badges found
+        setUserBadges([profile.badge_level]);
+      }
 
       // Fetch portfolio items
       const { data, error } = await supabase
@@ -73,8 +88,8 @@ export default function ProfileDetailModal({
       setLoading(false);
     }
 
-    fetchPortfolio();
-  }, [profile.id]);
+    fetchData();
+  }, [profile.id, profile.badge_level]);
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -109,14 +124,18 @@ export default function ProfileDetailModal({
                     {profile.primary_trade}
                   </Badge>
                 </div>
-                {profile.badge_level !== "none" && (
-                  <VaasBadgeIcon
-                    level={profile.badge_level}
-                    size="md"
-                    showLabel
-                    showSubtitle
-                    className="flex-shrink-0"
-                  />
+                {userBadges.length > 0 && (
+                  <div className="flex flex-wrap gap-2 flex-shrink-0">
+                    {userBadges.map((badge) => (
+                      <VaasBadgeIcon
+                        key={badge}
+                        level={badge}
+                        size="md"
+                        showLabel
+                        showSubtitle
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
 
