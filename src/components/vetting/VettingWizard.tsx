@@ -416,14 +416,16 @@ export default function VettingWizard({
                   <div
                     className={`rounded-full w-8 h-8 flex items-center justify-center ${
                       step.id === currentStep
-                        ? "bg-[#c9a962] text-[#1a1d27] text-[13px] font-semibold"
+                        ? "bg-[#c9a962] text-[#1a1d27]"
                         : step.id < currentStep
                         ? "bg-[#22c55e] text-white"
-                        : "bg-[#21242f] text-[#6a6d78] text-[13px] border border-[rgba(255,255,255,0.08)]"
+                        : "bg-[#21242f] text-[#6a6d78] border border-[rgba(255,255,255,0.08)]"
                     }`}
                   >
                     {step.id < currentStep ? (
-                      <CheckCircle className="w-5 h-5" />
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
                     ) : (
                       <span className="text-[13px] font-semibold">{step.id}</span>
                     )}
