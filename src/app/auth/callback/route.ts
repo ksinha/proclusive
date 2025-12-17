@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
+  const token_hash = requestUrl.searchParams.get("token_hash");
+  const type = requestUrl.searchParams.get("type");
   const error = requestUrl.searchParams.get("error");
   const errorDescription = requestUrl.searchParams.get("error_description");
 
@@ -18,9 +20,37 @@ export async function GET(request: Request) {
     return NextResponse.redirect(errorUrl);
   }
 
+  const supabase = await createClient();
+
+  // Handle token_hash flow (email confirmation without PKCE)
+  if (token_hash && type) {
+    try {
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        token_hash,
+        type: type as "signup" | "email" | "recovery" | "invite" | "magiclink" | "email_change",
+      });
+
+      if (verifyError) {
+        console.error("[Auth Callback] Token verification error:", verifyError);
+        const errorUrl = new URL("/auth/error", requestUrl.origin);
+        errorUrl.searchParams.set("error", "verification_failed");
+        errorUrl.searchParams.set("message", verifyError.message);
+        return NextResponse.redirect(errorUrl);
+      }
+
+      return NextResponse.redirect(new URL("/vetting", requestUrl.origin));
+    } catch (err) {
+      console.error("[Auth Callback] Token verification unexpected error:", err);
+      const errorUrl = new URL("/auth/error", requestUrl.origin);
+      errorUrl.searchParams.set("error", "unexpected_error");
+      errorUrl.searchParams.set("message", "An unexpected error occurred during confirmation");
+      return NextResponse.redirect(errorUrl);
+    }
+  }
+
+  // Handle code flow (PKCE)
   if (code) {
     try {
-      const supabase = await createClient();
       const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
       if (exchangeError) {
@@ -30,6 +60,8 @@ export async function GET(request: Request) {
         errorUrl.searchParams.set("message", exchangeError.message);
         return NextResponse.redirect(errorUrl);
       }
+
+      return NextResponse.redirect(new URL("/vetting", requestUrl.origin));
     } catch (err) {
       console.error("[Auth Callback] Unexpected error:", err);
       const errorUrl = new URL("/auth/error", requestUrl.origin);
@@ -37,13 +69,11 @@ export async function GET(request: Request) {
       errorUrl.searchParams.set("message", "An unexpected error occurred during confirmation");
       return NextResponse.redirect(errorUrl);
     }
-  } else {
-    // No code provided - redirect to error page
-    const errorUrl = new URL("/auth/error", requestUrl.origin);
-    errorUrl.searchParams.set("error", "missing_code");
-    errorUrl.searchParams.set("message", "No confirmation code was provided");
-    return NextResponse.redirect(errorUrl);
   }
 
-  return NextResponse.redirect(new URL("/vetting", requestUrl.origin));
+  // No valid auth parameters provided
+  const errorUrl = new URL("/auth/error", requestUrl.origin);
+  errorUrl.searchParams.set("error", "missing_code");
+  errorUrl.searchParams.set("message", "No confirmation code was provided");
+  return NextResponse.redirect(errorUrl);
 }
