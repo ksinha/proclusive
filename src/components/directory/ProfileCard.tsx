@@ -33,7 +33,7 @@ export default function ProfileCard({ profile, badges, onClick }: ProfileCardPro
             </p>
           </div>
           {badges.length > 0 && (
-            <div className="flex flex-wrap gap-1 ml-2 sm:ml-3 flex-shrink-0">
+            <div className="flex flex-col gap-1 ml-2 sm:ml-3 flex-shrink-0">
               {badges.map((badge) => (
                 <VaasBadgeInline key={badge} level={badge} size="sm" />
               ))}
