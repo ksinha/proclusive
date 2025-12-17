@@ -26,15 +26,19 @@ export default function Step4Review({
   onSubmit,
   loading,
 }: Step4Props) {
-  const documentCount = Object.keys(documents).filter(key => {
+  // Safety check for portfolioItems
+  const safePortfolioItems = portfolioItems || [];
+
+  const documentCount = Object.keys(documents || {}).filter(key => {
     const docs = documents[key as keyof DocumentData];
     return docs && docs.length > 0;
   }).length;
 
   // Required documents check
+  const safeDocuments = documents || {};
   const requiredDocs = ['business_registration', 'professional_license', 'liability_insurance', 'workers_comp', 'tax_compliance'];
   const missingDocs = requiredDocs.filter(key => {
-    const docs = documents[key as keyof DocumentData];
+    const docs = safeDocuments[key as keyof DocumentData];
     return !docs || docs.length === 0;
   });
   const hasAllRequiredDocs = missingDocs.length === 0;
@@ -269,19 +273,26 @@ export default function Step4Review({
             <Image className="h-5 w-5 text-[#c9a962]" />
             <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Portfolio</CardTitle>
           </div>
-          <CardDescription className="text-[13px] text-[#b0b2bc]">{portfolioItems.length} items uploaded</CardDescription>
+          <CardDescription className="text-[13px] text-[#b0b2bc]">{safePortfolioItems.length} items uploaded</CardDescription>
         </CardHeader>
         <CardContent>
-          {portfolioItems.length > 0 ? (
+          {safePortfolioItems.length > 0 ? (
             <div className="grid grid-cols-2 gap-4">
-              {portfolioItems.map((item, index) => (
+              {safePortfolioItems.map((item, index) => (
                 <div key={index} className="space-y-2">
-                  <div className="aspect-video bg-[#1a1d27] rounded-lg overflow-hidden border border-[rgba(255,255,255,0.08)]">
-                    <img
-                      src={URL.createObjectURL(item.file)}
-                      alt={`Portfolio ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="aspect-video bg-[#1a1d27] rounded-lg overflow-hidden border border-[rgba(255,255,255,0.08)] flex items-center justify-center">
+                    {item.file ? (
+                      <img
+                        src={URL.createObjectURL(item.file)}
+                        alt={`Portfolio ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-[#6a6d78] text-center p-4">
+                        <Image className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-[12px]">Image preview unavailable</p>
+                      </div>
+                    )}
                   </div>
                   {item.description && (
                     <p className="text-[13px] text-[#b0b2bc]">{item.description}</p>
