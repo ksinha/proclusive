@@ -354,7 +354,7 @@ export default function VettingWizard({
           liability_insurance: "point_3_liability_ins",
           workers_comp: "point_4_workers_comp",
           contact_verification: "point_5_contact_verify",
-          tax_compliance: "point_7_references", // Tax compliance (W-9)
+          tax_compliance: "point_6_portfolio", // Tax compliance (W-9)
         };
 
         if (pointMap[docType]) {

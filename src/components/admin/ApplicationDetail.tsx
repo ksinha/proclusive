@@ -283,14 +283,12 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   };
 
   const tier1Points = [
-    { key: "point_8_certifications", label: "Profile Verification", value: currentApplication.point_8_certifications },
     { key: "point_1_business_reg", label: "Business Registration", value: currentApplication.point_1_business_reg },
     { key: "point_2_prof_license", label: "Professional License", value: currentApplication.point_2_prof_license },
     { key: "point_3_liability_ins", label: "Liability Insurance", value: currentApplication.point_3_liability_ins },
     { key: "point_4_workers_comp", label: "Workers' Compensation", value: currentApplication.point_4_workers_comp },
     { key: "point_5_contact_verify", label: "Contact Verification", value: currentApplication.point_5_contact_verify },
-    { key: "point_7_references", label: "Tax Compliance (W-9)", value: currentApplication.point_7_references },
-    { key: "point_6_portfolio", label: "Portfolio", value: currentApplication.point_6_portfolio },
+    { key: "point_6_portfolio", label: "Tax Compliance (W-9)", value: currentApplication.point_6_portfolio },
   ];
 
   // Document type order matching verification points
