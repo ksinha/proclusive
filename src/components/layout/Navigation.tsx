@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const { user, isAdmin, isVerified, signOut } = useAuth();
 
   const isLoggedIn = !!user;
@@ -65,9 +66,9 @@ export default function Navigation() {
                     </Link>
                   </>
                 )}
-                <Link href={dashboardLink}>
-                  <Button variant="cta">Dashboard</Button>
-                </Link>
+                <Button variant="cta" onClick={() => router.push(dashboardLink)}>
+                  Dashboard
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -94,9 +95,9 @@ export default function Navigation() {
                     pathname === "/auth/login" ? "w-full" : "w-0 group-hover:w-full"
                   }`}></span>
                 </Link>
-                <Link href="/auth/signup">
-                  <Button variant="cta">Apply to Join</Button>
-                </Link>
+                <Button variant="cta" onClick={() => router.push("/auth/signup")}>
+                  Apply to Join
+                </Button>
               </>
             )}
           </div>
@@ -140,9 +141,9 @@ export default function Navigation() {
                     </Link>
                   </>
                 )}
-                <Link href={dashboardLink} onClick={() => setMobileMenuOpen(false)} className="block">
-                  <Button variant="cta" className="w-full h-10">Dashboard</Button>
-                </Link>
+                <Button variant="cta" className="w-full h-10" onClick={() => { router.push(dashboardLink); setMobileMenuOpen(false); }}>
+                  Dashboard
+                </Button>
                 <Button
                   variant="outline"
                   className="w-full h-10"
@@ -165,9 +166,9 @@ export default function Navigation() {
                 >
                   Login
                 </Link>
-                <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)} className="block">
-                  <Button variant="cta" className="w-full h-10">Apply to Join</Button>
-                </Link>
+                <Button variant="cta" className="w-full h-10" onClick={() => { router.push("/auth/signup"); setMobileMenuOpen(false); }}>
+                  Apply to Join
+                </Button>
               </>
             )}
           </div>
