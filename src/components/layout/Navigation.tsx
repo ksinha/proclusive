@@ -66,9 +66,19 @@ export default function Navigation() {
                     </Link>
                   </>
                 )}
-                <Button variant="cta" onClick={() => router.push(dashboardLink)}>
+                <Link
+                  href={dashboardLink}
+                  onClick={(e) => {
+                    // If already on the dashboard route, force a full page reload to reset state
+                    if (pathname === dashboardLink || pathname.startsWith(dashboardLink)) {
+                      e.preventDefault();
+                      window.location.href = dashboardLink;
+                    }
+                  }}
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-outfit font-medium tracking-wide transition-all duration-300 bg-[#c9a962] text-[#1a1d27] border-none hover:bg-[#dfc07a] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(201,169,98,0.3)] h-[46px] px-9 text-[14px] rounded-[5px]"
+                >
                   Dashboard
-                </Button>
+                </Link>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -95,9 +105,12 @@ export default function Navigation() {
                     pathname === "/auth/login" ? "w-full" : "w-0 group-hover:w-full"
                   }`}></span>
                 </Link>
-                <Button variant="cta" onClick={() => router.push("/auth/signup")}>
+                <Link
+                  href="/auth/signup"
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-outfit font-medium tracking-wide transition-all duration-300 bg-[#c9a962] text-[#1a1d27] border-none hover:bg-[#dfc07a] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(201,169,98,0.3)] h-[46px] px-9 text-[14px] rounded-[5px]"
+                >
                   Apply to Join
-                </Button>
+                </Link>
               </>
             )}
           </div>
@@ -141,9 +154,20 @@ export default function Navigation() {
                     </Link>
                   </>
                 )}
-                <Button variant="cta" className="w-full h-10" onClick={() => { router.push(dashboardLink); setMobileMenuOpen(false); }}>
+                <Link
+                  href={dashboardLink}
+                  onClick={(e) => {
+                    setMobileMenuOpen(false);
+                    // If already on the dashboard route, force a full page reload to reset state
+                    if (pathname === dashboardLink || pathname.startsWith(dashboardLink)) {
+                      e.preventDefault();
+                      window.location.href = dashboardLink;
+                    }
+                  }}
+                  className="block w-full text-center inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-outfit font-medium tracking-wide transition-all duration-300 bg-[#c9a962] text-[#1a1d27] border-none hover:bg-[#dfc07a] h-10 px-9 text-[14px] rounded-[5px]"
+                >
                   Dashboard
-                </Button>
+                </Link>
                 <Button
                   variant="outline"
                   className="w-full h-10"
