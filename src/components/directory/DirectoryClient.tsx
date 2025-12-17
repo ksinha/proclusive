@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Profile } from "@/types/database.types";
+import { Profile, BadgeLevel } from "@/types/database.types";
 import ProfileCard from "./ProfileCard";
 import ProfileDetailModal from "./ProfileDetailModal";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { Search, X } from "lucide-react";
 interface DirectoryClientProps {
   profiles: Profile[];
   currentUserId: string;
+  userBadgesMap: Record<string, BadgeLevel[]>;
 }
 
 const TRADE_OPTIONS = [
@@ -39,6 +40,7 @@ const BADGE_FILTERS = [
 export default function DirectoryClient({
   profiles,
   currentUserId,
+  userBadgesMap,
 }: DirectoryClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [tradeFilter, setTradeFilter] = useState("All Trades");
@@ -217,6 +219,7 @@ export default function DirectoryClient({
               <ProfileCard
                 key={profile.id}
                 profile={profile}
+                badges={userBadgesMap[profile.id] || (profile.badge_level !== "none" ? [profile.badge_level] : [])}
                 onClick={() => setSelectedProfile(profile)}
               />
             ))}
@@ -227,6 +230,7 @@ export default function DirectoryClient({
         {selectedProfile && (
           <ProfileDetailModal
             profile={selectedProfile}
+            badges={userBadgesMap[selectedProfile.id] || (selectedProfile.badge_level !== "none" ? [selectedProfile.badge_level] : [])}
             onClose={() => setSelectedProfile(null)}
           />
         )}

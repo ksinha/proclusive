@@ -1,6 +1,6 @@
 "use client";
 
-import { Profile } from "@/types/database.types";
+import { Profile, BadgeLevel } from "@/types/database.types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { VaasBadgeInline } from "@/components/ui/vaas-badge";
@@ -8,10 +8,11 @@ import { MapPin } from "lucide-react";
 
 interface ProfileCardProps {
   profile: Profile;
+  badges: BadgeLevel[];
   onClick: () => void;
 }
 
-export default function ProfileCard({ profile, onClick }: ProfileCardProps) {
+export default function ProfileCard({ profile, badges, onClick }: ProfileCardProps) {
 
   return (
     <Card
@@ -31,8 +32,12 @@ export default function ProfileCard({ profile, onClick }: ProfileCardProps) {
               {profile.company_name}
             </p>
           </div>
-          {profile.badge_level !== "none" && (
-            <VaasBadgeInline level={profile.badge_level} size="sm" className="ml-2 sm:ml-3 flex-shrink-0" />
+          {badges.length > 0 && (
+            <div className="flex flex-wrap gap-1 ml-2 sm:ml-3 flex-shrink-0">
+              {badges.map((badge) => (
+                <VaasBadgeInline key={badge} level={badge} size="sm" />
+              ))}
+            </div>
           )}
         </div>
 

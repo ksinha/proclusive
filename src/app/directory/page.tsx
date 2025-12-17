@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import DirectoryClient from "@/components/directory/DirectoryClient";
+import { BadgeLevel } from "@/types/database.types";
 
 export default async function DirectoryPage() {
   console.log("[DirectoryPage] Loading directory page...");
@@ -26,7 +27,7 @@ export default async function DirectoryPage() {
 
     console.log("[DirectoryPage] User authenticated:", user.id);
 
-    // Fetch public, verified profiles with their portfolio
+    // Fetch public, verified profiles
     const { data: profiles, error } = await supabase
       .from("profiles")
       .select("*")
@@ -48,8 +49,35 @@ export default async function DirectoryPage() {
       );
     }
 
+    // Fetch all user_badges for these profiles
+    const profileIds = profiles?.map(p => p.id) || [];
+    let userBadgesMap: Record<string, BadgeLevel[]> = {};
+
+    if (profileIds.length > 0) {
+      const { data: userBadges, error: badgesError } = await supabase
+        .from("user_badges")
+        .select("user_id, badge_level")
+        .in("user_id", profileIds);
+
+      if (!badgesError && userBadges) {
+        // Build a map of user_id -> badges[]
+        for (const badge of userBadges) {
+          if (!userBadgesMap[badge.user_id]) {
+            userBadgesMap[badge.user_id] = [];
+          }
+          userBadgesMap[badge.user_id].push(badge.badge_level as BadgeLevel);
+        }
+      }
+    }
+
     console.log("[DirectoryPage] Fetched", profiles?.length || 0, "profiles");
-    return <DirectoryClient profiles={profiles || []} currentUserId={user.id} />;
+    return (
+      <DirectoryClient
+        profiles={profiles || []}
+        currentUserId={user.id}
+        userBadgesMap={userBadgesMap}
+      />
+    );
   } catch (err) {
     console.error("[DirectoryPage] Unexpected error:", err);
     throw err;
