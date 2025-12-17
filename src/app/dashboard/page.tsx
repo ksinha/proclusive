@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import MemberDashboard from "@/components/dashboard/MemberDashboard";
+import { BadgeLevel } from "@/types/database.types";
 
 export default async function DashboardPage() {
   console.log("[DashboardPage] Loading dashboard...");
@@ -45,6 +46,20 @@ export default async function DashboardPage() {
       redirect("/admin/dashboard");
     }
 
+    // Fetch user's badges from user_badges table
+    let userBadges: BadgeLevel[] = [];
+    const { data: badgesData, error: badgesError } = await supabase
+      .from("user_badges")
+      .select("badge_level")
+      .eq("user_id", user.id);
+
+    if (!badgesError && badgesData && badgesData.length > 0) {
+      userBadges = badgesData.map(b => b.badge_level as BadgeLevel);
+    } else if (profile?.badge_level && profile.badge_level !== "none") {
+      // Fallback to profile.badge_level if no user_badges found
+      userBadges = [profile.badge_level as BadgeLevel];
+    }
+
     // Fetch user's application status
     const { data: application, error: appError } = await supabase
       .from("applications")
@@ -66,6 +81,7 @@ export default async function DashboardPage() {
         profile={profile}
         application={application}
         userId={user.id}
+        badges={userBadges}
       />
     );
   } catch (err) {

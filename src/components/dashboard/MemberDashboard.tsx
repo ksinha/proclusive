@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Profile, Application, ApplicationStatus, BadgeLevel } from "@/types/database.types";
@@ -18,6 +18,7 @@ interface MemberDashboardProps {
   profile: Profile | null;
   application: Application | null;
   userId: string;
+  badges: BadgeLevel[];
 }
 
 const STATUS_CONFIG: Record<
@@ -64,15 +65,12 @@ export default function MemberDashboard({
   profile,
   application,
   userId,
+  badges,
 }: MemberDashboardProps) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Initialize with profile.badge_level immediately to avoid flash of empty state
-  const [userBadges, setUserBadges] = useState<BadgeLevel[]>(
-    profile?.badge_level && profile.badge_level !== "none" ? [profile.badge_level] : []
-  );
   const [formData, setFormData] = useState<EditFormData>({
     full_name: profile?.full_name || "",
     phone: profile?.phone || "",
@@ -85,29 +83,6 @@ export default function MemberDashboard({
     website: profile?.website || "",
     is_public: profile?.is_public ?? true,
   });
-
-  // Load user badges from user_badges table
-  useEffect(() => {
-    const loadUserBadges = async () => {
-      if (!userId) return;
-
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("user_badges")
-        .select("badge_level")
-        .eq("user_id", userId);
-
-      if (!error && data && data.length > 0) {
-        const badges = data.map(b => b.badge_level as BadgeLevel);
-        setUserBadges(badges);
-      } else if (profile?.badge_level && profile.badge_level !== "none") {
-        // Fallback to profile.badge_level if no user_badges found
-        setUserBadges([profile.badge_level]);
-      }
-    };
-
-    loadUserBadges();
-  }, [userId, profile?.badge_level]);
 
   const handleSave = async () => {
     console.log("[MemberDashboard] Starting profile save...");
@@ -379,9 +354,9 @@ export default function MemberDashboard({
                 </div>
 
                 {/* Right side - Badge Cards */}
-                {application.status === "approved" && userBadges.length > 0 && (
+                {application.status === "approved" && badges.length > 0 && (
                   <div className="flex flex-wrap gap-3 flex-shrink-0">
-                    {userBadges.map((badge) => (
+                    {badges.map((badge) => (
                       <VaasBadgeCard key={badge} level={badge} highlighted />
                     ))}
                   </div>
