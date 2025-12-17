@@ -125,28 +125,194 @@ export default function MemberDashboard({
     }
   };
 
+  // Determine what view to show based on application status
+  const isApproved = application?.status === "approved" || profile?.is_verified;
+  const isPending = application?.status === "pending" || application?.status === "under_review";
+  const isRejected = application?.status === "rejected";
+  const needsToStartVetting = !application && !profile?.is_verified;
+  const needsToContinueVetting = !application && profile && !profile.is_verified && profile.company_name;
+
+  // View 1: No profile at all - need to start vetting
   if (!profile) {
     return (
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#1a1d27' }}>
-        <Card className="text-center py-12" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
-          <CardHeader>
-            <CardTitle className="text-[24px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Complete Your Profile</CardTitle>
-            <CardDescription className="text-[14px] mt-2" style={{ color: '#b0b2bc' }}>
-              Get started by completing the vetting process to join the Proclusive network.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/vetting">
-              <Button size="lg" className="mt-4">
-                Start Vetting Process
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen" style={{ background: '#1a1d27' }}>
+        <div className="container max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Card className="text-center py-12" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+            <CardHeader>
+              <div className="mx-auto w-16 h-16 bg-[rgba(201,169,98,0.15)] rounded-full flex items-center justify-center mb-4">
+                <AlertCircle className="h-8 w-8 text-[#c9a962]" />
+              </div>
+              <CardTitle className="text-[24px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>Complete Your Profile</CardTitle>
+              <CardDescription className="text-[14px] mt-2" style={{ color: '#b0b2bc' }}>
+                Get started by completing the vetting process to join the Proclusive network.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/vetting">
+                <Button size="lg" className="mt-4" style={{ background: '#c9a962', color: '#1a1d27' }}>
+                  Start Vetting Process
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
 
+  // View 2: Has partial profile but no application - continue vetting
+  if (needsToContinueVetting || needsToStartVetting) {
+    return (
+      <div className="min-h-screen" style={{ background: '#1a1d27' }}>
+        <div className="container max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Card className="text-center py-12" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+            <CardHeader>
+              <div className="mx-auto w-16 h-16 bg-[rgba(201,169,98,0.15)] rounded-full flex items-center justify-center mb-4">
+                <Clock className="h-8 w-8 text-[#c9a962]" />
+              </div>
+              <CardTitle className="text-[24px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
+                Continue Your Application
+              </CardTitle>
+              <CardDescription className="text-[14px] mt-2 max-w-md mx-auto" style={{ color: '#b0b2bc' }}>
+                You haven't completed the vetting process yet. Please finish your application to access the full dashboard and member features.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Link href="/vetting">
+                <Button size="lg" style={{ background: '#c9a962', color: '#1a1d27' }}>
+                  Return to Vetting
+                </Button>
+              </Link>
+              <p className="text-[13px]" style={{ color: '#6a6d78' }}>
+                Complete all steps to submit your application for review.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // View 3: Application pending or under review - show waiting status
+  if (isPending) {
+    return (
+      <div className="min-h-screen" style={{ background: '#1a1d27' }}>
+        <div className="container max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
+          <Card className="text-center py-8" style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+            <CardHeader>
+              <div className="mx-auto w-16 h-16 bg-[rgba(201,169,98,0.15)] rounded-full flex items-center justify-center mb-4">
+                <Clock className="h-8 w-8 text-[#c9a962]" />
+              </div>
+              <CardTitle className="text-[24px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
+                Vetting In Progress
+              </CardTitle>
+              <CardDescription className="text-[14px] mt-2 max-w-md mx-auto" style={{ color: '#b0b2bc' }}>
+                Your application has been submitted and is currently being reviewed by our admin team.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <Badge variant="warning" className="text-sm px-4 py-1">
+                {application?.status === "pending" ? "Pending Review" : "Under Review"}
+              </Badge>
+
+              <div className="text-left max-w-sm mx-auto rounded-lg p-4" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <p className="text-[13px] font-medium mb-2" style={{ color: '#f8f8fa' }}>What happens next?</p>
+                <ul className="text-[13px] space-y-2" style={{ color: '#b0b2bc' }}>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[#c9a962]">1.</span>
+                    Our team reviews your documents and information
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[#c9a962]">2.</span>
+                    You'll receive an email when the review is complete
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[#c9a962]">3.</span>
+                    Once approved, you'll have full access to the network
+                  </li>
+                </ul>
+              </div>
+
+              <p className="text-[13px]" style={{ color: '#6a6d78' }}>
+                This typically takes 1-2 business days. We'll notify you by email.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Preview of submitted info */}
+          <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+            <CardHeader>
+              <CardTitle className="text-base" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
+                Your Submitted Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Name</p>
+                  <p style={{ color: '#f8f8fa' }}>{profile.full_name}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Company</p>
+                  <p style={{ color: '#f8f8fa' }}>{profile.company_name}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Trade</p>
+                  <p style={{ color: '#f8f8fa' }}>{profile.primary_trade}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Location</p>
+                  <p style={{ color: '#f8f8fa' }}>{profile.city}{profile.city && profile.state && ", "}{profile.state}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // View 4: Application rejected - prompt to fix
+  if (isRejected) {
+    return (
+      <div className="min-h-screen" style={{ background: '#1a1d27' }}>
+        <div className="container max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
+          <Card className="text-center py-8" style={{ background: '#252833', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '10px' }}>
+            <CardHeader>
+              <div className="mx-auto w-16 h-16 bg-[rgba(248,113,113,0.15)] rounded-full flex items-center justify-center mb-4">
+                <XCircle className="h-8 w-8 text-[#f87171]" />
+              </div>
+              <CardTitle className="text-[24px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
+                Application Needs Updates
+              </CardTitle>
+              <CardDescription className="text-[14px] mt-2 max-w-md mx-auto" style={{ color: '#b0b2bc' }}>
+                Your application was reviewed and requires some corrections before it can be approved.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {application?.admin_notes && (
+                <div className="text-left max-w-sm mx-auto rounded-lg p-4" style={{ background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)' }}>
+                  <p className="text-[13px] font-medium mb-2" style={{ color: '#f87171' }}>Admin Feedback:</p>
+                  <p className="text-[13px]" style={{ color: '#f8f8fa' }}>{application.admin_notes}</p>
+                </div>
+              )}
+
+              <Link href="/vetting">
+                <Button size="lg" style={{ background: '#c9a962', color: '#1a1d27' }}>
+                  Fix My Application
+                </Button>
+              </Link>
+              <p className="text-[13px]" style={{ color: '#6a6d78' }}>
+                Update the required information and resubmit for review.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // View 5: Approved - show full dashboard (existing code below)
   const statusConfig = application ? STATUS_CONFIG[application.status] : null;
 
   return (
