@@ -558,11 +558,45 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       {/* Portfolio Items */}
       <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <ImageIcon className="h-5 w-5 text-[#c9a962]" />
-            <CardTitle className="text-white">Portfolio ({portfolioItems.length})</CardTitle>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <ImageIcon className="h-5 w-5 text-[#c9a962]" />
+                <CardTitle className="text-white">Portfolio ({portfolioItems.length})</CardTitle>
+              </div>
+              <CardDescription className="text-[#b0b2bc] mt-1">Review submitted portfolio images</CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              {currentApplication.point_7_references === "pending" || currentApplication.point_7_references === "not_submitted" ? (
+                <>
+                  <Button
+                    onClick={() => handleVerifyPoint("point_7_references", "verified")}
+                    disabled={loading}
+                    size="sm"
+                    variant="default"
+                    className="gap-1"
+                  >
+                    <CheckCircle2 className="h-3 w-3" />
+                    Verify Portfolio
+                  </Button>
+                  <Button
+                    onClick={() => handleVerifyPoint("point_7_references", "rejected")}
+                    disabled={loading}
+                    size="sm"
+                    variant="destructive"
+                    className="gap-1"
+                  >
+                    <XCircle className="h-3 w-3" />
+                    Reject
+                  </Button>
+                </>
+              ) : (
+                <Badge variant={currentApplication.point_7_references === "verified" ? "success" : "destructive"} size="lg">
+                  {currentApplication.point_7_references === "verified" ? "Portfolio Verified" : "Portfolio Rejected"}
+                </Badge>
+              )}
+            </div>
           </div>
-          <CardDescription className="text-[#b0b2bc]">Review submitted portfolio images</CardDescription>
         </CardHeader>
         <CardContent>
           {portfolioItems.length > 0 ? (
