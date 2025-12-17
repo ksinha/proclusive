@@ -82,14 +82,17 @@ export default function DirectoryClient({
         if (!matchesLocation) return false;
       }
 
-      // Badge filter
-      if (badgeFilter !== "all" && profile.badge_level !== badgeFilter) {
-        return false;
+      // Badge filter - check against all badges from userBadgesMap
+      if (badgeFilter !== "all") {
+        const profileBadges = userBadgesMap[profile.id] || (profile.badge_level !== "none" ? [profile.badge_level] : []);
+        if (!profileBadges.includes(badgeFilter as BadgeLevel)) {
+          return false;
+        }
       }
 
       return true;
     });
-  }, [profiles, searchQuery, tradeFilter, locationFilter, badgeFilter]);
+  }, [profiles, searchQuery, tradeFilter, locationFilter, badgeFilter, userBadgesMap]);
 
   return (
     <div className="min-h-screen" style={{ background: '#1a1d27' }}>
