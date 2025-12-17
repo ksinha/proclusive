@@ -72,7 +72,7 @@ export default function Navigation() {
                   variant="ghost"
                   size="sm"
                   onClick={signOut}
-                  className="text-gray-600 hover:text-gray-900"
+                  className="text-[#b0b2bc] hover:text-[#f8f8fa]"
                 >
                   <LogOut className="h-4 w-4 mr-1" />
                   Logout
