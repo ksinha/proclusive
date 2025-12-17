@@ -45,6 +45,12 @@ export default function Step4Review({
   });
   const hasAllRequiredDocs = missingDocs.length === 0;
 
+  // Portfolio validation - need at least 5 items with valid files
+  // File objects don't persist across page reloads, so we check for missing files
+  const portfolioItemsWithMissingFiles = safePortfolioItems.filter(item => !item.file);
+  const hasValidPortfolio = safePortfolioItems.length >= 5 && portfolioItemsWithMissingFiles.length === 0;
+  const portfolioNeedsReupload = safePortfolioItems.length > 0 && portfolioItemsWithMissingFiles.length > 0;
+
   // If businessInfo is not loaded yet, show loading state
   if (!businessInfo) {
     return (
@@ -104,6 +110,35 @@ export default function Step4Review({
                 className="mt-2 text-[13px] border-[#f87171] text-[#f87171] hover:bg-[rgba(248,113,113,0.1)]"
               >
                 Go Back to Upload Documents
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Missing Portfolio Warning */}
+      {!hasValidPortfolio && (
+        <Card hover={false} compact className="bg-[rgba(248,113,113,0.1)] border-[rgba(248,113,113,0.3)]">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-[#f87171] mt-0.5 flex-shrink-0" />
+            <div className="space-y-1">
+              <h3 className="text-[14px] font-medium text-[#f87171]">
+                {portfolioNeedsReupload ? "Portfolio Images Need Re-upload" : "Missing Portfolio Images"}
+              </h3>
+              <p className="text-[13px] text-[#b0b2bc]">
+                {portfolioNeedsReupload
+                  ? "Your portfolio images were not preserved. Please re-upload at least 5 portfolio images to continue."
+                  : `You need at least 5 portfolio images. Currently uploaded: ${safePortfolioItems.length}`
+                }
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onGoToStep(2)}
+                className="mt-2 text-[13px] border-[#f87171] text-[#f87171] hover:bg-[rgba(248,113,113,0.1)]"
+              >
+                Go Back to Upload Portfolio
               </Button>
             </div>
           </div>
@@ -356,7 +391,7 @@ export default function Step4Review({
         <Button
           type="button"
           onClick={onSubmit}
-          disabled={loading || !hasAllRequiredDocs}
+          disabled={loading || !hasAllRequiredDocs || !hasValidPortfolio}
           className="bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27] h-10 text-[14px] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
@@ -366,6 +401,8 @@ export default function Step4Review({
             </>
           ) : !hasAllRequiredDocs ? (
             "Upload Required Documents"
+          ) : !hasValidPortfolio ? (
+            "Upload Portfolio Images"
           ) : (
             "Submit Application"
           )}

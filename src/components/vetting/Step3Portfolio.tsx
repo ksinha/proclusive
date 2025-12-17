@@ -81,6 +81,13 @@ export default function Step3Portfolio({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Validate minimum 5 items
+    if (portfolioItems.length < 5) {
+      setError("Please upload at least 5 portfolio images");
+      return;
+    }
+
     onComplete(portfolioItems);
   };
 
@@ -88,10 +95,10 @@ export default function Step3Portfolio({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-[24px] font-semibold text-[#f8f8fa] mb-2">Portfolio <span className="text-[16px] font-normal text-[#6a6d78]">(Optional)</span></h2>
+        <h2 className="text-[24px] font-semibold text-[#f8f8fa] mb-2">Portfolio</h2>
         <p className="text-[14px] text-[#b0b2bc]">
-          Showcase your work by uploading high-quality images of your projects.
-          Adding portfolio images helps your profile stand out to other members.
+          Showcase your work by uploading at least 5 high-quality images of your
+          projects. Add descriptions to provide context about each project.
         </p>
       </div>
 
@@ -120,7 +127,7 @@ export default function Step3Portfolio({
               <div className="space-y-2">
                 <h3 className="text-[14px] font-medium text-[#b0b2bc]">Upload Portfolio Images</h3>
                 <p className="text-[13px] text-[#6a6d78]">
-                  {portfolioItems.length} image{portfolioItems.length !== 1 ? 's' : ''} uploaded
+                  {portfolioItems.length} / 5 minimum images uploaded
                 </p>
               </div>
               <Button
@@ -189,7 +196,8 @@ export default function Step3Portfolio({
         <Button
           type="submit"
           variant="default"
-          className="h-10 text-[14px] bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27]"
+          disabled={portfolioItems.length < 5}
+          className="h-10 text-[14px] bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27] disabled:bg-[rgba(201,169,98,0.3)]"
         >
           Continue
         </Button>
