@@ -545,6 +545,7 @@ export default function VettingWizard({
               portfolioItems={portfolioItems}
               tosAccepted={tosAccepted}
               onBack={() => setCurrentStep(4)}
+              onGoToStep={setCurrentStep}
               onSubmit={handleFinalSubmit}
               loading={loading}
             />

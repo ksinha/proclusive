@@ -13,6 +13,7 @@ interface Step4Props {
   portfolioItems: PortfolioItem[];
   tosAccepted: boolean;
   onBack: () => void;
+  onGoToStep: (step: number) => void;
   onSubmit: () => void;
   loading: boolean;
 }
@@ -23,6 +24,7 @@ export default function Step4Review({
   portfolioItems,
   tosAccepted,
   onBack,
+  onGoToStep,
   onSubmit,
   loading,
 }: Step4Props) {
@@ -98,7 +100,7 @@ export default function Step4Review({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => onBack()}
+                onClick={() => onGoToStep(3)}
                 className="mt-2 text-[13px] border-[#f87171] text-[#f87171] hover:bg-[rgba(248,113,113,0.1)]"
               >
                 Go Back to Upload Documents
@@ -313,7 +315,19 @@ export default function Step4Review({
               ))}
             </div>
           ) : (
-            <p className="text-[14px] text-[#6a6d78] italic">No portfolio items uploaded yet</p>
+            <div className="text-center py-4">
+              <ImageIcon className="h-10 w-10 mx-auto mb-3 text-[#6a6d78] opacity-50" />
+              <p className="text-[14px] text-[#6a6d78] mb-3">No portfolio items uploaded</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onGoToStep(2)}
+                className="text-[13px]"
+              >
+                Go Back to Upload Portfolio
+              </Button>
+            </div>
           )}
         </CardContent>
       </Card>
