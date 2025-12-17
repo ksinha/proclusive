@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { user, isAdmin, loading, signOut } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
 
   const isLoggedIn = !!user;
 
@@ -29,72 +29,68 @@ export default function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            {!loading && (
+            {isLoggedIn ? (
               <>
-                {isLoggedIn ? (
-                  <>
-                    <Link
-                      href="/directory"
-                      className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
-                        pathname === "/directory"
-                          ? "text-[#c9a962]"
-                          : "text-[#b0b2bc] hover:text-[#c9a962]"
-                      }`}
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Directory
-                      <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
-                        pathname === "/directory" ? "w-full" : "w-0 group-hover:w-full"
-                      }`}></span>
-                    </Link>
-                    <Link
-                      href={referralsLink}
-                      className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
-                        pathname.includes("/referrals")
-                          ? "text-[#c9a962]"
-                          : "text-[#b0b2bc] hover:text-[#c9a962]"
-                      }`}
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Referrals
-                      <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
-                        pathname.includes("/referrals") ? "w-full" : "w-0 group-hover:w-full"
-                      }`}></span>
-                    </Link>
-                    <Button asChild variant="cta">
-                      <Link href={dashboardLink}>Dashboard</Link>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={signOut}
-                      className="text-gray-600 hover:text-gray-900"
-                    >
-                      <LogOut className="h-4 w-4 mr-1" />
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/auth/login"
-                      className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
-                        pathname === "/auth/login"
-                          ? "text-[#c9a962]"
-                          : "text-[#b0b2bc] hover:text-[#c9a962]"
-                      }`}
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Login
-                      <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
-                        pathname === "/auth/login" ? "w-full" : "w-0 group-hover:w-full"
-                      }`}></span>
-                    </Link>
-                    <Button asChild variant="cta">
-                      <Link href="/auth/signup">Apply to Join</Link>
-                    </Button>
-                  </>
-                )}
+                <Link
+                  href="/directory"
+                  className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
+                    pathname === "/directory"
+                      ? "text-[#c9a962]"
+                      : "text-[#b0b2bc] hover:text-[#c9a962]"
+                  }`}
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  Directory
+                  <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
+                    pathname === "/directory" ? "w-full" : "w-0 group-hover:w-full"
+                  }`}></span>
+                </Link>
+                <Link
+                  href={referralsLink}
+                  className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
+                    pathname.includes("/referrals")
+                      ? "text-[#c9a962]"
+                      : "text-[#b0b2bc] hover:text-[#c9a962]"
+                  }`}
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  Referrals
+                  <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
+                    pathname.includes("/referrals") ? "w-full" : "w-0 group-hover:w-full"
+                  }`}></span>
+                </Link>
+                <Button asChild variant="cta">
+                  <Link href={dashboardLink}>Dashboard</Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={signOut}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <LogOut className="h-4 w-4 mr-1" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
+                    pathname === "/auth/login"
+                      ? "text-[#c9a962]"
+                      : "text-[#b0b2bc] hover:text-[#c9a962]"
+                  }`}
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  Login
+                  <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
+                    pathname === "/auth/login" ? "w-full" : "w-0 group-hover:w-full"
+                  }`}></span>
+                </Link>
+                <Button asChild variant="cta">
+                  <Link href="/auth/signup">Apply to Join</Link>
+                </Button>
               </>
             )}
           </div>
@@ -116,60 +112,56 @@ export default function Navigation() {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-[#21242f] border-t border-white/[0.08] py-3 space-y-3">
-            {!loading && (
+            {isLoggedIn ? (
               <>
-                {isLoggedIn ? (
-                  <>
-                    <Link
-                      href="/directory"
-                      className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
-                      onClick={() => setMobileMenuOpen(false)}
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Directory
-                    </Link>
-                    <Link
-                      href={referralsLink}
-                      className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
-                      onClick={() => setMobileMenuOpen(false)}
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Referrals
-                    </Link>
-                    <Button asChild variant="cta" className="w-full h-10">
-                      <Link href={dashboardLink} onClick={() => setMobileMenuOpen(false)}>
-                        Dashboard
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full h-10"
-                      onClick={() => {
-                        signOut();
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/auth/login"
-                      className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
-                      onClick={() => setMobileMenuOpen(false)}
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Login
-                    </Link>
-                    <Button asChild variant="cta" className="w-full h-10">
-                      <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
-                        Apply to Join
-                      </Link>
-                    </Button>
-                  </>
-                )}
+                <Link
+                  href="/directory"
+                  className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  Directory
+                </Link>
+                <Link
+                  href={referralsLink}
+                  className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  Referrals
+                </Link>
+                <Button asChild variant="cta" className="w-full h-10">
+                  <Link href={dashboardLink} onClick={() => setMobileMenuOpen(false)}>
+                    Dashboard
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full h-10"
+                  onClick={() => {
+                    signOut();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  Login
+                </Link>
+                <Button asChild variant="cta" className="w-full h-10">
+                  <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
+                    Apply to Join
+                  </Link>
+                </Button>
               </>
             )}
           </div>

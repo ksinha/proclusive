@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,8 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, Mail, CheckCircle2, ArrowLeft } from "lucide-react";
+import { AlertCircle, Mail, CheckCircle2, ArrowLeft, Check, X } from "lucide-react";
 import Link from "next/link";
+
+// Password requirements
+const PASSWORD_REQUIREMENTS = [
+  { key: "length", label: "At least 8 characters", test: (p: string) => p.length >= 8 },
+  { key: "uppercase", label: "One uppercase letter", test: (p: string) => /[A-Z]/.test(p) },
+  { key: "lowercase", label: "One lowercase letter", test: (p: string) => /[a-z]/.test(p) },
+  { key: "number", label: "One number", test: (p: string) => /[0-9]/.test(p) },
+  { key: "special", label: "One special character (!@#$%^&*)", test: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p) },
+];
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -18,9 +27,26 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+
+  // Check password strength
+  const passwordChecks = useMemo(() => {
+    return PASSWORD_REQUIREMENTS.map((req) => ({
+      ...req,
+      met: req.test(password),
+    }));
+  }, [password]);
+
+  const isPasswordStrong = passwordChecks.every((check) => check.met);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isPasswordStrong) {
+      setError("Please meet all password requirements");
+      return;
+    }
+
     console.log("[SignUpPage] Starting signup...");
     setLoading(true);
     setError(null);
@@ -251,10 +277,37 @@ export default function SignUpPage() {
                   type="password"
                   autoComplete="new-password"
                   required
-                  placeholder="Minimum 6 characters"
+                  placeholder="Create a strong password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setShowPasswordRequirements(true)}
                 />
+
+                {/* Password Requirements */}
+                {showPasswordRequirements && password.length > 0 && (
+                  <div className="rounded-lg p-3 mt-2" style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)'
+                  }}>
+                    <p className="text-xs font-medium mb-2" style={{ color: '#b0b2bc' }}>
+                      Password requirements:
+                    </p>
+                    <ul className="space-y-1">
+                      {passwordChecks.map((check) => (
+                        <li key={check.key} className="flex items-center gap-2 text-xs">
+                          {check.met ? (
+                            <Check className="h-3 w-3" style={{ color: '#22c55e' }} />
+                          ) : (
+                            <X className="h-3 w-3" style={{ color: '#6a6d78' }} />
+                          )}
+                          <span style={{ color: check.met ? '#22c55e' : '#6a6d78' }}>
+                            {check.label}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               {/* Error Display */}
@@ -282,11 +335,11 @@ export default function SignUpPage() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !isPasswordStrong}
                 variant="default"
                 className="w-full h-10 sm:h-11"
                 style={{
-                  background: '#c9a962',
+                  background: loading || !isPasswordStrong ? 'rgba(201, 169, 98, 0.5)' : '#c9a962',
                   color: '#1a1d27',
                   fontWeight: 500
                 }}
