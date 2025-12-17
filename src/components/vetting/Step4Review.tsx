@@ -87,64 +87,6 @@ export default function Step4Review({
         </div>
       </Card>
 
-      {/* Missing Documents Warning */}
-      {!hasAllRequiredDocs && (
-        <Card hover={false} compact className="bg-[rgba(248,113,113,0.1)] border-[rgba(248,113,113,0.3)]">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-[#f87171] mt-0.5 flex-shrink-0" />
-            <div className="space-y-1">
-              <h3 className="text-[14px] font-medium text-[#f87171]">Missing Required Documents</h3>
-              <p className="text-[13px] text-[#b0b2bc]">
-                You must upload the following documents before submitting:
-              </p>
-              <ul className="text-[13px] text-[#f87171] list-disc list-inside mt-1">
-                {missingDocs.map(doc => (
-                  <li key={doc}>{doc.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</li>
-                ))}
-              </ul>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => onGoToStep(3)}
-                className="mt-2 text-[13px] border-[#f87171] text-[#f87171] hover:bg-[rgba(248,113,113,0.1)]"
-              >
-                Go Back to Upload Documents
-              </Button>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {/* Missing Portfolio Warning */}
-      {!hasValidPortfolio && (
-        <Card hover={false} compact className="bg-[rgba(248,113,113,0.1)] border-[rgba(248,113,113,0.3)]">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-[#f87171] mt-0.5 flex-shrink-0" />
-            <div className="space-y-1">
-              <h3 className="text-[14px] font-medium text-[#f87171]">
-                {portfolioNeedsReupload ? "Portfolio Images Need Re-upload" : "Missing Portfolio Images"}
-              </h3>
-              <p className="text-[13px] text-[#b0b2bc]">
-                {portfolioNeedsReupload
-                  ? "Your portfolio images were not preserved. Please re-upload at least 5 portfolio images to continue."
-                  : `You need at least 5 portfolio images. Currently uploaded: ${safePortfolioItems.length}`
-                }
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => onGoToStep(2)}
-                className="mt-2 text-[13px] border-[#f87171] text-[#f87171] hover:bg-[rgba(248,113,113,0.1)]"
-              >
-                Go Back to Upload Portfolio
-              </Button>
-            </div>
-          </div>
-        </Card>
-      )}
-
       {/* Business Information */}
       <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
@@ -255,16 +197,123 @@ export default function Step4Review({
         </CardContent>
       </Card>
 
-      {/* Uploaded Documents */}
-      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
+      {/* Portfolio Items - appears before Documents to mirror form structure */}
+      <Card className={`${!hasValidPortfolio ? 'bg-[rgba(248,113,113,0.05)] border-[rgba(248,113,113,0.4)]' : 'bg-[#21242f] border-[rgba(255,255,255,0.08)]'}`}>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-[#c9a962]" />
-            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Uploaded Documents</CardTitle>
+            {!hasValidPortfolio ? (
+              <AlertCircle className="h-5 w-5 text-[#f87171]" />
+            ) : (
+              <ImageIcon className="h-5 w-5 text-[#c9a962]" />
+            )}
+            <CardTitle className={`text-[18px] font-semibold ${!hasValidPortfolio ? 'text-[#f87171]' : 'text-[#f8f8fa]'}`}>
+              Portfolio {!hasValidPortfolio && '- Action Required'}
+            </CardTitle>
           </div>
-          <CardDescription className="text-[13px] text-[#b0b2bc]">{documentCount} documents uploaded</CardDescription>
+          <CardDescription className="text-[13px] text-[#b0b2bc]">
+            {hasValidPortfolio
+              ? `${safePortfolioItems.length} items uploaded`
+              : portfolioNeedsReupload
+                ? 'Portfolio images need to be re-uploaded'
+                : `${safePortfolioItems.length} of 5 minimum images uploaded`
+            }
+          </CardDescription>
         </CardHeader>
         <CardContent>
+          {!hasValidPortfolio && (
+            <div className="mb-4 p-3 rounded-md bg-[rgba(248,113,113,0.1)] border border-[rgba(248,113,113,0.2)]">
+              <p className="text-[13px] text-[#f87171] mb-2">
+                {portfolioNeedsReupload
+                  ? 'Your portfolio images were not preserved. Please re-upload at least 5 portfolio images to continue.'
+                  : `You need at least 5 portfolio images to submit your application.`
+                }
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onGoToStep(2)}
+                className="text-[13px] border-[#f87171] text-[#f87171] hover:bg-[rgba(248,113,113,0.1)]"
+              >
+                Go Back to Upload Portfolio
+              </Button>
+            </div>
+          )}
+          {safePortfolioItems.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              {safePortfolioItems.map((item, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="aspect-video bg-[#1a1d27] rounded-lg overflow-hidden border border-[rgba(255,255,255,0.08)] flex items-center justify-center">
+                    {item.file ? (
+                      <img
+                        src={URL.createObjectURL(item.file)}
+                        alt={`Portfolio ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-[#6a6d78] text-center p-4">
+                        <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-[12px]">Image preview unavailable</p>
+                      </div>
+                    )}
+                  </div>
+                  {item.description && (
+                    <p className="text-[13px] text-[#b0b2bc]">{item.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : !hasValidPortfolio ? null : (
+            <div className="text-center py-4">
+              <ImageIcon className="h-10 w-10 mx-auto mb-3 text-[#6a6d78] opacity-50" />
+              <p className="text-[14px] text-[#6a6d78]">No portfolio items uploaded</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Uploaded Documents */}
+      <Card className={`${!hasAllRequiredDocs ? 'bg-[rgba(248,113,113,0.05)] border-[rgba(248,113,113,0.4)]' : 'bg-[#21242f] border-[rgba(255,255,255,0.08)]'}`}>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            {!hasAllRequiredDocs ? (
+              <AlertCircle className="h-5 w-5 text-[#f87171]" />
+            ) : (
+              <FileText className="h-5 w-5 text-[#c9a962]" />
+            )}
+            <CardTitle className={`text-[18px] font-semibold ${!hasAllRequiredDocs ? 'text-[#f87171]' : 'text-[#f8f8fa]'}`}>
+              Uploaded Documents {!hasAllRequiredDocs && '- Action Required'}
+            </CardTitle>
+          </div>
+          <CardDescription className="text-[13px] text-[#b0b2bc]">
+            {hasAllRequiredDocs
+              ? `${documentCount} documents uploaded`
+              : `${missingDocs.length} required document${missingDocs.length > 1 ? 's' : ''} missing`
+            }
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {!hasAllRequiredDocs && (
+            <div className="mb-4 p-3 rounded-md bg-[rgba(248,113,113,0.1)] border border-[rgba(248,113,113,0.2)]">
+              <p className="text-[13px] text-[#b0b2bc] mb-2">
+                You must upload the following documents before submitting:
+              </p>
+              <ul className="text-[13px] text-[#f87171] list-disc list-inside mb-2">
+                {missingDocs.map(doc => (
+                  <li key={doc}>{doc.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</li>
+                ))}
+              </ul>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onGoToStep(3)}
+                className="text-[13px] border-[#f87171] text-[#f87171] hover:bg-[rgba(248,113,113,0.1)]"
+              >
+                Go Back to Upload Documents
+              </Button>
+            </div>
+          )}
           <ul className="space-y-3">
             {documents.business_registration && documents.business_registration.length > 0 && (
               <li className="flex items-center gap-2 text-[14px]">
@@ -308,62 +357,10 @@ export default function Step4Review({
                 <span className="text-[#b0b2bc]">{documents.tax_compliance.map(f => f.name).join(', ')}</span>
               </li>
             )}
-            {documentCount === 0 && (
+            {documentCount === 0 && hasAllRequiredDocs && (
               <li className="text-[14px] text-[#6a6d78] italic">No documents uploaded yet</li>
             )}
           </ul>
-        </CardContent>
-      </Card>
-
-      {/* Portfolio Items */}
-      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <ImageIcon className="h-5 w-5 text-[#c9a962]" />
-            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Portfolio</CardTitle>
-          </div>
-          <CardDescription className="text-[13px] text-[#b0b2bc]">{safePortfolioItems.length} items uploaded</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {safePortfolioItems.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4">
-              {safePortfolioItems.map((item, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="aspect-video bg-[#1a1d27] rounded-lg overflow-hidden border border-[rgba(255,255,255,0.08)] flex items-center justify-center">
-                    {item.file ? (
-                      <img
-                        src={URL.createObjectURL(item.file)}
-                        alt={`Portfolio ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="text-[#6a6d78] text-center p-4">
-                        <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p className="text-[12px]">Image preview unavailable</p>
-                      </div>
-                    )}
-                  </div>
-                  {item.description && (
-                    <p className="text-[13px] text-[#b0b2bc]">{item.description}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-4">
-              <ImageIcon className="h-10 w-10 mx-auto mb-3 text-[#6a6d78] opacity-50" />
-              <p className="text-[14px] text-[#6a6d78] mb-3">No portfolio items uploaded</p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => onGoToStep(2)}
-                className="text-[13px]"
-              >
-                Go Back to Upload Portfolio
-              </Button>
-            </div>
-          )}
         </CardContent>
       </Card>
 
