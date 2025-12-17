@@ -542,6 +542,7 @@ export default function VettingWizard({
             <Step5Review
               businessInfo={businessInfo!}
               documents={documents}
+              portfolioItems={portfolioItems}
               tosAccepted={tosAccepted}
               onBack={() => setCurrentStep(4)}
               onSubmit={handleFinalSubmit}
