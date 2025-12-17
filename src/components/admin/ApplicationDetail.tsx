@@ -51,7 +51,6 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const [selectedBadges, setSelectedBadges] = useState<BadgeLevel[]>(
     application.profile.badge_level !== "none" ? [application.profile.badge_level] : []
   );
-  const [profileVerified, setProfileVerified] = useState<boolean | null>(null);
   const [adminNotes, setAdminNotes] = useState(application.admin_notes || "");
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -284,13 +283,32 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   };
 
   const tier1Points = [
+    { key: "point_8_certifications", label: "Profile Verification", value: currentApplication.point_8_certifications },
     { key: "point_1_business_reg", label: "Business Registration", value: currentApplication.point_1_business_reg },
     { key: "point_2_prof_license", label: "Professional License", value: currentApplication.point_2_prof_license },
     { key: "point_3_liability_ins", label: "Liability Insurance", value: currentApplication.point_3_liability_ins },
     { key: "point_4_workers_comp", label: "Workers' Compensation", value: currentApplication.point_4_workers_comp },
     { key: "point_5_contact_verify", label: "Contact Verification", value: currentApplication.point_5_contact_verify },
+    { key: "point_7_references", label: "Tax Compliance (W-9)", value: currentApplication.point_7_references },
     { key: "point_6_portfolio", label: "Portfolio", value: currentApplication.point_6_portfolio },
   ];
+
+  // Document type order matching verification points
+  const documentTypeOrder: Record<string, number> = {
+    business_registration: 1,
+    professional_license: 2,
+    liability_insurance: 3,
+    workers_comp: 4,
+    contact_verification: 5,
+    tax_compliance: 6,
+  };
+
+  // Sort documents by verification point order
+  const sortedDocuments = [...documents].sort((a, b) => {
+    const orderA = documentTypeOrder[a.document_type] || 99;
+    const orderB = documentTypeOrder[b.document_type] || 99;
+    return orderA - orderB;
+  });
 
   const getInitials = (name: string) => {
     return name
@@ -365,10 +383,11 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
               <CardTitle className="text-white">Profile Information</CardTitle>
             </div>
             <div className="flex items-center gap-2">
-              {profileVerified === null ? (
+              {currentApplication.point_8_certifications === "pending" || currentApplication.point_8_certifications === "not_submitted" ? (
                 <>
                   <Button
-                    onClick={() => setProfileVerified(true)}
+                    onClick={() => handleVerifyPoint("point_8_certifications", "verified")}
+                    disabled={loading}
                     size="sm"
                     variant="default"
                     className="gap-1"
@@ -377,7 +396,8 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
                     Verify Profile
                   </Button>
                   <Button
-                    onClick={() => setProfileVerified(false)}
+                    onClick={() => handleVerifyPoint("point_8_certifications", "rejected")}
+                    disabled={loading}
                     size="sm"
                     variant="destructive"
                     className="gap-1"
@@ -387,8 +407,8 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
                   </Button>
                 </>
               ) : (
-                <Badge variant={profileVerified ? "success" : "destructive"} size="lg">
-                  {profileVerified ? "Profile Verified" : "Profile Rejected"}
+                <Badge variant={currentApplication.point_8_certifications === "verified" ? "success" : "destructive"} size="lg">
+                  {currentApplication.point_8_certifications === "verified" ? "Profile Verified" : "Profile Rejected"}
                 </Badge>
               )}
             </div>
@@ -506,9 +526,9 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
           <CardDescription className="text-[#b0b2bc]">Review submitted documentation files</CardDescription>
         </CardHeader>
         <CardContent>
-          {documents.length > 0 ? (
+          {sortedDocuments.length > 0 ? (
             <div className="space-y-2">
-              {documents.map((doc) => (
+              {sortedDocuments.map((doc) => (
                 <div
                   key={doc.id}
                   className="flex items-center justify-between p-4 rounded-lg"

@@ -63,12 +63,14 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
 
   const getTier1Progress = (app: Application) => {
     const tier1Points = [
-      app.point_1_business_reg,
-      app.point_2_prof_license,
-      app.point_3_liability_ins,
-      app.point_4_workers_comp,
-      app.point_5_contact_verify,
-      app.point_6_portfolio,
+      app.point_8_certifications,  // Profile Verification
+      app.point_1_business_reg,    // Business Registration
+      app.point_2_prof_license,    // Professional License
+      app.point_3_liability_ins,   // Liability Insurance
+      app.point_4_workers_comp,    // Workers' Compensation
+      app.point_5_contact_verify,  // Contact Verification
+      app.point_7_references,      // Tax Compliance (W-9)
+      app.point_6_portfolio,       // Portfolio
     ];
 
     const submitted = tier1Points.filter((p) => p !== "not_submitted").length;
