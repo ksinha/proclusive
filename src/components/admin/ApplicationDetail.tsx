@@ -289,6 +289,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
     { key: "point_3_liability_ins", label: "Liability Insurance", value: currentApplication.point_3_liability_ins },
     { key: "point_4_workers_comp", label: "Workers' Compensation", value: currentApplication.point_4_workers_comp },
     { key: "point_5_contact_verify", label: "Contact Verification", value: currentApplication.point_5_contact_verify },
+    { key: "point_6_portfolio", label: "Portfolio", value: currentApplication.point_6_portfolio },
   ];
 
   const getInitials = (name: string) => {

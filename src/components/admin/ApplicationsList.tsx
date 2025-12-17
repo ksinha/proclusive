@@ -68,12 +68,13 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
       app.point_3_liability_ins,
       app.point_4_workers_comp,
       app.point_5_contact_verify,
+      app.point_6_portfolio,
     ];
 
     const submitted = tier1Points.filter((p) => p !== "not_submitted").length;
     const verified = tier1Points.filter((p) => p === "verified").length;
 
-    return { submitted, verified, total: 5 };
+    return { submitted, verified, total: tier1Points.length };
   };
 
   const getInitials = (name: string) => {
