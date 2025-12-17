@@ -69,7 +69,10 @@ export default function MemberDashboard({
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userBadges, setUserBadges] = useState<BadgeLevel[]>([]);
+  // Initialize with profile.badge_level immediately to avoid flash of empty state
+  const [userBadges, setUserBadges] = useState<BadgeLevel[]>(
+    profile?.badge_level && profile.badge_level !== "none" ? [profile.badge_level] : []
+  );
   const [formData, setFormData] = useState<EditFormData>({
     full_name: profile?.full_name || "",
     phone: profile?.phone || "",

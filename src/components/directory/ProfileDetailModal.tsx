@@ -33,7 +33,10 @@ export default function ProfileDetailModal({
     Record<string, string>
   >({});
   const [loading, setLoading] = useState(true);
-  const [userBadges, setUserBadges] = useState<BadgeLevel[]>([]);
+  // Initialize with profile.badge_level immediately to avoid flash of empty state
+  const [userBadges, setUserBadges] = useState<BadgeLevel[]>(
+    profile.badge_level !== "none" ? [profile.badge_level] : []
+  );
 
   useEffect(() => {
     async function fetchData() {

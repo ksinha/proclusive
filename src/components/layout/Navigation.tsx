@@ -11,11 +11,12 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAdmin, isVerified, signOut } = useAuth();
+  const { user, isAdmin, isVerified, loading, signOut } = useAuth();
 
   const isLoggedIn = !!user;
   // Only show Directory and Referrals to verified/approved users or admins
-  const canAccessMemberFeatures = isVerified || isAdmin;
+  // During loading, show optimistically if user is logged in (they're likely verified if on dashboard)
+  const canAccessMemberFeatures = (loading && isLoggedIn) || isVerified || isAdmin;
 
   // Determine the correct links based on role
   const dashboardLink = isAdmin ? "/admin/dashboard" : "/dashboard";
