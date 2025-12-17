@@ -278,9 +278,9 @@ export default function VettingWizard({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#1a1d27]">
       {/* Clean Progress Stepper */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[#252833] border-b border-[rgba(255,255,255,0.08)]">
         <div className="container max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {STEPS.map((step, index) => (
@@ -289,10 +289,10 @@ export default function VettingWizard({
                   <div
                     className={`rounded-full w-8 h-8 flex items-center justify-center ${
                       step.id === currentStep
-                        ? "bg-blue-600 text-white text-[13px] font-semibold"
+                        ? "bg-[#c9a962] text-[#1a1d27] text-[13px] font-semibold"
                         : step.id < currentStep
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-200 text-gray-500 text-[13px]"
+                        ? "bg-[#22c55e] text-white"
+                        : "bg-[#21242f] text-[#6a6d78] text-[13px] border border-[rgba(255,255,255,0.08)]"
                     }`}
                   >
                     {step.id < currentStep ? (
@@ -304,10 +304,10 @@ export default function VettingWizard({
                   <span
                     className={`mt-2 text-[13px] font-medium text-center max-w-[100px] ${
                       step.id === currentStep
-                        ? "text-gray-900"
+                        ? "text-[#f8f8fa]"
                         : step.id < currentStep
-                        ? "text-green-700"
-                        : "text-gray-500"
+                        ? "text-[#22c55e]"
+                        : "text-[#6a6d78]"
                     }`}
                   >
                     {step.name}
@@ -316,7 +316,7 @@ export default function VettingWizard({
                 {index < STEPS.length - 1 && (
                   <div
                     className={`flex-1 h-0.5 mx-2 ${
-                      step.id < currentStep ? "bg-green-600" : "bg-gray-200"
+                      step.id < currentStep ? "bg-[#22c55e]" : "bg-[rgba(255,255,255,0.08)]"
                     }`}
                   />
                 )}
@@ -330,14 +330,14 @@ export default function VettingWizard({
       <div className="container max-w-3xl mx-auto px-6 py-8">
         {/* Error Display */}
         {error && (
-          <Card className="border-red-200 bg-red-50 mb-6">
+          <Card className="border-[rgba(248,113,113,0.3)] bg-[rgba(248,113,113,0.1)] mb-6">
             <div className="p-4">
-              <p className="text-red-700 font-medium text-[14px]">{error}</p>
+              <p className="text-[#f87171] font-medium text-[14px]">{error}</p>
             </div>
           </Card>
         )}
 
-        <Card className="bg-white p-8">
+        <Card className="bg-[#252833] border-[rgba(255,255,255,0.08)] p-8">
           {currentStep === 1 && (
             <Step1BusinessInfo
               onComplete={handleStep1Complete}

@@ -110,10 +110,10 @@ export default function VettingPage() {
   // Show loading while auth is being checked or application is being checked
   if (authLoading || checkingApplication || hasApprovedApplication) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#1a1d27]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#c9a962] mx-auto"></div>
+          <p className="mt-4 text-[#b0b2bc]">Loading...</p>
         </div>
       </div>
     );
@@ -127,24 +127,24 @@ export default function VettingPage() {
   // Show pending/under review status
   if (hasPendingApplication && existingData && !showEditMode) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-[#1a1d27] py-8">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="border-blue-200 bg-blue-50">
+          <Card className="border-[rgba(201,169,98,0.3)] bg-[#252833]">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <Clock className="h-8 w-8 text-blue-600" />
+              <div className="mx-auto w-16 h-16 bg-[rgba(201,169,98,0.15)] rounded-full flex items-center justify-center mb-4">
+                <Clock className="h-8 w-8 text-[#c9a962]" />
               </div>
-              <CardTitle className="text-2xl text-blue-900">Application Under Review</CardTitle>
-              <CardDescription className="text-blue-700 text-base mt-2">
+              <CardTitle className="text-2xl text-[#f8f8fa]">Application Under Review</CardTitle>
+              <CardDescription className="text-[#b0b2bc] text-base mt-2">
                 Your application has been submitted and is currently being reviewed by our team.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-blue-800 mb-4">
+              <p className="text-[#b0b2bc] mb-4">
                 We'll notify you by email once your application has been reviewed.
                 This typically takes 1-2 business days.
               </p>
-              <Badge variant="info" size="lg">
+              <Badge variant="warning" size="lg">
                 Status: {existingData.application.status === "pending" ? "Pending Review" : "Under Review"}
               </Badge>
             </CardContent>
@@ -165,19 +165,17 @@ export default function VettingPage() {
       { key: "point_6_portfolio", status: existingData.application.point_6_portfolio },
     ];
 
-    const rejectedPoints = verificationPoints.filter(p => p.status === "rejected");
-
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-[#1a1d27] py-8">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Header Card */}
-          <Card className="border-red-200 bg-red-50">
+          <Card className="border-[rgba(248,113,113,0.3)] bg-[#252833]">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <AlertTriangle className="h-8 w-8 text-red-600" />
+              <div className="mx-auto w-16 h-16 bg-[rgba(248,113,113,0.15)] rounded-full flex items-center justify-center mb-4">
+                <AlertTriangle className="h-8 w-8 text-[#f87171]" />
               </div>
-              <CardTitle className="text-2xl text-red-900">Application Needs Updates</CardTitle>
-              <CardDescription className="text-red-700 text-base mt-2">
+              <CardTitle className="text-2xl text-[#f8f8fa]">Application Needs Updates</CardTitle>
+              <CardDescription className="text-[#b0b2bc] text-base mt-2">
                 Your application was reviewed and requires some corrections before it can be approved.
               </CardDescription>
             </CardHeader>
@@ -185,23 +183,23 @@ export default function VettingPage() {
 
           {/* Admin Notes */}
           {existingData.application.admin_notes && (
-            <Card>
+            <Card className="bg-[#252833] border-[rgba(255,255,255,0.08)]">
               <CardHeader>
-                <CardTitle className="text-lg">What Needs to be Fixed</CardTitle>
+                <CardTitle className="text-lg text-[#f8f8fa]">What Needs to be Fixed</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <p className="text-amber-900 whitespace-pre-wrap">{existingData.application.admin_notes}</p>
+                <div className="bg-[rgba(201,169,98,0.1)] border border-[rgba(201,169,98,0.3)] rounded-lg p-4">
+                  <p className="text-[#c9a962] whitespace-pre-wrap">{existingData.application.admin_notes}</p>
                 </div>
               </CardContent>
             </Card>
           )}
 
           {/* Verification Status */}
-          <Card>
+          <Card className="bg-[#252833] border-[rgba(255,255,255,0.08)]">
             <CardHeader>
-              <CardTitle className="text-lg">Verification Status</CardTitle>
-              <CardDescription>Items that need attention are highlighted</CardDescription>
+              <CardTitle className="text-lg text-[#f8f8fa]">Verification Status</CardTitle>
+              <CardDescription className="text-[#b0b2bc]">Items that need attention are highlighted</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -212,19 +210,19 @@ export default function VettingPage() {
 
                   switch (point.status) {
                     case "verified":
-                      statusIcon = <CheckCircle2 className="h-5 w-5 text-green-600" />;
+                      statusIcon = <CheckCircle2 className="h-5 w-5 text-[#22c55e]" />;
                       statusBadge = <Badge variant="success">Approved</Badge>;
                       break;
                     case "rejected":
-                      statusIcon = <XCircle className="h-5 w-5 text-red-600" />;
+                      statusIcon = <XCircle className="h-5 w-5 text-[#f87171]" />;
                       statusBadge = <Badge variant="destructive">Needs Revision</Badge>;
                       break;
                     case "pending":
-                      statusIcon = <Clock className="h-5 w-5 text-yellow-600" />;
+                      statusIcon = <Clock className="h-5 w-5 text-[#c9a962]" />;
                       statusBadge = <Badge variant="warning">Pending</Badge>;
                       break;
                     default:
-                      statusIcon = <div className="h-5 w-5 rounded-full border-2 border-gray-300" />;
+                      statusIcon = <div className="h-5 w-5 rounded-full border-2 border-[#6a6d78]" />;
                       statusBadge = <Badge variant="secondary">Not Submitted</Badge>;
                   }
 
@@ -232,12 +230,14 @@ export default function VettingPage() {
                     <div
                       key={point.key}
                       className={`flex items-center justify-between p-3 rounded-lg border ${
-                        point.status === "rejected" ? "bg-red-50 border-red-200" : "bg-gray-50"
+                        point.status === "rejected"
+                          ? "bg-[rgba(248,113,113,0.1)] border-[rgba(248,113,113,0.3)]"
+                          : "bg-[#21242f] border-[rgba(255,255,255,0.08)]"
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         {statusIcon}
-                        <span className="font-medium text-gray-900">{label}</span>
+                        <span className="font-medium text-[#f8f8fa]">{label}</span>
                       </div>
                       {statusBadge}
                     </div>
@@ -248,17 +248,17 @@ export default function VettingPage() {
           </Card>
 
           {/* Action Button */}
-          <Card>
+          <Card className="bg-[#252833] border-[rgba(255,255,255,0.08)]">
             <CardContent className="pt-6">
               <Button
                 onClick={() => setShowEditMode(true)}
-                className="w-full h-12 text-base"
+                className="w-full h-12 text-base bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27]"
                 size="lg"
               >
                 Fix My Application
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <p className="text-center text-sm text-gray-500 mt-3">
+              <p className="text-center text-sm text-[#6a6d78] mt-3">
                 You'll be able to update your information and resubmit for review
               </p>
             </CardContent>
@@ -270,13 +270,13 @@ export default function VettingPage() {
 
   // Show vetting wizard (new application or edit mode)
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#1a1d27] py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-[#f8f8fa]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
             {existingData ? "Update Your Application" : "Vetting Application"}
           </h1>
-          <p className="mt-2 text-lg text-gray-600">
+          <p className="mt-2 text-lg text-[#b0b2bc]">
             {existingData
               ? "Make the necessary corrections and resubmit for review"
               : "Complete your verification to join the Proclusive network"}

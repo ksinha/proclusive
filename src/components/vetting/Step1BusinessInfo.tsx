@@ -84,18 +84,18 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Personal Information */}
-      <Card className="bg-white">
+      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Info className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Personal Information</CardTitle>
+            <Info className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Personal Information</CardTitle>
           </div>
-          <CardDescription className="text-[14px] text-gray-600">Your contact details for the application</CardDescription>
+          <CardDescription className="text-[14px] text-[#b0b2bc]">Your contact details for the application</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="full_name" className="text-[13px] font-medium text-gray-700">Full Name *</Label>
+              <Label htmlFor="full_name" className="text-[13px] font-medium text-[#b0b2bc]">Full Name *</Label>
               <Input
                 type="text"
                 name="full_name"
@@ -103,12 +103,11 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 required
                 value={formData.full_name}
                 onChange={handleChange}
-                className="h-10"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-[13px] font-medium text-gray-700">Phone Number *</Label>
+              <Label htmlFor="phone" className="text-[13px] font-medium text-[#b0b2bc]">Phone Number *</Label>
               <Input
                 type="tel"
                 name="phone"
@@ -116,7 +115,6 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 required
                 value={formData.phone}
                 onChange={handleChange}
-                className="h-10"
               />
             </div>
           </div>
@@ -124,17 +122,17 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
       </Card>
 
       {/* Business Information */}
-      <Card className="bg-white">
+      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Business Information</CardTitle>
+            <Building2 className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Business Information</CardTitle>
           </div>
-          <CardDescription className="text-[14px] text-gray-600">Tell us about your company and expertise</CardDescription>
+          <CardDescription className="text-[14px] text-[#b0b2bc]">Tell us about your company and expertise</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="company_name" className="text-[13px] font-medium text-gray-700">Company Name *</Label>
+            <Label htmlFor="company_name" className="text-[13px] font-medium text-[#b0b2bc]">Company Name *</Label>
             <Input
               type="text"
               name="company_name"
@@ -142,20 +140,18 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
               required
               value={formData.company_name}
               onChange={handleChange}
-              className="h-10"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="primary_trade" className="text-[13px] font-medium text-gray-700">Primary Trade *</Label>
+              <Label htmlFor="primary_trade" className="text-[13px] font-medium text-[#b0b2bc]">Primary Trade *</Label>
               <Select
                 name="primary_trade"
                 id="primary_trade"
                 required
                 value={formData.primary_trade}
                 onChange={handleChange}
-                className="h-10"
               >
                 <option value="">Select a trade</option>
                 {TRADE_OPTIONS.map((trade) => (
@@ -167,7 +163,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="business_type" className="text-[13px] font-medium text-gray-700">Business Type</Label>
+              <Label htmlFor="business_type" className="text-[13px] font-medium text-[#b0b2bc]">Business Type</Label>
               <Input
                 type="text"
                 name="business_type"
@@ -175,14 +171,13 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 placeholder="e.g., LLC, Corporation, Sole Proprietor"
                 value={formData.business_type}
                 onChange={handleChange}
-                className="h-10"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="years_in_business" className="text-[13px] font-medium text-gray-700">Years in Business</Label>
+              <Label htmlFor="years_in_business" className="text-[13px] font-medium text-[#b0b2bc]">Years in Business</Label>
               <Input
                 type="number"
                 name="years_in_business"
@@ -190,18 +185,16 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 min="0"
                 value={formData.years_in_business}
                 onChange={handleChange}
-                className="h-10"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="team_size" className="text-[13px] font-medium text-gray-700">Team Size</Label>
+              <Label htmlFor="team_size" className="text-[13px] font-medium text-[#b0b2bc]">Team Size</Label>
               <Select
                 name="team_size"
                 id="team_size"
                 value={formData.team_size}
                 onChange={handleChange}
-                className="h-10"
               >
                 <option value="">Select team size</option>
                 {TEAM_SIZE_OPTIONS.map((size) => (
@@ -214,7 +207,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="service_areas" className="text-[13px] font-medium text-gray-700">Service Areas (comma-separated)</Label>
+            <Label htmlFor="service_areas" className="text-[13px] font-medium text-[#b0b2bc]">Service Areas (comma-separated)</Label>
             <Input
               type="text"
               name="service_areas"
@@ -222,13 +215,12 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
               placeholder="e.g., Washington DC, Maryland, Virginia"
               value={formData.service_areas.join(", ")}
               onChange={handleServiceAreasChange}
-              className="h-10"
             />
-            <p className="text-[12px] text-gray-500">Enter cities or regions where you provide services</p>
+            <p className="text-[12px] text-[#6a6d78]">Enter cities or regions where you provide services</p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bio" className="text-[13px] font-medium text-gray-700">Company Bio</Label>
+            <Label htmlFor="bio" className="text-[13px] font-medium text-[#b0b2bc]">Company Bio</Label>
             <Textarea
               name="bio"
               id="bio"
@@ -241,7 +233,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="website" className="text-[13px] font-medium text-gray-700">Website</Label>
+              <Label htmlFor="website" className="text-[13px] font-medium text-[#b0b2bc]">Website</Label>
               <Input
                 type="text"
                 name="website"
@@ -249,12 +241,11 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 placeholder="yourcompany.com"
                 value={formData.website}
                 onChange={handleChange}
-                className="h-10"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="linkedin_url" className="text-[13px] font-medium text-gray-700">LinkedIn Profile</Label>
+              <Label htmlFor="linkedin_url" className="text-[13px] font-medium text-[#b0b2bc]">LinkedIn Profile</Label>
               <Input
                 type="text"
                 name="linkedin_url"
@@ -262,7 +253,6 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 placeholder="linkedin.com/in/yourprofile"
                 value={formData.linkedin_url}
                 onChange={handleChange}
-                className="h-10"
               />
             </div>
           </div>
@@ -270,48 +260,45 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
       </Card>
 
       {/* Business Address */}
-      <Card className="bg-white">
+      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Business Address</CardTitle>
+            <MapPin className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Business Address</CardTitle>
           </div>
-          <CardDescription className="text-[14px] text-gray-600">Where is your business located?</CardDescription>
+          <CardDescription className="text-[14px] text-[#b0b2bc]">Where is your business located?</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="street_address" className="text-[13px] font-medium text-gray-700">Street Address</Label>
+            <Label htmlFor="street_address" className="text-[13px] font-medium text-[#b0b2bc]">Street Address</Label>
             <Input
               type="text"
               name="street_address"
               id="street_address"
               value={formData.street_address}
               onChange={handleChange}
-              className="h-10"
             />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="city" className="text-[13px] font-medium text-gray-700">City</Label>
+              <Label htmlFor="city" className="text-[13px] font-medium text-[#b0b2bc]">City</Label>
               <Input
                 type="text"
                 name="city"
                 id="city"
                 value={formData.city}
                 onChange={handleChange}
-                className="h-10"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="state" className="text-[13px] font-medium text-gray-700">State</Label>
+              <Label htmlFor="state" className="text-[13px] font-medium text-[#b0b2bc]">State</Label>
               <Select
                 name="state"
                 id="state"
                 value={formData.state}
                 onChange={handleChange}
-                className="h-10"
               >
                 <option value="">Select state</option>
                 {US_STATES.map((state) => (
@@ -323,14 +310,13 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="zip_code" className="text-[13px] font-medium text-gray-700">ZIP Code</Label>
+              <Label htmlFor="zip_code" className="text-[13px] font-medium text-[#b0b2bc]">ZIP Code</Label>
               <Input
                 type="text"
                 name="zip_code"
                 id="zip_code"
                 value={formData.zip_code}
                 onChange={handleChange}
-                className="h-10"
               />
             </div>
           </div>
@@ -338,22 +324,22 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
       </Card>
 
       {/* Tax Compliance */}
-      <Card className="bg-white border-blue-100">
+      <Card className="bg-[#21242f] border-[rgba(201,169,98,0.2)]">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Tax Compliance</CardTitle>
+            <Shield className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Tax Compliance</CardTitle>
           </div>
-          <CardDescription className="text-[14px] text-gray-600">Secure tax identification information</CardDescription>
+          <CardDescription className="text-[14px] text-[#b0b2bc]">Secure tax identification information</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Card className="bg-blue-50 border-blue-200">
+          <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
             <CardContent className="pt-4">
               <div className="flex items-start gap-3">
-                <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <Info className="h-5 w-5 text-[#c9a962] mt-0.5 flex-shrink-0" />
                 <div className="space-y-1">
-                  <p className="text-[13px] font-medium text-blue-900">Your information is secure</p>
-                  <p className="text-[13px] text-blue-800">
+                  <p className="text-[13px] font-medium text-[#c9a962]">Your information is secure</p>
+                  <p className="text-[13px] text-[#b0b2bc]">
                     Your TIN is encrypted and stored securely. This information will never be
                     displayed publicly and is only accessible to authorized administrators for
                     compliance purposes.
@@ -364,7 +350,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
           </Card>
 
           <div className="space-y-2">
-            <Label htmlFor="tin_number" className="text-[13px] font-medium text-gray-700">Tax Identification Number (TIN / EIN) *</Label>
+            <Label htmlFor="tin_number" className="text-[13px] font-medium text-[#b0b2bc]">Tax Identification Number (TIN / EIN) *</Label>
             <Input
               type="text"
               name="tin_number"
@@ -386,9 +372,8 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 }
                 setFormData((prev) => ({ ...prev, tin_number: formatted }));
               }}
-              className="h-10"
             />
-            <p className="text-[12px] text-gray-500">
+            <p className="text-[12px] text-[#6a6d78]">
               Format: XX-XXXXXXX (9 digits). You'll upload your W-9 form in the next step.
             </p>
           </div>
@@ -396,16 +381,16 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
       </Card>
 
       {/* Profile Settings */}
-      <Card className="bg-white border-blue-100">
+      <Card className="bg-[#21242f] border-[rgba(201,169,98,0.2)]">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Eye className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-[18px] font-semibold text-gray-900">Profile Settings</CardTitle>
+            <Eye className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Profile Settings</CardTitle>
           </div>
-          <CardDescription className="text-[14px] text-gray-600">Control your profile visibility</CardDescription>
+          <CardDescription className="text-[14px] text-[#b0b2bc]">Control your profile visibility</CardDescription>
         </CardHeader>
         <CardContent>
-          <Card className="bg-blue-50 border-blue-200">
+          <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
             <CardContent className="pt-4">
               <div className="flex items-start gap-3">
                 <input
@@ -416,13 +401,13 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, is_public: e.target.checked }))
                   }
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-1"
+                  className="h-4 w-4 rounded border-[rgba(255,255,255,0.2)] bg-[#21242f] text-[#c9a962] focus:ring-[#c9a962] mt-1"
                 />
                 <div className="space-y-1">
-                  <Label htmlFor="is_public" className="text-[14px] font-medium text-gray-900 cursor-pointer">
+                  <Label htmlFor="is_public" className="text-[14px] font-medium text-[#f8f8fa] cursor-pointer">
                     Make my profile visible in the Member Directory
                   </Label>
-                  <p className="text-[13px] text-gray-700">
+                  <p className="text-[13px] text-[#b0b2bc]">
                     When enabled, verified members can view your profile, portfolio, and contact
                     information in the directory. Your sensitive documents (W-9, insurance, etc.)
                     are never shown publicly. You can change this setting later.
@@ -434,9 +419,9 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+      <div className="flex items-center justify-between mt-8 pt-6 border-t border-[rgba(255,255,255,0.08)]">
         <div></div>
-        <Button type="submit" variant="default" className="h-10 text-[14px]">
+        <Button type="submit" variant="default" className="h-10 text-[14px] bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27]">
           Continue to Portfolio
         </Button>
       </div>
