@@ -65,9 +65,9 @@ export default function Navigation() {
                     </Link>
                   </>
                 )}
-                <Button asChild variant="cta">
-                  <Link href={dashboardLink}>Dashboard</Link>
-                </Button>
+                <Link href={dashboardLink}>
+                  <Button variant="cta">Dashboard</Button>
+                </Link>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -94,9 +94,9 @@ export default function Navigation() {
                     pathname === "/auth/login" ? "w-full" : "w-0 group-hover:w-full"
                   }`}></span>
                 </Link>
-                <Button asChild variant="cta">
-                  <Link href="/auth/signup">Apply to Join</Link>
-                </Button>
+                <Link href="/auth/signup">
+                  <Button variant="cta">Apply to Join</Button>
+                </Link>
               </>
             )}
           </div>
@@ -140,11 +140,9 @@ export default function Navigation() {
                     </Link>
                   </>
                 )}
-                <Button asChild variant="cta" className="w-full h-10">
-                  <Link href={dashboardLink} onClick={() => setMobileMenuOpen(false)}>
-                    Dashboard
-                  </Link>
-                </Button>
+                <Link href={dashboardLink} onClick={() => setMobileMenuOpen(false)} className="block">
+                  <Button variant="cta" className="w-full h-10">Dashboard</Button>
+                </Link>
                 <Button
                   variant="outline"
                   className="w-full h-10"
@@ -167,11 +165,9 @@ export default function Navigation() {
                 >
                   Login
                 </Link>
-                <Button asChild variant="cta" className="w-full h-10">
-                  <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
-                    Apply to Join
-                  </Link>
-                </Button>
+                <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)} className="block">
+                  <Button variant="cta" className="w-full h-10">Apply to Join</Button>
+                </Link>
               </>
             )}
           </div>
