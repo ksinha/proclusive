@@ -409,9 +409,9 @@ export default function VettingWizard({
       {/* Clean Progress Stepper */}
       <div className="bg-[#252833] border-b border-[rgba(255,255,255,0.08)]">
         <div className="container max-w-5xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             {STEPS.map((step, index) => (
-              <div key={step.id} className="flex items-center flex-1">
+              <div key={step.id} className="flex items-start flex-1">
                 <div className="flex flex-col items-center">
                   <div
                     className={`rounded-full w-8 h-8 flex items-center justify-center ${
@@ -444,7 +444,7 @@ export default function VettingWizard({
                 </div>
                 {index < STEPS.length - 1 && (
                   <div
-                    className={`flex-1 h-0.5 mx-2 ${
+                    className={`flex-1 h-0.5 mx-3 mt-4 ${
                       step.id < currentStep ? "bg-[#22c55e]" : "bg-[rgba(255,255,255,0.08)]"
                     }`}
                   />
