@@ -540,7 +540,7 @@ export default function VettingWizard({
 
           {currentStep === 5 && (
             <Step5Review
-              businessInfo={businessInfo!}
+              businessInfo={businessInfo}
               documents={documents}
               portfolioItems={portfolioItems}
               tosAccepted={tosAccepted}

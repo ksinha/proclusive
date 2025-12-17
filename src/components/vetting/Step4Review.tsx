@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, FileText, Building2, MapPin, Loader2, Info, AlertCircle, ImageIcon } from "lucide-react";
 
 interface Step4Props {
-  businessInfo: BusinessInfoData;
+  businessInfo: BusinessInfoData | null;
   documents: DocumentData;
   portfolioItems: PortfolioItem[];
   tosAccepted: boolean;
@@ -42,6 +42,18 @@ export default function Step4Review({
     return !docs || docs.length === 0;
   });
   const hasAllRequiredDocs = missingDocs.length === 0;
+
+  // If businessInfo is not loaded yet, show loading state
+  if (!businessInfo) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-[#c9a962]" />
+          <span className="ml-3 text-[#b0b2bc]">Loading your application data...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
