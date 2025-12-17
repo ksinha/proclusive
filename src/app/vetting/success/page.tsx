@@ -122,9 +122,9 @@ export default function VettingSuccessPage() {
 
         {/* Action Buttons */}
         <div className="space-y-4">
-          <Link href="/auth/login" className="block">
+          <Link href="/dashboard" className="block">
             <Button variant="default" className="w-full h-11 text-[14px] bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27]">
-              Return to Login
+              Go to Dashboard
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
