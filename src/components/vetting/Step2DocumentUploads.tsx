@@ -162,19 +162,17 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Header Info */}
-      <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-[#c9a962] mt-0.5 flex-shrink-0" />
-            <div className="space-y-1">
-              <h3 className="text-[14px] font-medium text-[#c9a962]">Tier 1 Verification Documents</h3>
-              <p className="text-[13px] text-[#b0b2bc]">
-                Upload the following documents to complete your Tier 1 verification. These are the foundational
-                requirements for joining the Proclusive network.
-              </p>
-            </div>
+      <Card hover={false} compact className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
+        <div className="flex items-start gap-3">
+          <Info className="h-5 w-5 text-[#c9a962] mt-0.5 flex-shrink-0" />
+          <div className="space-y-1">
+            <h3 className="text-[14px] font-medium text-[#c9a962]">Tier 1 Verification Documents</h3>
+            <p className="text-[13px] text-[#b0b2bc]">
+              Upload the following documents to complete your Tier 1 verification. These are the foundational
+              requirements for joining the Proclusive network.
+            </p>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       {/* Document Upload Cards */}
