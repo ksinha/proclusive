@@ -17,6 +17,15 @@ export const metadata: Metadata = {
   title: "Proclusive - High-Trust B2B Referral Network for Construction",
   description: "Join the Founding 50 members in an exclusive, pre-vetted professional network. 15-point Vetting-as-a-Service verification for construction industry professionals.",
   keywords: "B2B referrals, construction network, professional vetting, VaaS",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-icon.svg", type: "image/svg+xml" },
+    ],
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <rect width="180" height="180" fill="#1a1d27"/>
+  <!-- Elegant serif P for Apple touch icon -->
+  <path fill="#c9a962" d="M47 32h58c13 0 23 3.5 30 10.5 7 7 10.5 16 10.5 27s-3.5 20-10.5 27c-7 7-17 10.5-30 10.5H70v38H47V32zm23 20v35h33c7.5 0 13.5-2 17.5-5.5 4-3.5 6-8.5 6-15s-2-11.5-6-15c-4-3.5-10-5.5-17.5-5.5H70z"/>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" fill="#1a1d27"/>
+  <!-- Elegant serif P - optimized for small sizes -->
+  <path fill="#c9a962" d="M8.5 6h10c2.2 0 4 .6 5.2 1.8 1.2 1.2 1.8 2.8 1.8 4.7 0 2-.6 3.5-1.8 4.7-1.2 1.2-3 1.8-5.2 1.8h-6v6.5H8.5V6zm4 3.5v6h5.8c1.3 0 2.3-.3 3-.9.7-.6 1.1-1.5 1.1-2.6s-.4-2-1.1-2.6c-.7-.6-1.7-.9-3-.9h-5.8z"/>
+</svg>
