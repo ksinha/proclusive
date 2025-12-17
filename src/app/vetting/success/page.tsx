@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Clock, Mail, Award, ChevronRight } from "lucide-react";
+import { CheckCircle, Clock, Mail, ChevronRight } from "lucide-react";
 
 export default function VettingSuccessPage() {
   return (
@@ -95,14 +95,8 @@ export default function VettingSuccessPage() {
 
         {/* Benefits Card */}
         <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-[#c9a962]" />
-              <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">While You Wait...</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-[13px] text-[#b0b2bc]">
+          <CardContent className="pt-6 space-y-3">
+            <p className="text-[14px] text-[#b0b2bc]">
               Get ready to unlock exclusive benefits once approved:
             </p>
             <div className="grid grid-cols-2 gap-3">
