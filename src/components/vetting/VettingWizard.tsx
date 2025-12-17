@@ -457,8 +457,8 @@ export default function VettingWizard({
       <div className="container max-w-3xl mx-auto px-6 py-8">
         {/* Progress Restored Notice */}
         {progressRestored && (
-          <Card className="border-[rgba(34,197,94,0.3)] bg-[rgba(34,197,94,0.1)] mb-6">
-            <div className="p-4 flex items-center justify-between">
+          <Card hover={false} compact className="border-[rgba(34,197,94,0.3)] bg-[rgba(34,197,94,0.1)] mb-6">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <CheckCircle className="h-5 w-5 text-[#22c55e]" />
                 <p className="text-[#22c55e] font-medium text-[14px]">
@@ -477,8 +477,8 @@ export default function VettingWizard({
 
         {/* Note about file uploads if resuming after step 2 */}
         {progressRestored && currentStep > 2 && (
-          <Card className="border-[rgba(201,169,98,0.3)] bg-[rgba(201,169,98,0.1)] mb-6">
-            <div className="p-4 flex items-start gap-3">
+          <Card hover={false} compact className="border-[rgba(201,169,98,0.3)] bg-[rgba(201,169,98,0.1)] mb-6">
+            <div className="flex items-start gap-3">
               <span className="text-[#c9a962] text-lg">⚠️</span>
               <p className="text-[#c9a962] text-[13px]">
                 Note: Portfolio images and documents cannot be saved between sessions.
@@ -490,10 +490,8 @@ export default function VettingWizard({
 
         {/* Error Display */}
         {error && (
-          <Card className="border-[rgba(248,113,113,0.3)] bg-[rgba(248,113,113,0.1)] mb-6">
-            <div className="p-4">
-              <p className="text-[#f87171] font-medium text-[14px]">{error}</p>
-            </div>
+          <Card hover={false} compact className="border-[rgba(248,113,113,0.3)] bg-[rgba(248,113,113,0.1)] mb-6">
+            <p className="text-[#f87171] font-medium text-[14px]">{error}</p>
           </Card>
         )}
 

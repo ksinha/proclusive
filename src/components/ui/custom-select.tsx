@@ -110,7 +110,7 @@ export function CustomSelect({
         onKeyDown={handleKeyDown}
         disabled={disabled}
         className={cn(
-          "flex w-full items-center justify-between rounded-md border px-3 py-2.5 text-[14px] text-left",
+          "flex w-full h-[52px] items-center justify-between rounded-md border px-[18px] text-[16px] text-left",
           "bg-[#21242f] border-[rgba(255,255,255,0.08)] text-[#f8f8fa]",
           "font-['Outfit',sans-serif] transition-all duration-200",
           "focus:outline-none focus:border-[#c9a962] focus:shadow-[0_0_0_3px_rgba(201,169,98,0.15)]",
@@ -154,7 +154,7 @@ export function CustomSelect({
                 aria-selected={isSelected}
                 onClick={() => handleSelect(option.value)}
                 className={cn(
-                  "flex items-center justify-between px-3 py-2.5 text-[14px] cursor-pointer",
+                  "flex items-center justify-between px-[18px] py-3 text-[15px] cursor-pointer",
                   "transition-colors duration-150",
                   isSelected
                     ? "bg-[rgba(201,169,98,0.15)] text-[#c9a962]"

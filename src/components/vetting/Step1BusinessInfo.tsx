@@ -227,35 +227,31 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Required Fields Notice */}
-      <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
-        <CardContent className="pt-4 pb-4">
-          <div className="flex items-center gap-3">
-            <Info className="h-5 w-5 text-[#c9a962] flex-shrink-0" />
-            <p className="text-[13px] text-[#c9a962]">
-              All fields on this page are required for vetting. Please complete each section thoroughly.
-            </p>
-          </div>
-        </CardContent>
+      <Card hover={false} compact className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
+        <div className="flex items-center gap-2">
+          <Info className="h-4 w-4 text-[#c9a962] flex-shrink-0" />
+          <p className="text-[13px] text-[#c9a962]">
+            All fields on this page are required for vetting. Please complete each section thoroughly.
+          </p>
+        </div>
       </Card>
 
       {/* Validation Error Summary */}
       {submitted && Object.keys(errors).length > 0 && (
-        <Card className="bg-[rgba(248,113,113,0.1)] border-[rgba(248,113,113,0.3)]">
-          <CardContent className="pt-4 pb-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-[#f87171] flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[13px] font-medium text-[#f87171]">
-                  Please fix the following errors before continuing:
-                </p>
-                <ul className="text-[12px] text-[#f87171] mt-1 list-disc list-inside">
-                  {Object.values(errors).map((error, i) => (
-                    <li key={i}>{error}</li>
-                  ))}
-                </ul>
-              </div>
+        <Card hover={false} compact className="bg-[rgba(248,113,113,0.1)] border-[rgba(248,113,113,0.3)]">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-[#f87171] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-[13px] font-medium text-[#f87171]">
+                Please fix the following errors before continuing:
+              </p>
+              <ul className="text-[12px] text-[#f87171] mt-1 list-disc list-inside">
+                {Object.values(errors).map((error, i) => (
+                  <li key={i}>{error}</li>
+                ))}
+              </ul>
             </div>
-          </CardContent>
+          </div>
         </Card>
       )}
 
@@ -535,20 +531,18 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
           <CardDescription className="text-[14px] text-[#b0b2bc]">Secure tax identification information</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
-            <CardContent className="pt-4">
-              <div className="flex items-start gap-3">
-                <Info className="h-5 w-5 text-[#c9a962] mt-0.5 flex-shrink-0" />
-                <div className="space-y-1">
-                  <p className="text-[13px] font-medium text-[#c9a962]">Your information is secure</p>
-                  <p className="text-[13px] text-[#b0b2bc]">
-                    Your TIN is encrypted and stored securely. This information will never be
-                    displayed publicly and is only accessible to authorized administrators for
-                    compliance purposes.
-                  </p>
-                </div>
+          <Card hover={false} compact className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
+            <div className="flex items-start gap-2">
+              <Info className="h-4 w-4 text-[#c9a962] mt-0.5 flex-shrink-0" />
+              <div className="space-y-0.5">
+                <p className="text-[13px] font-medium text-[#c9a962]">Your information is secure</p>
+                <p className="text-[12px] text-[#b0b2bc]">
+                  Your TIN is encrypted and stored securely. This information will never be
+                  displayed publicly and is only accessible to authorized administrators for
+                  compliance purposes.
+                </p>
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <div className="space-y-2">
@@ -596,31 +590,29 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
           <CardDescription className="text-[14px] text-[#b0b2bc]">Control your profile visibility</CardDescription>
         </CardHeader>
         <CardContent>
-          <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
-            <CardContent className="pt-4">
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  name="is_public"
-                  id="is_public"
-                  checked={formData.is_public}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, is_public: e.target.checked }))
-                  }
-                  className="h-4 w-4 rounded border-[rgba(255,255,255,0.2)] bg-[#21242f] text-[#c9a962] focus:ring-[#c9a962] mt-1"
-                />
-                <div className="space-y-1">
-                  <Label htmlFor="is_public" className="text-[14px] font-medium text-[#f8f8fa] cursor-pointer">
-                    Make my profile visible in the Member Directory
-                  </Label>
-                  <p className="text-[13px] text-[#b0b2bc]">
-                    When enabled, verified members can view your profile, portfolio, and contact
-                    information in the directory. Your sensitive documents (W-9, insurance, etc.)
-                    are never shown publicly. You can change this setting later.
-                  </p>
-                </div>
+          <Card hover={false} compact className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
+            <div className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                name="is_public"
+                id="is_public"
+                checked={formData.is_public}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, is_public: e.target.checked }))
+                }
+                className="h-4 w-4 rounded border-[rgba(255,255,255,0.2)] bg-[#21242f] text-[#c9a962] focus:ring-[#c9a962] mt-0.5"
+              />
+              <div className="space-y-0.5">
+                <Label htmlFor="is_public" className="text-[13px] font-medium text-[#f8f8fa] cursor-pointer">
+                  Make my profile visible in the Member Directory
+                </Label>
+                <p className="text-[12px] text-[#b0b2bc]">
+                  When enabled, verified members can view your profile, portfolio, and contact
+                  information in the directory. Your sensitive documents (W-9, insurance, etc.)
+                  are never shown publicly. You can change this setting later.
+                </p>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </CardContent>
       </Card>

@@ -3,12 +3,13 @@ import { cn } from "@/lib/utils"
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { hover?: boolean }
->(({ className, hover = true, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & { hover?: boolean; compact?: boolean }
+>(({ className, hover = true, compact = false, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border border-white/8 bg-[#252833] p-7 md:p-12 transition-all duration-400",
+      "rounded-lg border border-white/8 bg-[#252833] transition-all duration-400",
+      compact ? "py-2 px-3" : "p-7 md:p-12",
       hover && "hover:border-[rgba(201,169,98,0.25)] hover:shadow-[0_0_30px_rgba(201,169,98,0.15)] hover:-translate-y-[3px] cursor-pointer",
       className
     )}
