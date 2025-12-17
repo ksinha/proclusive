@@ -5,7 +5,7 @@ import { PortfolioItem } from "./Step3Portfolio";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, FileText, Building2, MapPin, Loader2, Info, AlertCircle, Image } from "lucide-react";
+import { CheckCircle, FileText, Building2, MapPin, Loader2, Info, AlertCircle, ImageIcon } from "lucide-react";
 
 interface Step4Props {
   businessInfo: BusinessInfoData;
@@ -270,7 +270,7 @@ export default function Step4Review({
       <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Image className="h-5 w-5 text-[#c9a962]" />
+            <ImageIcon className="h-5 w-5 text-[#c9a962]" />
             <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Portfolio</CardTitle>
           </div>
           <CardDescription className="text-[13px] text-[#b0b2bc]">{safePortfolioItems.length} items uploaded</CardDescription>
@@ -289,7 +289,7 @@ export default function Step4Review({
                       />
                     ) : (
                       <div className="text-[#6a6d78] text-center p-4">
-                        <Image className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
                         <p className="text-[12px]">Image preview unavailable</p>
                       </div>
                     )}
