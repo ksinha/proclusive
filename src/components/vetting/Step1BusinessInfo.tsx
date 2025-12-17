@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-import { Info, Building2, MapPin, FileText, Shield, Eye } from "lucide-react";
+import { Info, Building2, MapPin, Shield, Eye, AlertCircle } from "lucide-react";
 
 interface Step1Props {
   onComplete: (data: BusinessInfoData) => void;
@@ -38,6 +38,41 @@ const US_STATES = [
   "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC"
 ];
 
+// Phone number formatting helper
+const formatPhoneNumber = (value: string): string => {
+  // Remove all non-digits
+  const digits = value.replace(/\D/g, "");
+
+  // Format as (XXX) XXX-XXXX
+  if (digits.length <= 3) {
+    return digits;
+  } else if (digits.length <= 6) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  } else {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  }
+};
+
+// Validation types
+interface ValidationErrors {
+  full_name?: string;
+  phone?: string;
+  company_name?: string;
+  primary_trade?: string;
+  business_type?: string;
+  years_in_business?: string;
+  team_size?: string;
+  service_areas?: string;
+  bio?: string;
+  website?: string;
+  linkedin_url?: string;
+  street_address?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  tin_number?: string;
+}
+
 export default function Step1BusinessInfo({ onComplete, initialData }: Step1Props) {
   const [formData, setFormData] = useState<BusinessInfoData>(
     initialData || {
@@ -60,10 +95,83 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
       is_public: true,
     }
   );
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [submitted, setSubmitted] = useState(false);
+
+  // Validate all fields
+  const validateForm = (): boolean => {
+    const newErrors: ValidationErrors = {};
+
+    // Personal Information
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = "Full name is required";
+    }
+
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+    if (!phoneDigits) {
+      newErrors.phone = "Phone number is required";
+    } else if (phoneDigits.length !== 10) {
+      newErrors.phone = "Please enter a valid 10-digit phone number";
+    }
+
+    // Business Information
+    if (!formData.company_name.trim()) {
+      newErrors.company_name = "Company name is required";
+    }
+    if (!formData.primary_trade) {
+      newErrors.primary_trade = "Primary trade is required";
+    }
+    if (!formData.business_type.trim()) {
+      newErrors.business_type = "Business type is required";
+    }
+    if (!formData.years_in_business || formData.years_in_business < 0) {
+      newErrors.years_in_business = "Years in business is required";
+    }
+    if (!formData.team_size) {
+      newErrors.team_size = "Team size is required";
+    }
+    if (!formData.service_areas.length || !formData.service_areas.some(a => a.trim())) {
+      newErrors.service_areas = "At least one service area is required";
+    }
+    if (!formData.bio.trim()) {
+      newErrors.bio = "Company bio is required";
+    }
+
+    // Business Address
+    if (!formData.street_address.trim()) {
+      newErrors.street_address = "Street address is required";
+    }
+    if (!formData.city.trim()) {
+      newErrors.city = "City is required";
+    }
+    if (!formData.state) {
+      newErrors.state = "State is required";
+    }
+    if (!formData.zip_code.trim()) {
+      newErrors.zip_code = "ZIP code is required";
+    } else if (!/^\d{5}(-\d{4})?$/.test(formData.zip_code.trim())) {
+      newErrors.zip_code = "Please enter a valid ZIP code";
+    }
+
+    // Tax Compliance
+    const tinDigits = formData.tin_number.replace(/\D/g, "");
+    if (!tinDigits) {
+      newErrors.tin_number = "TIN/EIN is required";
+    } else if (tinDigits.length !== 9) {
+      newErrors.tin_number = "TIN/EIN must be 9 digits";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onComplete(formData);
+    setSubmitted(true);
+
+    if (validateForm()) {
+      onComplete(formData);
+    }
   };
 
   const handleChange = (
@@ -74,15 +182,77 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
       ...prev,
       [name]: name === "years_in_business" ? parseInt(value) || 0 : value,
     }));
+
+    // Clear error when field is edited
+    if (submitted && errors[name as keyof ValidationErrors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setFormData((prev) => ({ ...prev, phone: formatted }));
+
+    if (submitted && errors.phone) {
+      setErrors((prev) => ({ ...prev, phone: undefined }));
+    }
   };
 
   const handleServiceAreasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const areas = e.target.value.split(",").map((s) => s.trim());
     setFormData((prev) => ({ ...prev, service_areas: areas }));
+
+    if (submitted && errors.service_areas) {
+      setErrors((prev) => ({ ...prev, service_areas: undefined }));
+    }
+  };
+
+  // Helper for showing field errors
+  const FieldError = ({ error }: { error?: string }) => {
+    if (!error) return null;
+    return (
+      <p className="text-[12px] text-[#f87171] mt-1 flex items-center gap-1">
+        <AlertCircle className="h-3 w-3" />
+        {error}
+      </p>
+    );
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Required Fields Notice */}
+      <Card className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
+        <CardContent className="pt-4 pb-4">
+          <div className="flex items-center gap-3">
+            <Info className="h-5 w-5 text-[#c9a962] flex-shrink-0" />
+            <p className="text-[13px] text-[#c9a962]">
+              All fields on this page are required for vetting. Please complete each section thoroughly.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Validation Error Summary */}
+      {submitted && Object.keys(errors).length > 0 && (
+        <Card className="bg-[rgba(248,113,113,0.1)] border-[rgba(248,113,113,0.3)]">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-[#f87171] flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-[13px] font-medium text-[#f87171]">
+                  Please fix the following errors before continuing:
+                </p>
+                <ul className="text-[12px] text-[#f87171] mt-1 list-disc list-inside">
+                  {Object.values(errors).map((error, i) => (
+                    <li key={i}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Personal Information */}
       <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardHeader>
@@ -95,27 +265,30 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="full_name" className="text-[13px] font-medium text-[#b0b2bc]">Full Name *</Label>
+              <Label htmlFor="full_name" className="text-[13px] font-medium text-[#b0b2bc]">Full Name</Label>
               <Input
                 type="text"
                 name="full_name"
                 id="full_name"
-                required
                 value={formData.full_name}
                 onChange={handleChange}
+                className={errors.full_name ? "border-[#f87171]" : ""}
               />
+              <FieldError error={errors.full_name} />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-[13px] font-medium text-[#b0b2bc]">Phone Number *</Label>
+              <Label htmlFor="phone" className="text-[13px] font-medium text-[#b0b2bc]">Phone Number</Label>
               <Input
                 type="tel"
                 name="phone"
                 id="phone"
-                required
+                placeholder="(555) 555-5555"
                 value={formData.phone}
-                onChange={handleChange}
+                onChange={handlePhoneChange}
+                className={errors.phone ? "border-[#f87171]" : ""}
               />
+              <FieldError error={errors.phone} />
             </div>
           </div>
         </CardContent>
@@ -132,26 +305,27 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="company_name" className="text-[13px] font-medium text-[#b0b2bc]">Company Name *</Label>
+            <Label htmlFor="company_name" className="text-[13px] font-medium text-[#b0b2bc]">Company Name</Label>
             <Input
               type="text"
               name="company_name"
               id="company_name"
-              required
               value={formData.company_name}
               onChange={handleChange}
+              className={errors.company_name ? "border-[#f87171]" : ""}
             />
+            <FieldError error={errors.company_name} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="primary_trade" className="text-[13px] font-medium text-[#b0b2bc]">Primary Trade *</Label>
+              <Label htmlFor="primary_trade" className="text-[13px] font-medium text-[#b0b2bc]">Primary Trade</Label>
               <Select
                 name="primary_trade"
                 id="primary_trade"
-                required
                 value={formData.primary_trade}
                 onChange={handleChange}
+                error={!!errors.primary_trade}
               >
                 <option value="">Select a trade</option>
                 {TRADE_OPTIONS.map((trade) => (
@@ -160,6 +334,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                   </option>
                 ))}
               </Select>
+              <FieldError error={errors.primary_trade} />
             </div>
 
             <div className="space-y-2">
@@ -171,7 +346,9 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 placeholder="e.g., LLC, Corporation, Sole Proprietor"
                 value={formData.business_type}
                 onChange={handleChange}
+                className={errors.business_type ? "border-[#f87171]" : ""}
               />
+              <FieldError error={errors.business_type} />
             </div>
           </div>
 
@@ -185,7 +362,9 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 min="0"
                 value={formData.years_in_business}
                 onChange={handleChange}
+                className={errors.years_in_business ? "border-[#f87171]" : ""}
               />
+              <FieldError error={errors.years_in_business} />
             </div>
 
             <div className="space-y-2">
@@ -195,6 +374,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 id="team_size"
                 value={formData.team_size}
                 onChange={handleChange}
+                error={!!errors.team_size}
               >
                 <option value="">Select team size</option>
                 {TEAM_SIZE_OPTIONS.map((size) => (
@@ -203,11 +383,12 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                   </option>
                 ))}
               </Select>
+              <FieldError error={errors.team_size} />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="service_areas" className="text-[13px] font-medium text-[#b0b2bc]">Service Areas (comma-separated)</Label>
+            <Label htmlFor="service_areas" className="text-[13px] font-medium text-[#b0b2bc]">Service Areas</Label>
             <Input
               type="text"
               name="service_areas"
@@ -215,8 +396,10 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
               placeholder="e.g., Washington DC, Maryland, Virginia"
               value={formData.service_areas.join(", ")}
               onChange={handleServiceAreasChange}
+              className={errors.service_areas ? "border-[#f87171]" : ""}
             />
-            <p className="text-[12px] text-[#6a6d78]">Enter cities or regions where you provide services</p>
+            <p className="text-[12px] text-[#6a6d78]">Enter cities or regions where you provide services (comma-separated)</p>
+            <FieldError error={errors.service_areas} />
           </div>
 
           <div className="space-y-2">
@@ -228,7 +411,9 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
               placeholder="Tell us about your company and expertise..."
               value={formData.bio}
               onChange={handleChange}
+              className={errors.bio ? "border-[#f87171]" : ""}
             />
+            <FieldError error={errors.bio} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -242,6 +427,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 value={formData.website}
                 onChange={handleChange}
               />
+              <p className="text-[12px] text-[#6a6d78]">Optional but recommended</p>
             </div>
 
             <div className="space-y-2">
@@ -254,6 +440,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 value={formData.linkedin_url}
                 onChange={handleChange}
               />
+              <p className="text-[12px] text-[#6a6d78]">Optional but recommended</p>
             </div>
           </div>
         </CardContent>
@@ -277,7 +464,9 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
               id="street_address"
               value={formData.street_address}
               onChange={handleChange}
+              className={errors.street_address ? "border-[#f87171]" : ""}
             />
+            <FieldError error={errors.street_address} />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
@@ -289,7 +478,9 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 id="city"
                 value={formData.city}
                 onChange={handleChange}
+                className={errors.city ? "border-[#f87171]" : ""}
               />
+              <FieldError error={errors.city} />
             </div>
 
             <div className="space-y-2">
@@ -299,6 +490,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 id="state"
                 value={formData.state}
                 onChange={handleChange}
+                error={!!errors.state}
               >
                 <option value="">Select state</option>
                 {US_STATES.map((state) => (
@@ -307,6 +499,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                   </option>
                 ))}
               </Select>
+              <FieldError error={errors.state} />
             </div>
 
             <div className="space-y-2">
@@ -315,9 +508,12 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                 type="text"
                 name="zip_code"
                 id="zip_code"
+                placeholder="12345"
                 value={formData.zip_code}
                 onChange={handleChange}
+                className={errors.zip_code ? "border-[#f87171]" : ""}
               />
+              <FieldError error={errors.zip_code} />
             </div>
           </div>
         </CardContent>
@@ -350,15 +546,15 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
           </Card>
 
           <div className="space-y-2">
-            <Label htmlFor="tin_number" className="text-[13px] font-medium text-[#b0b2bc]">Tax Identification Number (TIN / EIN) *</Label>
+            <Label htmlFor="tin_number" className="text-[13px] font-medium text-[#b0b2bc]">Tax Identification Number (TIN / EIN)</Label>
             <Input
               type="text"
               name="tin_number"
               id="tin_number"
-              required
               placeholder="XX-XXXXXXX"
               maxLength={10}
               value={formData.tin_number}
+              className={errors.tin_number ? "border-[#f87171]" : ""}
               onChange={(e) => {
                 // Format TIN as XX-XXXXXXX
                 const digits = e.target.value.replace(/\D/g, "");
@@ -371,11 +567,15 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
                   formatted = `${digits.slice(0, 2)}-${digits.slice(2, 9)}`;
                 }
                 setFormData((prev) => ({ ...prev, tin_number: formatted }));
+                if (submitted && errors.tin_number) {
+                  setErrors((prev) => ({ ...prev, tin_number: undefined }));
+                }
               }}
             />
             <p className="text-[12px] text-[#6a6d78]">
               Format: XX-XXXXXXX (9 digits). You'll upload your W-9 form in the next step.
             </p>
+            <FieldError error={errors.tin_number} />
           </div>
         </CardContent>
       </Card>
