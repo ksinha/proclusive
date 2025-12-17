@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
+import { CustomSelect } from "@/components/ui/custom-select";
 import { Info, Building2, MapPin, Shield, Eye, AlertCircle } from "lucide-react";
 
 interface Step1Props {
@@ -16,19 +16,25 @@ interface Step1Props {
 }
 
 const TRADE_OPTIONS = [
-  "Architecture",
-  "Interior Design",
-  "Project Management",
-  "General Contracting",
-  "Electrical",
-  "Plumbing",
-  "HVAC",
-  "Landscaping",
-  "Specialty Contractor",
-  "Other",
+  { value: "Architecture", label: "Architecture" },
+  { value: "Interior Design", label: "Interior Design" },
+  { value: "Project Management", label: "Project Management" },
+  { value: "General Contracting", label: "General Contracting" },
+  { value: "Electrical", label: "Electrical" },
+  { value: "Plumbing", label: "Plumbing" },
+  { value: "HVAC", label: "HVAC" },
+  { value: "Landscaping", label: "Landscaping" },
+  { value: "Specialty Contractor", label: "Specialty Contractor" },
+  { value: "Other", label: "Other" },
 ];
 
-const TEAM_SIZE_OPTIONS = ["1-5", "6-10", "11-25", "26-50", "50+"];
+const TEAM_SIZE_OPTIONS = [
+  { value: "1-5", label: "1-5 employees" },
+  { value: "6-10", label: "6-10 employees" },
+  { value: "11-25", label: "11-25 employees" },
+  { value: "26-50", label: "26-50 employees" },
+  { value: "50+", label: "50+ employees" },
+];
 
 const US_STATES = [
   "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
@@ -36,7 +42,7 @@ const US_STATES = [
   "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
   "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
   "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC"
-];
+].map(state => ({ value: state, label: state }));
 
 // Phone number formatting helper
 const formatPhoneNumber = (value: string): string => {
@@ -320,20 +326,20 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="primary_trade" className="text-[13px] font-medium text-[#b0b2bc]">Primary Trade</Label>
-              <Select
+              <CustomSelect
                 name="primary_trade"
                 id="primary_trade"
+                options={TRADE_OPTIONS}
                 value={formData.primary_trade}
-                onChange={handleChange}
+                onChange={(value) => {
+                  setFormData((prev) => ({ ...prev, primary_trade: value }));
+                  if (submitted && errors.primary_trade) {
+                    setErrors((prev) => ({ ...prev, primary_trade: undefined }));
+                  }
+                }}
+                placeholder="Select a trade"
                 error={!!errors.primary_trade}
-              >
-                <option value="">Select a trade</option>
-                {TRADE_OPTIONS.map((trade) => (
-                  <option key={trade} value={trade}>
-                    {trade}
-                  </option>
-                ))}
-              </Select>
+              />
               <FieldError error={errors.primary_trade} />
             </div>
 
@@ -369,20 +375,20 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
 
             <div className="space-y-2">
               <Label htmlFor="team_size" className="text-[13px] font-medium text-[#b0b2bc]">Team Size</Label>
-              <Select
+              <CustomSelect
                 name="team_size"
                 id="team_size"
+                options={TEAM_SIZE_OPTIONS}
                 value={formData.team_size}
-                onChange={handleChange}
+                onChange={(value) => {
+                  setFormData((prev) => ({ ...prev, team_size: value }));
+                  if (submitted && errors.team_size) {
+                    setErrors((prev) => ({ ...prev, team_size: undefined }));
+                  }
+                }}
+                placeholder="Select team size"
                 error={!!errors.team_size}
-              >
-                <option value="">Select team size</option>
-                {TEAM_SIZE_OPTIONS.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </Select>
+              />
               <FieldError error={errors.team_size} />
             </div>
           </div>
@@ -485,20 +491,20 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
 
             <div className="space-y-2">
               <Label htmlFor="state" className="text-[13px] font-medium text-[#b0b2bc]">State</Label>
-              <Select
+              <CustomSelect
                 name="state"
                 id="state"
+                options={US_STATES}
                 value={formData.state}
-                onChange={handleChange}
+                onChange={(value) => {
+                  setFormData((prev) => ({ ...prev, state: value }));
+                  if (submitted && errors.state) {
+                    setErrors((prev) => ({ ...prev, state: undefined }));
+                  }
+                }}
+                placeholder="Select state"
                 error={!!errors.state}
-              >
-                <option value="">Select state</option>
-                {US_STATES.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </Select>
+              />
               <FieldError error={errors.state} />
             </div>
 
