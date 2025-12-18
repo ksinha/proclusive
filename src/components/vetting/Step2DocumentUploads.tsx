@@ -352,23 +352,36 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
                 </div>
               )}
 
-              {/* Upload Area */}
+              {/* Upload Area - entire zone is clickable */}
               <div
-                className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
+                className={`border-2 border-dashed rounded-lg p-6 transition-colors cursor-pointer ${
                   dragOver === field.key
                     ? 'border-[#c9a962] bg-[rgba(201,169,98,0.1)]'
-                    : 'border-[rgba(255,255,255,0.15)] hover:border-[#c9a962]'
+                    : 'border-[rgba(255,255,255,0.15)] hover:border-[#c9a962] hover:bg-[rgba(201,169,98,0.05)]'
                 }${field.key === 'workers_comp' && workersCompExempt ? ' opacity-60' : ''}`}
                 onDragOver={(e) => handleDragOver(e, field.key)}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, field.key)}
+                onClick={() => {
+                  const input = document.getElementById(`file-${field.key}`) as HTMLInputElement;
+                  if (input) input.click();
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    const input = document.getElementById(`file-${field.key}`) as HTMLInputElement;
+                    if (input) input.click();
+                  }
+                }}
               >
-                <div className="flex flex-col items-center gap-3">
+                <div className="flex flex-col items-center gap-3 pointer-events-none">
                   <Upload className="h-8 w-8 text-[#6a6d78]" />
                   <div className="text-center">
-                    <label htmlFor={`file-${field.key}`} className="text-[14px] text-[#b0b2bc] font-medium cursor-pointer hover:text-[#c9a962]">
+                    <span className="text-[14px] text-[#b0b2bc] font-medium">
                       {field.key === 'workers_comp' && workersCompExempt ? 'Optional: Upload exemption certificate' : 'Choose files or drag and drop'}
-                    </label>
+                    </span>
                     <p className="text-[12px] text-[#6a6d78] mt-1">
                       Accepted: {field.acceptedFormats.replace(/\./g, '').toUpperCase()} • Multiple files allowed
                     </p>
@@ -384,7 +397,8 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
                         e.target.value = ''; // Reset input to allow re-upload of same file
                       }
                     }}
-                    className="hidden"
+                    className="sr-only"
+                    aria-label={`Upload ${field.label}`}
                   />
                 </div>
               </div>

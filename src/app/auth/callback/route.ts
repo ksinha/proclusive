@@ -1,6 +1,27 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+// Retry helper for transient network failures
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  delayMs: number = 1000
+): Promise<T> {
+  let lastError: Error | undefined;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err as Error;
+      console.warn(`[Auth Callback] Attempt ${attempt}/${maxRetries} failed:`, err);
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+      }
+    }
+  }
+  throw lastError;
+}
+
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
@@ -20,30 +41,31 @@ export async function GET(request: Request) {
     return NextResponse.redirect(errorUrl);
   }
 
-  const supabase = await createClient();
-
   // Handle token_hash flow (email confirmation without PKCE)
   if (token_hash && type) {
     try {
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        token_hash,
-        type: type as "signup" | "email" | "recovery" | "invite" | "magiclink" | "email_change",
+      const result = await withRetry(async () => {
+        const supabase = await createClient();
+        return supabase.auth.verifyOtp({
+          token_hash,
+          type: type as "signup" | "email" | "recovery" | "invite" | "magiclink" | "email_change",
+        });
       });
 
-      if (verifyError) {
-        console.error("[Auth Callback] Token verification error:", verifyError);
+      if (result.error) {
+        console.error("[Auth Callback] Token verification error:", result.error);
         const errorUrl = new URL("/auth/error", requestUrl.origin);
         errorUrl.searchParams.set("error", "verification_failed");
-        errorUrl.searchParams.set("message", verifyError.message);
+        errorUrl.searchParams.set("message", result.error.message);
         return NextResponse.redirect(errorUrl);
       }
 
       return NextResponse.redirect(new URL("/vetting", requestUrl.origin));
     } catch (err) {
-      console.error("[Auth Callback] Token verification unexpected error:", err);
+      console.error("[Auth Callback] Token verification failed after retries:", err);
       const errorUrl = new URL("/auth/error", requestUrl.origin);
-      errorUrl.searchParams.set("error", "unexpected_error");
-      errorUrl.searchParams.set("message", "An unexpected error occurred during confirmation");
+      errorUrl.searchParams.set("error", "network_error");
+      errorUrl.searchParams.set("message", "Network error during confirmation. Please try clicking the link again.");
       return NextResponse.redirect(errorUrl);
     }
   }
@@ -51,22 +73,25 @@ export async function GET(request: Request) {
   // Handle code flow (PKCE)
   if (code) {
     try {
-      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+      const result = await withRetry(async () => {
+        const supabase = await createClient();
+        return supabase.auth.exchangeCodeForSession(code);
+      });
 
-      if (exchangeError) {
-        console.error("[Auth Callback] Code exchange error:", exchangeError);
+      if (result.error) {
+        console.error("[Auth Callback] Code exchange error:", result.error);
         const errorUrl = new URL("/auth/error", requestUrl.origin);
         errorUrl.searchParams.set("error", "exchange_failed");
-        errorUrl.searchParams.set("message", exchangeError.message);
+        errorUrl.searchParams.set("message", result.error.message);
         return NextResponse.redirect(errorUrl);
       }
 
       return NextResponse.redirect(new URL("/vetting", requestUrl.origin));
     } catch (err) {
-      console.error("[Auth Callback] Unexpected error:", err);
+      console.error("[Auth Callback] Code exchange failed after retries:", err);
       const errorUrl = new URL("/auth/error", requestUrl.origin);
-      errorUrl.searchParams.set("error", "unexpected_error");
-      errorUrl.searchParams.set("message", "An unexpected error occurred during confirmation");
+      errorUrl.searchParams.set("error", "network_error");
+      errorUrl.searchParams.set("message", "Network error during confirmation. Please try clicking the link again.");
       return NextResponse.redirect(errorUrl);
     }
   }

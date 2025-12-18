@@ -116,34 +116,65 @@ export default function Home() {
       </section>
 
       {/* 15-Point Verification Section */}
-      <section className="bg-[#21242f] py-20">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center space-y-8">
-            {/* Shield Icon */}
-            <div className="flex justify-center">
-              <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center">
-                <Shield className="h-8 w-8 text-gold" />
+      <section className="bg-[#21242f] py-16 md:py-20">
+        <div className="max-w-5xl mx-auto px-6">
+          {/* Mobile: Centered layout */}
+          <div className="md:hidden text-center space-y-6">
+            <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto">
+              <Shield className="h-8 w-8 text-gold" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-[11px] text-[#c9a962] font-medium uppercase tracking-[0.2em]">
+                Vetting-as-a-Service™
+              </p>
+              <h2 className="text-[32px] font-display font-semibold text-[#f8f8fa]">
+                15-Point Verification
+              </h2>
+            </div>
+            <p className="text-[15px] text-[#b0b2bc] font-body leading-relaxed">
+              Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
+            </p>
+          </div>
+
+          {/* Desktop: Left icon, right text */}
+          <div className="hidden md:flex items-center gap-12 lg:gap-16">
+            {/* Left: Icon with decorative elements */}
+            <div className="flex-shrink-0 relative">
+              {/* Outer ring */}
+              <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full border border-[#c9a962]/20 flex items-center justify-center">
+                {/* Inner circle with icon */}
+                <div className="w-20 h-20 lg:w-24 lg:h-24 bg-gold/10 rounded-full flex items-center justify-center">
+                  <Shield className="h-10 w-10 lg:h-12 lg:w-12 text-gold" />
+                </div>
+              </div>
+              {/* Decorative corner accent */}
+              <div className="absolute -top-2 -left-2 w-6 h-6">
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[#c9a962]/50 to-transparent"></div>
+                <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-[#c9a962]/50 to-transparent"></div>
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-6 h-6">
+                <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-[#c9a962]/50 to-transparent"></div>
+                <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-[#c9a962]/50 to-transparent"></div>
               </div>
             </div>
 
-            {/* Title */}
-            <div className="space-y-2">
-              <h2 className="text-[36px] md:text-[42px] font-display font-semibold text-[#f8f8fa]">
-                15-Point Verification
-              </h2>
-              <p className="text-[12px] text-[#c9a962] font-medium uppercase tracking-[0.2em]">
-                Vetting-as-a-Service™
+            {/* Right: Text content */}
+            <div className="flex-1 space-y-4">
+              <div className="space-y-2">
+                <p className="text-[11px] text-[#c9a962] font-medium uppercase tracking-[0.2em]">
+                  Vetting-as-a-Service™
+                </p>
+                <h2 className="text-[36px] lg:text-[42px] font-display font-semibold text-[#f8f8fa] leading-tight">
+                  15-Point Verification
+                </h2>
+              </div>
+              <p className="text-[16px] lg:text-[17px] text-[#b0b2bc] font-body leading-relaxed max-w-xl">
+                Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
               </p>
-            </div>
-
-            {/* Description */}
-            <p className="text-[16px] md:text-[18px] text-[#b0b2bc] font-body leading-relaxed max-w-2xl mx-auto">
-              Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
-            </p>
-
-            {/* Decorative line */}
-            <div className="pt-4">
-              <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/40 to-transparent mx-auto"></div>
+              {/* Decorative underline */}
+              <div className="pt-2">
+                <div className="w-16 h-[2px] bg-gradient-to-r from-[#c9a962] to-transparent"></div>
+              </div>
             </div>
           </div>
         </div>
