@@ -137,23 +137,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const signOut = async () => {
+    console.log("[AuthProvider] Signing out...");
+
+    // Clear local state immediately
+    setUser(null);
+    setIsAdmin(false);
+    setIsVerified(false);
+
+    // Set a timeout to guarantee redirect even if Supabase call hangs
+    const redirectTimeout = setTimeout(() => {
+      console.log("[AuthProvider] Redirect timeout - forcing redirect");
+      window.location.href = "/";
+    }, 3000);
+
     try {
-      console.log("[AuthProvider] Signing out...");
       const supabase = createClient();
       const { error } = await supabase.auth.signOut();
 
       if (error) {
         console.error("[AuthProvider] Sign out error:", error);
       }
-
-      setUser(null);
-      setIsAdmin(false);
-      setIsVerified(false);
-
-      // Force full page reload to clear any cached state
-      window.location.href = "/";
     } catch (err) {
       console.error("[AuthProvider] Sign out error:", err);
+    } finally {
+      // Clear timeout and redirect
+      clearTimeout(redirectTimeout);
+      // Force full page reload to clear any cached state
       window.location.href = "/";
     }
   };
