@@ -12,9 +12,9 @@ import {
   ClipboardCheck,
   CheckCircle2,
   Bell,
-  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import Link from "next/link";
 
 interface ApplicationWithProfile extends Application {
   profile: Profile;
@@ -26,8 +26,6 @@ export default function AdminDashboardPage() {
   const [allApplications, setAllApplications] = useState<ApplicationWithProfile[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "under_review" | "approved" | "rejected">("pending");
   const [isViewingIndividual, setIsViewingIndividual] = useState(false);
-  const [sendingReminders, setSendingReminders] = useState(false);
-  const [reminderResult, setReminderResult] = useState<string | null>(null);
 
   // Refs for preventing race conditions and memory leaks
   const isMountedRef = useRef(true);
@@ -129,34 +127,6 @@ export default function AdminDashboardPage() {
     ? allApplications
     : allApplications.filter((app) => app.status === filter);
 
-  const sendApplicationReminders = async () => {
-    setSendingReminders(true);
-    setReminderResult(null);
-
-    try {
-      const response = await fetch('/api/cron/application-reminders', {
-        method: 'POST',
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setReminderResult(`✓ ${data.message}`);
-      } else {
-        setReminderResult(`✗ ${data.error || 'Failed to send reminders'}`);
-      }
-
-      // Clear result after 5 seconds
-      setTimeout(() => setReminderResult(null), 5000);
-    } catch (err) {
-      console.error('[AdminDashboard] Error sending reminders:', err);
-      setReminderResult('✗ Error sending reminders');
-      setTimeout(() => setReminderResult(null), 5000);
-    } finally {
-      setSendingReminders(false);
-    }
-  };
-
   // Show loading while auth is being checked
   if (authLoading) {
     return (
@@ -182,27 +152,12 @@ export default function AdminDashboardPage() {
                 <p className="text-xs sm:text-sm text-[#6a6d78] hidden sm:block">Proclusive Vetting System</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {reminderResult && (
-                <span className={`text-[13px] ${reminderResult.startsWith('✓') ? 'text-[#4ade80]' : 'text-[#f87171]'}`}>
-                  {reminderResult}
-                </span>
-              )}
-              <Button
-                onClick={sendApplicationReminders}
-                disabled={sendingReminders}
-                variant="outline"
-                size="sm"
-                className="gap-2"
-              >
-                {sendingReminders ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Bell className="h-4 w-4" />
-                )}
-                <span className="hidden sm:inline">Send Reminders</span>
+            <Link href="/admin/reminders">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Bell className="h-4 w-4" />
+                <span className="hidden sm:inline">Reminders</span>
               </Button>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
