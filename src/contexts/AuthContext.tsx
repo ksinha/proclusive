@@ -4,6 +4,46 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 
+const VERIFIED_CACHE_KEY = "proclusive_verified_status";
+const ADMIN_CACHE_KEY = "proclusive_admin_status";
+
+// Read cached status from localStorage (runs only on client)
+function getCachedStatus(): { isVerified: boolean; isAdmin: boolean } {
+  if (typeof window === "undefined") {
+    return { isVerified: false, isAdmin: false };
+  }
+  try {
+    return {
+      isVerified: localStorage.getItem(VERIFIED_CACHE_KEY) === "true",
+      isAdmin: localStorage.getItem(ADMIN_CACHE_KEY) === "true",
+    };
+  } catch {
+    return { isVerified: false, isAdmin: false };
+  }
+}
+
+// Save status to localStorage
+function setCachedStatus(isVerified: boolean, isAdmin: boolean) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(VERIFIED_CACHE_KEY, isVerified ? "true" : "false");
+    localStorage.setItem(ADMIN_CACHE_KEY, isAdmin ? "true" : "false");
+  } catch {
+    // Ignore localStorage errors
+  }
+}
+
+// Clear cached status
+function clearCachedStatus() {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(VERIFIED_CACHE_KEY);
+    localStorage.removeItem(ADMIN_CACHE_KEY);
+  } catch {
+    // Ignore localStorage errors
+  }
+}
+
 interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
@@ -33,9 +73,11 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  // Initialize with cached values for instant UI on returning users
+  const cached = getCachedStatus();
   const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(cached.isAdmin);
+  const [isVerified, setIsVerified] = useState(cached.isVerified);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -95,13 +137,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
           return;
         }
 
+        const adminStatus = profile?.is_admin || false;
+        const verifiedStatus = profile?.is_verified || false;
+
         console.log("[AuthProvider] Profile loaded:", {
-          is_admin: profile?.is_admin,
-          is_verified: profile?.is_verified,
+          is_admin: adminStatus,
+          is_verified: verifiedStatus,
         });
 
-        setIsAdmin(profile?.is_admin || false);
-        setIsVerified(profile?.is_verified || false);
+        setIsAdmin(adminStatus);
+        setIsVerified(verifiedStatus);
+
+        // Cache status for instant UI on next visit
+        setCachedStatus(verifiedStatus, adminStatus);
       } catch (err) {
         console.error("[AuthProvider] Profile fetch error:", err);
         // Don't block the app - allow it to proceed without profile data
@@ -122,6 +170,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setUser(null);
           setIsAdmin(false);
           setIsVerified(false);
+          clearCachedStatus();
         } else if (event === "TOKEN_REFRESHED" && session?.user) {
           console.log("[AuthProvider] Token refreshed");
           setUser(session.user);
@@ -143,6 +192,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null);
     setIsAdmin(false);
     setIsVerified(false);
+
+    // Clear cached status so nav doesn't show member links after logout
+    clearCachedStatus();
 
     // Set a timeout to guarantee redirect even if Supabase call hangs
     const redirectTimeout = setTimeout(() => {

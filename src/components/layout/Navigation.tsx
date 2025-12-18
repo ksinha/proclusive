@@ -15,8 +15,9 @@ export default function Navigation() {
 
   const isLoggedIn = !!user;
   // Only show Directory and Referrals to verified/approved users or admins
-  // Wait for auth to load before showing these links to avoid showing them to non-verified users
-  const canAccessMemberFeatures = !loading && (isVerified || isAdmin);
+  // isVerified/isAdmin are initialized from localStorage cache for instant UI,
+  // then updated from server when profile loads
+  const canAccessMemberFeatures = isVerified || isAdmin;
 
   // Determine the correct links based on role
   const dashboardLink = isAdmin ? "/admin/dashboard" : "/dashboard";
