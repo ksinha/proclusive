@@ -277,16 +277,11 @@ export default function Step1BusinessInfo({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Required Fields Notice */}
       <Card hover={false} compact className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
-        <div className="flex items-start gap-2">
-          <Info className="h-4 w-4 text-[#c9a962] flex-shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="text-[13px] text-[#c9a962]">
-              All fields on this page are required for vetting. Please complete each section thoroughly.
-            </p>
-            <p className="text-[12px] text-[#b0b2bc]">
-              Step 3 (Document Uploads) includes detailed "More Info" buttons explaining each verification requirement.
-            </p>
-          </div>
+        <div className="flex items-center gap-2">
+          <Info className="h-4 w-4 text-[#c9a962] flex-shrink-0" />
+          <p className="text-[13px] text-[#c9a962]">
+            All fields are required for vetting unless otherwise noted.
+          </p>
         </div>
       </Card>
 

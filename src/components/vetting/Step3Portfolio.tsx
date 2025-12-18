@@ -8,6 +8,54 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Upload, X, ImageIcon, Info } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+// Portfolio verification info from VaaS framework
+const PORTFOLIO_VERIFICATION_INFO = {
+  title: "Portfolio & Project Documentation",
+  whatWeVerify: "Minimum of three (3) completed projects with documentation including photos, project scope, and completion dates. Portfolio review by Proclusive team. Random spot-check verification with project contacts for authenticity. Project values and scope assessed for consistency with claimed capabilities.",
+};
+
+// More Info Modal for Portfolio
+function PortfolioMoreInfo() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="text-[#c9a962] hover:text-[#d4b674] hover:bg-[rgba(201,169,98,0.1)] h-auto px-2 py-1 gap-1"
+        >
+          <Info className="h-4 w-4" />
+          <span className="text-[12px] font-medium">More Info</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="bg-[#21242f] border-[rgba(255,255,255,0.08)] max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="text-[18px] font-semibold text-[#f8f8fa]">
+            {PORTFOLIO_VERIFICATION_INFO.title}
+          </DialogTitle>
+          <DialogDescription className="text-[13px] text-[#b0b2bc]">
+            What We Verify
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mt-2">
+          <p className="text-[14px] text-[#d4d6e1] leading-relaxed">
+            {PORTFOLIO_VERIFICATION_INFO.whatWeVerify}
+          </p>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export interface PortfolioItem {
   file: File;
@@ -125,7 +173,10 @@ export default function Step3Portfolio({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-[24px] font-semibold text-[#f8f8fa] mb-2">Portfolio</h2>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-[24px] font-semibold text-[#f8f8fa]">Portfolio</h2>
+          <PortfolioMoreInfo />
+        </div>
         <p className="text-[14px] text-[#b0b2bc]">
           Showcase your work by uploading at least 5 high-quality images of your
           projects. Add descriptions to provide context about each project.

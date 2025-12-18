@@ -124,43 +124,19 @@ function MoreInfoModal({ field }: { field: DocumentField }) {
           <span className="text-[12px] font-medium">More Info</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#21242f] border-[rgba(255,255,255,0.08)] max-w-2xl">
+      <DialogContent className="bg-[#21242f] border-[rgba(255,255,255,0.08)] max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-[18px] font-semibold text-[#f8f8fa]">
-            {field.label} - Verification Details
+            {field.label}
           </DialogTitle>
           <DialogDescription className="text-[13px] text-[#b0b2bc]">
-            From the 15-Point VaaS Framework
+            What We Verify
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-5 mt-4">
-          <div className="space-y-2">
-            <h4 className="text-[14px] font-semibold text-[#c9a962] flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
-              What We Verify
-            </h4>
-            <p className="text-[13px] text-[#d4d6e1] leading-relaxed pl-6">
-              {field.verificationInfo.whatWeVerify}
-            </p>
-          </div>
-          <div className="space-y-2">
-            <h4 className="text-[14px] font-semibold text-[#c9a962] flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
-              How We Verify
-            </h4>
-            <p className="text-[13px] text-[#d4d6e1] leading-relaxed pl-6">
-              {field.verificationInfo.howWeVerify}
-            </p>
-          </div>
-          <div className="space-y-2">
-            <h4 className="text-[14px] font-semibold text-[#c9a962] flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
-              Why It Matters
-            </h4>
-            <p className="text-[13px] text-[#d4d6e1] leading-relaxed pl-6">
-              {field.verificationInfo.whyItMatters}
-            </p>
-          </div>
+        <div className="mt-2">
+          <p className="text-[14px] text-[#d4d6e1] leading-relaxed">
+            {field.verificationInfo.whatWeVerify}
+          </p>
         </div>
       </DialogContent>
     </Dialog>
