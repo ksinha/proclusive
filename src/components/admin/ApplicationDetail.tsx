@@ -58,6 +58,8 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectionNotes, setRejectionNotes] = useState("");
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
+  const [isPaid, setIsPaid] = useState(application.profile.is_paid || false);
+  const [paidAt, setPaidAt] = useState(application.profile.paid_at || "");
 
   useEffect(() => {
     loadDocuments();
@@ -214,6 +216,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
           is_verified: true,
           badge_level: highestBadge,
           verification_completed_at: new Date().toISOString(),
+          approved_at: new Date().toISOString(),
         })
         .eq("id", application.user_id);
 
@@ -251,6 +254,35 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
         details: { new_status: newStatus, badges_assigned: selectedBadges },
       });
 
+      // Send approval email if status is approved
+      if (newStatus === "approved") {
+        try {
+          const response = await fetch('/api/applications/approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              applicationId: application.id,
+              badgeLevel: selectedBadges.length > 0 ? selectedBadges.reduce((highest, badge) => {
+                const badgePriority: Record<string, number> = {
+                  elite: 3, vetted: 2, verified: 1, none: 0,
+                  compliance: 1, capability: 2, reputation: 2, enterprise: 3,
+                };
+                return (badgePriority[badge] || 0) > (badgePriority[highest] || 0) ? badge : highest;
+              }) : 'verified',
+            }),
+          });
+
+          if (response.ok) {
+            console.log('Approval notification email sent');
+          } else {
+            console.error('Failed to send approval notification email');
+          }
+        } catch (emailError) {
+          console.error('Error sending approval email:', emailError);
+          // Don't fail the approval if email fails
+        }
+      }
+
       onClose();
     }
 
@@ -286,6 +318,43 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUpdatePaymentStatus = async () => {
+    setLoading(true);
+    setSuccessMessage(null);
+    const supabase = createClient();
+
+    const updateData: any = {
+      is_paid: isPaid,
+      paid_at: isPaid && paidAt ? new Date(paidAt).toISOString() : null,
+    };
+
+    const { error } = await supabase
+      .from("profiles")
+      .update(updateData)
+      .eq("id", application.user_id);
+
+    if (!error) {
+      setSuccessMessage(`Payment status updated successfully.`);
+
+      // Update local state
+      setCurrentApplication((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          is_paid: isPaid,
+          paid_at: updateData.paid_at,
+        },
+      }));
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } else {
+      console.error("Error updating payment status:", error);
+    }
+
+    setLoading(false);
   };
 
   const handlePreviewDocument = async (doc: Document) => {
@@ -495,6 +564,10 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
                   "N/A"
                 )}
               </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Referred By</div>
+              <div className="text-[14px] font-medium text-white">{application.profile.referred_by || "N/A"}</div>
             </div>
           </div>
         </CardContent>
@@ -736,6 +809,101 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
           />
         </CardContent>
       </Card>
+
+      {/* Payment Status - Only show for approved members */}
+      {currentApplication.status === "approved" && (
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-[#c9a962]" />
+              <CardTitle className="text-white">Payment Status</CardTitle>
+            </div>
+            <CardDescription className="text-[#b0b2bc]">Manage payment status for this member</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {/* Date Approved - Read Only */}
+              <div>
+                <label className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide mb-2 block">
+                  Date Approved
+                </label>
+                <div className="text-[14px] font-medium text-white">
+                  {currentApplication.profile.approved_at
+                    ? new Date(currentApplication.profile.approved_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })
+                    : "Not set"}
+                </div>
+              </div>
+
+              <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '16px' }}>
+                {/* PAID Status Toggle */}
+                <div className="mb-4">
+                  <label className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide mb-2 block">
+                    Payment Status
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setIsPaid(false)}
+                      className={`px-4 py-2 rounded-md text-[14px] font-medium transition-colors ${
+                        !isPaid
+                          ? 'bg-[#f87171] text-white'
+                          : 'bg-[#282c38] text-[#b0b2bc] hover:bg-[#2f3442]'
+                      }`}
+                      style={{ border: '1px solid rgba(255, 255, 255, 0.08)' }}
+                    >
+                      NOT PAID
+                    </button>
+                    <button
+                      onClick={() => setIsPaid(true)}
+                      className={`px-4 py-2 rounded-md text-[14px] font-medium transition-colors ${
+                        isPaid
+                          ? 'bg-[#4ade80] text-white'
+                          : 'bg-[#282c38] text-[#b0b2bc] hover:bg-[#2f3442]'
+                      }`}
+                      style={{ border: '1px solid rgba(255, 255, 255, 0.08)' }}
+                    >
+                      PAID
+                    </button>
+                  </div>
+                </div>
+
+                {/* Date Paid Input - Only show when PAID is selected */}
+                {isPaid && (
+                  <div className="mb-4">
+                    <label htmlFor="paid_at" className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide mb-2 block">
+                      Date Paid
+                    </label>
+                    <input
+                      id="paid_at"
+                      type="date"
+                      value={paidAt ? new Date(paidAt).toISOString().split('T')[0] : ''}
+                      onChange={(e) => setPaidAt(e.target.value ? new Date(e.target.value).toISOString() : '')}
+                      className="w-full rounded-md shadow-xs text-[14px] border px-3 py-2 text-white"
+                      style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
+                    />
+                  </div>
+                )}
+
+                {/* Save Button */}
+                <Button
+                  onClick={handleUpdatePaymentStatus}
+                  disabled={loading || (isPaid && !paidAt)}
+                  variant="default"
+                  className="w-full"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  Update Payment Status
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Action Buttons */}
       <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>

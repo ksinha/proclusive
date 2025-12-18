@@ -156,9 +156,18 @@ export default function LoginPage() {
 
               {/* Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="password" style={{ color: '#b0b2bc', fontSize: '0.9rem' }}>
-                  Password
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" style={{ color: '#b0b2bc', fontSize: '0.9rem' }}>
+                    Password
+                  </Label>
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-xs transition-colors underline-offset-4 hover:underline"
+                    style={{ color: '#c9a962', textDecoration: 'none' }}
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <Input
                   id="password"
                   name="password"

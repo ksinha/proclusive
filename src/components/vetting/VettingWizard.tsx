@@ -39,6 +39,7 @@ export interface BusinessInfoData {
   team_size: string;
   tin_number: string;
   is_public: boolean;
+  referred_by: string;
 }
 
 export interface DocumentData {
@@ -147,6 +148,7 @@ export default function VettingWizard({
           team_size: existingProfile.team_size || "",
           tin_number: existingProfile.tin_number || "",
           is_public: existingProfile.is_public ?? true,
+          referred_by: (existingProfile as any).referred_by || "",
         });
         if (existingApplication) {
           setTosAccepted(existingApplication.tos_accepted || false);
@@ -184,6 +186,7 @@ export default function VettingWizard({
             team_size: profile.team_size || "",
             tin_number: profile.tin_number || "",
             is_public: profile.is_public ?? true,
+            referred_by: profile.referred_by || "",
           });
         }
       } catch (err) {
@@ -426,10 +429,23 @@ export default function VettingWizard({
       // 5. Update profile with TIN number (already included in businessInfo)
       // TIN is saved with the profile in step 1 above
 
-      // 6. Clear saved progress since submission is complete
+      // 6. Send email notifications (don't block on this)
+      try {
+        await fetch('/api/applications/notify-submission', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ applicationId: application.id }),
+        });
+        console.log('[VettingWizard] Email notifications sent');
+      } catch (emailError) {
+        console.error('[VettingWizard] Failed to send email notifications:', emailError);
+        // Don't fail the submission if email fails
+      }
+
+      // 7. Clear saved progress since submission is complete
       localStorage.removeItem(VETTING_PROGRESS_KEY);
 
-      // 7. Redirect to success page
+      // 8. Redirect to success page
       router.push("/vetting/success");
     } catch (err: any) {
       setError(err.message || "An error occurred");

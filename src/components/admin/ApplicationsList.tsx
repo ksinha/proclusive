@@ -46,13 +46,22 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
     );
   }
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, isPaid?: boolean) => {
     const variants = {
       pending: "warning",
       under_review: "default",
       approved: "success",
       rejected: "destructive",
     } as const;
+
+    // If approved and paid, show PAID badge
+    if (status === "approved" && isPaid) {
+      return (
+        <Badge variant="success">
+          PAID
+        </Badge>
+      );
+    }
 
     return (
       <Badge variant={variants[status as keyof typeof variants] || "secondary"}>
@@ -105,6 +114,7 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
                 <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Status</TableHead>
                 <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Progress</TableHead>
                 <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Submitted</TableHead>
+                <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Date Approved</TableHead>
                 <TableHead style={{ color: '#6a6d78', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -140,7 +150,7 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
 
                     {/* Status Cell */}
                     <TableCell>
-                      {getStatusBadge(app.status)}
+                      {getStatusBadge(app.status, app.profile.is_paid)}
                     </TableCell>
 
                     {/* Progress Cell */}
@@ -161,6 +171,13 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
                     {/* Submitted Cell */}
                     <TableCell className="text-[#b0b2bc] font-tabular-nums">
                       {new Date(app.created_at).toLocaleDateString()}
+                    </TableCell>
+
+                    {/* Date Approved Cell */}
+                    <TableCell className="text-[#b0b2bc] font-tabular-nums">
+                      {app.profile.approved_at
+                        ? new Date(app.profile.approved_at).toLocaleDateString()
+                        : <span className="text-[#6a6d78] italic">Not approved</span>}
                     </TableCell>
 
                     {/* Actions Cell */}

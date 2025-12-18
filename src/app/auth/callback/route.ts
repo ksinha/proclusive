@@ -60,6 +60,12 @@ export async function GET(request: Request) {
         return NextResponse.redirect(errorUrl);
       }
 
+      // Redirect to reset password page for recovery type
+      if (type === "recovery") {
+        console.log("[Auth Callback] Password recovery - redirecting to reset password");
+        return NextResponse.redirect(new URL("/auth/reset-password", requestUrl.origin));
+      }
+
       return NextResponse.redirect(new URL("/vetting", requestUrl.origin));
     } catch (err) {
       console.error("[Auth Callback] Token verification failed after retries:", err);

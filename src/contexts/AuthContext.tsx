@@ -49,7 +49,6 @@ interface AuthContextType {
   isAdmin: boolean;
   isVerified: boolean;
   loading: boolean;
-  loggingOut: boolean;
   signOut: () => void;
 }
 
@@ -58,7 +57,6 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   isVerified: false,
   loading: true,
-  loggingOut: false,
   signOut: () => {},
 });
 
@@ -74,45 +72,32 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Logout overlay component
-function LogoutOverlay() {
-  return (
-    <div className="fixed inset-0 z-[100] bg-[#1a1d27] flex items-center justify-center">
-      <div className="text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 mb-6">
-          <svg
-            className="animate-spin h-10 w-10 text-[#c9a962]"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
+// Show logout overlay via direct DOM manipulation (bypasses React async)
+function showLogoutOverlay() {
+  if (typeof document === "undefined") return;
+
+  // Remove any existing overlay first
+  const existing = document.getElementById("logout-overlay");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "logout-overlay";
+  overlay.innerHTML = `
+    <div style="position:fixed;inset:0;z-index:9999;background:#1a1d27;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;">
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;margin-bottom:24px;">
+          <svg style="animation:spin 1s linear infinite;height:40px;width:40px;color:#c9a962;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle style="opacity:0.25;" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path style="opacity:0.75;" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
         </div>
-        <h2
-          className="text-[24px] text-[#f8f8fa] mb-2"
-          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-        >
-          Signing Out
-        </h2>
-        <p className="text-[14px] text-[#b0b2bc]">
-          Please wait...
-        </p>
+        <h2 style="font-size:24px;color:#f8f8fa;margin-bottom:8px;font-family:'Cormorant Garamond',Georgia,serif;">Signing Out</h2>
+        <p style="font-size:14px;color:#b0b2bc;">Please wait...</p>
       </div>
     </div>
-  );
+    <style>@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}</style>
+  `;
+  document.body.appendChild(overlay);
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -122,7 +107,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isAdmin, setIsAdmin] = useState(cached.isAdmin);
   const [isVerified, setIsVerified] = useState(cached.isVerified);
   const [loading, setLoading] = useState(true);
-  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -229,27 +213,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
-  // Trigger signOut by setting loggingOut to true
+  // Sign out - uses direct DOM manipulation for instant overlay
   const signOut = () => {
-    console.log("[AuthProvider] SignOut triggered, showing overlay...");
-    setLoggingOut(true);
-  };
+    console.log("[AuthProvider] SignOut triggered");
 
-  // Handle actual signOut in useEffect - this ensures overlay renders first
-  useEffect(() => {
-    if (!loggingOut) return;
+    // Show overlay IMMEDIATELY via direct DOM manipulation (synchronous, bypasses React)
+    showLogoutOverlay();
 
+    // Clear localStorage cache IMMEDIATELY (synchronous)
+    clearCachedStatus();
+
+    // Perform the async signout
     const performSignOut = async () => {
-      console.log("[AuthProvider] Performing signOut...");
-
-      // Clear cache FIRST - this is synchronous
-      clearCachedStatus();
-
-      // Also clear state so if something goes wrong, we're logged out
-      setUser(null);
-      setIsAdmin(false);
-      setIsVerified(false);
-
       // Set a timeout to guarantee redirect even if Supabase call hangs
       const redirectTimeout = setTimeout(() => {
         console.log("[AuthProvider] Redirect timeout - forcing redirect");
@@ -265,7 +240,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         // Small delay so user sees the "Signing Out" message
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 800));
       } catch (err) {
         console.error("[AuthProvider] Sign out error:", err);
       } finally {
@@ -277,11 +252,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
 
     performSignOut();
-  }, [loggingOut]);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, isVerified, loading, loggingOut, signOut }}>
-      {loggingOut && <LogoutOverlay />}
+    <AuthContext.Provider value={{ user, isAdmin, isVerified, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );

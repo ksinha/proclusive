@@ -204,6 +204,12 @@ export default function Step4Review({
                 <dd className="text-[14px] text-[#b0b2bc]">{businessInfo.bio}</dd>
               </div>
             )}
+            {businessInfo.referred_by && (
+              <div className="col-span-2 space-y-1">
+                <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Referred By</dt>
+                <dd className="text-[14px] font-semibold text-[#f8f8fa]">{businessInfo.referred_by}</dd>
+              </div>
+            )}
           </dl>
 
           {(businessInfo.street_address || businessInfo.city || businessInfo.state) && (

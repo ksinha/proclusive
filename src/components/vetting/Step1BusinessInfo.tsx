@@ -80,6 +80,7 @@ interface ValidationErrors {
   state?: string;
   zip_code?: string;
   tin_number?: string;
+  referred_by?: string;
 }
 
 export default function Step1BusinessInfo({
@@ -106,6 +107,7 @@ export default function Step1BusinessInfo({
       team_size: "",
       tin_number: "",
       is_public: true,
+      referred_by: "",
     }
   );
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -193,6 +195,11 @@ export default function Step1BusinessInfo({
       newErrors.tin_number = "TIN/EIN is required";
     } else if (tinDigits.length !== 9) {
       newErrors.tin_number = "TIN/EIN must be 9 digits";
+    }
+
+    // Referral
+    if (!formData.referred_by.trim()) {
+      newErrors.referred_by = "Please enter who referred you";
     }
 
     setErrors(newErrors);
@@ -648,6 +655,35 @@ export default function Step1BusinessInfo({
               Format: XX-XXXXXXX (9 digits). You'll upload your W-9 form in the next step.
             </p>
             <FieldError error={errors.tin_number} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Referral Information */}
+      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Info className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Referral Information</CardTitle>
+          </div>
+          <CardDescription className="text-[14px] text-[#b0b2bc]">Help us track how you found Proclusive</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="referred_by" className="text-[13px] font-medium text-[#b0b2bc]">Who Referred You?</Label>
+            <Input
+              type="text"
+              name="referred_by"
+              id="referred_by"
+              placeholder="Enter the name of the Proclusive member who referred you"
+              value={formData.referred_by}
+              onChange={handleChange}
+              className={errors.referred_by ? "border-[#f87171]" : ""}
+            />
+            <p className="text-[12px] text-[#6a6d78]">
+              Enter the name of the Proclusive member who referred you
+            </p>
+            <FieldError error={errors.referred_by} />
           </div>
         </CardContent>
       </Card>

@@ -51,12 +51,16 @@ export interface Profile {
   is_admin: boolean;
   is_verified: boolean;
   verification_completed_at: string | null;
+  approved_at: string | null;
+  is_paid: boolean;
+  paid_at: string | null;
   bio: string | null;
   years_in_business: number | null;
   team_size: string | null;
   is_public: boolean;
   tin_number: string | null;
   profile_picture_url: string | null;
+  referred_by: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -6,51 +6,51 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
+import { CustomSelect } from "@/components/ui/custom-select";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { User, Building2, Briefcase, MapPin, Clock, FileText, Send } from "lucide-react";
 
 const PROJECT_TYPES = [
-  "Commercial Construction",
-  "Residential Construction",
-  "Renovation/Remodel",
-  "Electrical",
-  "Plumbing",
-  "HVAC",
-  "Landscaping",
-  "Roofing",
-  "Concrete",
-  "Painting",
-  "Masonry",
-  "Flooring",
-  "Steel Erection",
-  "Demolition",
-  "Insulation",
-  "Waterproofing",
-  "Glazing",
-  "Fire Protection",
-  "Elevator Installation",
-  "Excavation",
-  "Other",
+  { value: "Commercial Construction", label: "Commercial Construction" },
+  { value: "Residential Construction", label: "Residential Construction" },
+  { value: "Renovation/Remodel", label: "Renovation/Remodel" },
+  { value: "Electrical", label: "Electrical" },
+  { value: "Plumbing", label: "Plumbing" },
+  { value: "HVAC", label: "HVAC" },
+  { value: "Landscaping", label: "Landscaping" },
+  { value: "Roofing", label: "Roofing" },
+  { value: "Concrete", label: "Concrete" },
+  { value: "Painting", label: "Painting" },
+  { value: "Masonry", label: "Masonry" },
+  { value: "Flooring", label: "Flooring" },
+  { value: "Steel Erection", label: "Steel Erection" },
+  { value: "Demolition", label: "Demolition" },
+  { value: "Insulation", label: "Insulation" },
+  { value: "Waterproofing", label: "Waterproofing" },
+  { value: "Glazing", label: "Glazing" },
+  { value: "Fire Protection", label: "Fire Protection" },
+  { value: "Elevator Installation", label: "Elevator Installation" },
+  { value: "Excavation", label: "Excavation" },
+  { value: "Other", label: "Other" },
 ];
 
 const VALUE_RANGES = [
-  "Under $10k",
-  "$10k - $50k",
-  "$50k - $100k",
-  "$100k - $250k",
-  "$250k - $500k",
-  "$500k - $1M",
-  "Over $1M",
+  { value: "Under $10k", label: "Under $10k" },
+  { value: "$10k - $50k", label: "$10k - $50k" },
+  { value: "$50k - $100k", label: "$50k - $100k" },
+  { value: "$100k - $250k", label: "$100k - $250k" },
+  { value: "$250k - $500k", label: "$250k - $500k" },
+  { value: "$500k - $1M", label: "$500k - $1M" },
+  { value: "Over $1M", label: "Over $1M" },
 ];
 
 const TIMELINES = [
-  "Immediate (0-2 weeks)",
-  "Short-term (2-4 weeks)",
-  "Medium-term (1-3 months)",
-  "Long-term (3-6 months)",
-  "Future (6+ months)",
+  { value: "Immediate (0-2 weeks)", label: "Immediate (0-2 weeks)" },
+  { value: "Short-term (2-4 weeks)", label: "Short-term (2-4 weeks)" },
+  { value: "Medium-term (1-3 months)", label: "Medium-term (1-3 months)" },
+  { value: "Long-term (3-6 months)", label: "Long-term (3-6 months)" },
+  { value: "Future (6+ months)", label: "Future (6+ months)" },
 ];
 
 interface ReferralFormData {
@@ -84,7 +84,7 @@ export default function ReferralSubmissionForm() {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -274,41 +274,28 @@ export default function ReferralSubmissionForm() {
               <Label htmlFor="project_type" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 Project Type *
               </Label>
-              <Select
+              <CustomSelect
                 name="project_type"
                 id="project_type"
-                required
+                options={PROJECT_TYPES}
                 value={formData.project_type}
-                onChange={handleChange}
-                className="h-10"
-              >
-                <option value="">Select project type</option>
-                {PROJECT_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+                onChange={(value) => setFormData((prev) => ({ ...prev, project_type: value }))}
+                placeholder="Select project type"
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="value_range" className="text-[13px] font-medium" style={{ color: '#b0b2bc' }}>
                 Project Value Range
               </Label>
-              <Select
+              <CustomSelect
                 name="value_range"
                 id="value_range"
+                options={VALUE_RANGES}
                 value={formData.value_range}
-                onChange={handleChange}
-                className="h-10"
-              >
-                <option value="">Select value range</option>
-                {VALUE_RANGES.map((range) => (
-                  <option key={range} value={range}>
-                    {range}
-                  </option>
-                ))}
-              </Select>
+                onChange={(value) => setFormData((prev) => ({ ...prev, value_range: value }))}
+                placeholder="Select value range"
+              />
             </div>
           </div>
 
@@ -353,20 +340,14 @@ export default function ReferralSubmissionForm() {
                   Timeline
                 </div>
               </Label>
-              <Select
+              <CustomSelect
                 name="timeline"
                 id="timeline"
+                options={TIMELINES}
                 value={formData.timeline}
-                onChange={handleChange}
-                className="h-10"
-              >
-                <option value="">Select timeline</option>
-                {TIMELINES.map((timeline) => (
-                  <option key={timeline} value={timeline}>
-                    {timeline}
-                  </option>
-                ))}
-              </Select>
+                onChange={(value) => setFormData((prev) => ({ ...prev, timeline: value }))}
+                placeholder="Select timeline"
+              />
             </div>
           </div>
         </CardContent>
