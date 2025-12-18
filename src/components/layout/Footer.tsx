@@ -75,7 +75,7 @@ export default function Footer() {
                   href="mailto:hello@proclusive.com"
                   className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
                 >
-                  Contact Us
+                  hello@proclusive.com
                 </a>
               </li>
             </ul>

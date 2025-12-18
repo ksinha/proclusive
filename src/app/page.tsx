@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   TrendingUp,
   Shield,
-  DollarSign,
-  Mail
+  DollarSign
 } from "lucide-react";
 
 export default function Home() {
@@ -116,70 +115,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* 15-Point Verification Section */}
       <section className="bg-[#21242f] py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16 space-y-3">
-            <h2 className="text-[36px] font-display font-semibold text-[#f8f8fa]">How It Works</h2>
-            <p className="text-[14px] text-[#b0b2bc] font-body">
-              Join an exclusive network built on trust and verified expertise
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center space-y-8">
+            {/* Shield Icon */}
+            <div className="flex justify-center">
+              <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center">
+                <Shield className="h-8 w-8 text-gold" />
+              </div>
+            </div>
+
+            {/* Title */}
+            <div className="space-y-2">
+              <h2 className="text-[36px] md:text-[42px] font-display font-semibold text-[#f8f8fa]">
+                15-Point Verification
+              </h2>
+              <p className="text-[12px] text-[#c9a962] font-medium uppercase tracking-[0.2em]">
+                Vetting-as-a-Service™
+              </p>
+            </div>
+
+            {/* Description */}
+            <p className="text-[16px] md:text-[18px] text-[#b0b2bc] font-body leading-relaxed max-w-2xl mx-auto">
+              Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
             </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <Card className="relative overflow-visible bg-[#252833] border-white/[0.08]">
-              <CardHeader>
-                <div className="absolute -top-4 -left-4">
-                  <div className="w-12 h-12 bg-gold rounded-full flex items-center justify-center shadow-lg">
-                    <span className="text-[20px] font-bold text-primary">1</span>
-                  </div>
-                </div>
-                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                  <Mail className="h-6 w-6 text-gold" />
-                </div>
-                <CardTitle className="text-[#f8f8fa]">Get Invited</CardTitle>
-                <CardDescription className="text-[#b0b2bc]">
-                  Join through a trusted connection in the Founding 50. Our invite-only approach ensures every member is vouched for by existing professionals.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            {/* Step 2 */}
-            <Card className="relative overflow-visible bg-[#252833] border-white/[0.08]">
-              <CardHeader>
-                <div className="absolute -top-4 -left-4">
-                  <div className="w-12 h-12 bg-gold rounded-full flex items-center justify-center shadow-lg">
-                    <span className="text-[20px] font-bold text-primary">2</span>
-                  </div>
-                </div>
-                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 text-gold" />
-                </div>
-                <CardTitle className="text-[#f8f8fa]">Complete Vetting</CardTitle>
-                <CardDescription className="text-[#b0b2bc]">
-                  Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            {/* Step 3 */}
-            <Card className="relative overflow-visible bg-[#252833] border-white/[0.08]">
-              <CardHeader>
-                <div className="absolute -top-4 -left-4">
-                  <div className="w-12 h-12 bg-gold rounded-full flex items-center justify-center shadow-lg">
-                    <span className="text-[20px] font-bold text-primary">3</span>
-                  </div>
-                </div>
-                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                  <TrendingUp className="h-6 w-6 text-gold" />
-                </div>
-                <CardTitle className="text-[#f8f8fa]">Connect & Grow</CardTitle>
-                <CardDescription className="text-[#b0b2bc]">
-                  Access our vetted directory, exchange high-converting referrals, and build strategic partnerships with verified construction professionals.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            {/* Decorative line */}
+            <div className="pt-4">
+              <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/40 to-transparent mx-auto"></div>
+            </div>
           </div>
         </div>
       </section>
