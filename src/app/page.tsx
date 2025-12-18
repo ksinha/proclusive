@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   TrendingUp,
   Shield,
-  Building2,
-  Users,
   DollarSign,
   Mail
 } from "lucide-react";
@@ -160,7 +158,7 @@ export default function Home() {
                 </div>
                 <CardTitle className="text-[#f8f8fa]">Complete Vetting</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
-                  Pass our comprehensive 15-point verification process. We validate your expertise, track record, and professional credentials to maintain network quality.
+                  Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -192,7 +190,7 @@ export default function Home() {
           <div className="text-center mb-16 space-y-3">
             <h2 className="text-[36px] font-display font-semibold text-[#f8f8fa]">Why Join Proclusive?</h2>
             <p className="text-[14px] text-[#b0b2bc] font-body">
-              The most rigorous vetting process in the construction industry
+              Unlock higher-converting opportunities with verified professionals
             </p>
           </div>
 
@@ -200,11 +198,11 @@ export default function Home() {
             <Card className="bg-[#252833] border-white/[0.08] transition-all duration-300 hover:border-gold/25 hover:shadow-[0_0_20px_rgba(201,169,98,0.1)]">
               <CardHeader>
                 <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                  <Building2 className="h-6 w-6 text-gold" />
+                  <TrendingUp className="h-6 w-6 text-gold" />
                 </div>
-                <CardTitle className="text-[#f8f8fa]">Build Trust Together</CardTitle>
+                <CardTitle className="text-[#f8f8fa]">Close More Deals</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
-                  Connect with verified industry experts. By joining our vetted network, you become part of a trusted community that elevates professional standards.
+                  Referral-based leads convert at 70–80%—compared to 10–20% for cold outreach. Work with pre-qualified opportunities that are ready to close.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -216,7 +214,7 @@ export default function Home() {
                 </div>
                 <CardTitle className="text-[#f8f8fa]">Earn Commissions</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
-                  Get rewarded for your referrals. Earn commissions when you connect fellow members with quality business opportunities.
+                  Get rewarded when you connect fellow members with quality projects. Every successful referral earns you a commission.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -224,11 +222,11 @@ export default function Home() {
             <Card className="bg-[#252833] border-white/[0.08] transition-all duration-300 hover:border-gold/25 hover:shadow-[0_0_20px_rgba(201,169,98,0.1)]">
               <CardHeader>
                 <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-gold" />
+                  <Shield className="h-6 w-6 text-gold" />
                 </div>
-                <CardTitle className="text-[#f8f8fa]">Expand Your Network</CardTitle>
+                <CardTitle className="text-[#f8f8fa]">Pre-Vetted Professionals</CardTitle>
                 <CardDescription className="text-[#b0b2bc]">
-                  Grow your business through strategic connections. Access our vetted directory of construction professionals and unlock new opportunities.
+                  We verify credentials, insurance, and track record before anyone joins. You get introductions, not question marks.
                 </CardDescription>
               </CardHeader>
             </Card>

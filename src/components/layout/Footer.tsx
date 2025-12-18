@@ -11,7 +11,7 @@ export default function Footer() {
               Proclusive
             </h3>
             <p className="text-[14px] text-[#b0b2bc]">
-              High-Trust B2B Referral Network for the Construction Industry
+              For the built environment
             </p>
           </div>
 
@@ -72,10 +72,10 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@proclusive.com"
+                  href="mailto:hello@proclusive.com"
                   className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
                 >
-                  Contact Support
+                  Contact Us
                 </a>
               </li>
             </ul>
@@ -85,7 +85,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-white/[0.08]">
           <p className="text-[13px] text-[#6a6d78] text-center">
-            © {new Date().getFullYear()} Proclusive. All rights reserved.
+            © {new Date().getFullYear()} Chalo Enterprises LLC. All rights reserved.
           </p>
         </div>
       </div>
