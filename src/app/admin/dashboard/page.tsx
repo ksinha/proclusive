@@ -21,7 +21,7 @@ interface ApplicationWithProfile extends Application {
 }
 
 export default function AdminDashboardPage() {
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading, signingOut } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [allApplications, setAllApplications] = useState<ApplicationWithProfile[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "under_review" | "approved" | "rejected">("pending");
@@ -47,7 +47,7 @@ export default function AdminDashboardPage() {
 
   // Auth validation and redirect (runs in parallel with data loading)
   useEffect(() => {
-    if (!authLoading) {
+    if (!authLoading && !signingOut) {
       console.log("[AdminDashboard] Auth loaded:", { user: user?.id, isAdmin });
 
       if (!user) {
@@ -64,7 +64,7 @@ export default function AdminDashboardPage() {
 
       console.log("[AdminDashboard] Admin verified");
     }
-  }, [authLoading, user, isAdmin]);
+  }, [authLoading, user, isAdmin, signingOut]);
 
 
   const loadApplications = async () => {

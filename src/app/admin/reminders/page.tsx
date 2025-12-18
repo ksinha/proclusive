@@ -59,14 +59,14 @@ function getDaysSince(dateString: string): number {
 }
 
 export default function AdminRemindersPage() {
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading, signingOut } = useAuth();
   const [applications, setApplications] = useState<ApplicationWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [sendingReminder, setSendingReminder] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, 'success' | 'error'>>({});
 
   useEffect(() => {
-    if (!authLoading) {
+    if (!authLoading && !signingOut) {
       if (!user) {
         window.location.href = "/auth/login";
         return;
@@ -77,7 +77,7 @@ export default function AdminRemindersPage() {
       }
       loadApplications();
     }
-  }, [authLoading, user, isAdmin]);
+  }, [authLoading, user, isAdmin, signingOut]);
 
   const loadApplications = async () => {
     setLoading(true);
