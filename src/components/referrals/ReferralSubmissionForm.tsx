@@ -143,18 +143,27 @@ export default function ReferralSubmissionForm() {
 
       console.log("[ReferralSubmissionForm] Referral created:", data.id);
 
-      // Send email notification to admin
+      // Send email notifications in parallel
       try {
-        console.log("[ReferralSubmissionForm] Sending admin notification...");
-        await fetch('/api/referrals/notify-admin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ referralId: data.id }),
-        });
-        console.log("[ReferralSubmissionForm] Admin notification sent");
+        console.log("[ReferralSubmissionForm] Sending email notifications...");
+        await Promise.all([
+          // Send confirmation to submitter (3.1)
+          fetch('/api/referrals/notify-submitter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ referralId: data.id }),
+          }),
+          // Send notification to admin (3.2)
+          fetch('/api/referrals/notify-admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ referralId: data.id }),
+          }),
+        ]);
+        console.log("[ReferralSubmissionForm] Email notifications sent");
       } catch (emailError) {
         // Log but don't fail the submission if email fails
-        console.error('[ReferralSubmissionForm] Failed to send admin notification:', emailError);
+        console.error('[ReferralSubmissionForm] Failed to send email notifications:', emailError);
       }
 
       // Redirect to success or referrals list

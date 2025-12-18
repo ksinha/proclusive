@@ -108,7 +108,6 @@ export async function POST(request: NextRequest) {
         email: application.profile.email,
         fullName: application.profile.full_name,
       },
-      verificationPoints,
       adminNotes || ''
     );
 

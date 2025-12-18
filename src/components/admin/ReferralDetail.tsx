@@ -87,6 +87,7 @@ export default function ReferralDetail({
   const [adminNotes, setAdminNotes] = useState(referral.admin_notes || "");
   const [selectedMember, setSelectedMember] = useState<string>(referral.matched_to || "");
   const [showMemberSelect, setShowMemberSelect] = useState(false);
+  const [finalValue, setFinalValue] = useState<string>((referral as any).final_value || "");
 
   const [error, setError] = useState<string | null>(null);
 
@@ -129,6 +130,9 @@ export default function ReferralDetail({
         updateData.engaged_at = new Date().toISOString();
       } else if (newStatus === "COMPLETED") {
         updateData.completed_at = new Date().toISOString();
+        if (finalValue) {
+          updateData.final_value = finalValue;
+        }
       }
 
       console.log("[ReferralDetail] Updating referral with data:", updateData);
@@ -160,9 +164,10 @@ export default function ReferralDetail({
         // Don't fail the operation if audit log fails
       }
 
-      // Send email notification if status is MATCHED
-      if (newStatus === "MATCHED") {
-        try {
+      // Send email notifications based on status
+      try {
+        if (newStatus === "MATCHED") {
+          // Send "You have a referral" notification to matched member (3.3)
           console.log("[ReferralDetail] Sending member notification...");
           await fetch('/api/referrals/notify-member', {
             method: 'POST',
@@ -173,10 +178,33 @@ export default function ReferralDetail({
             }),
           });
           console.log("[ReferralDetail] Member notification sent");
-        } catch (emailError) {
-          // Log but don't fail the status update if email fails
-          console.error('[ReferralDetail] Failed to send member notification:', emailError);
+        } else if (newStatus === "REVIEWED" || newStatus === "ENGAGED") {
+          // Send status update emails (3.4)
+          console.log("[ReferralDetail] Sending status update notifications...");
+          await fetch('/api/referrals/notify-status-update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              referralId: referral.id,
+              newStatus,
+            }),
+          });
+          console.log("[ReferralDetail] Status update notifications sent");
+        } else if (newStatus === "COMPLETED") {
+          // Send completion emails to both parties (3.5)
+          console.log("[ReferralDetail] Sending completion notifications...");
+          await fetch('/api/referrals/notify-completed', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              referralId: referral.id,
+            }),
+          });
+          console.log("[ReferralDetail] Completion notifications sent");
         }
+      } catch (emailError) {
+        // Log but don't fail the status update if email fails
+        console.error('[ReferralDetail] Failed to send email notification:', emailError);
       }
 
       setSuccessMessage(`Referral status updated to ${STATUS_CONFIG[newStatus].label}`);
@@ -428,6 +456,34 @@ export default function ReferralDetail({
             <div className="text-[#b0b2bc] text-[13px] mt-1">
               {referral.matched_member.primary_trade}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Final Value (Show when status is ENGAGED - ready for completion) */}
+      {referral.status === "ENGAGED" && (
+        <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-[#4ade80]" />
+              <CardTitle className="text-[18px] text-white">Final Project Value</CardTitle>
+            </div>
+            <CardDescription className="text-[#b0b2bc]">
+              Enter the actual project value before marking as completed
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <input
+              type="text"
+              value={finalValue}
+              onChange={(e) => setFinalValue(e.target.value)}
+              className="w-full h-10 rounded-md shadow-xs text-[14px] border px-3 py-2 text-white"
+              style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
+              placeholder={referral.value_range || "e.g., $125,000"}
+            />
+            <p className="text-[12px] text-[#6a6d78] mt-2">
+              Original estimate: {referral.value_range || 'Not specified'}
+            </p>
           </CardContent>
         </Card>
       )}
