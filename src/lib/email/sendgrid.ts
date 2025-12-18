@@ -31,32 +31,118 @@ function formatDate(date?: Date | string): string {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-// Email wrapper template
-function emailWrapper(content: string): string {
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #1a1d27; color: #f8f8fa; padding: 32px; border-radius: 8px;">
-      <div style="text-align: center; margin-bottom: 32px;">
-        <h1 style="color: #c9a962; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; margin: 0 0 8px 0; letter-spacing: 0.1em;">PROCLUSIVE</h1>
-        <div style="height: 1px; background: linear-gradient(90deg, transparent, #c9a962, transparent); margin: 16px 0;"></div>
-      </div>
-      ${content}
-      <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-        <p style="color: #b0b2bc; font-size: 13px; margin: 0 0 4px 0;">Warm regards,</p>
-        <p style="color: #f8f8fa; font-size: 13px; margin: 0; font-weight: 600;">The Proclusive Team</p>
-      </div>
-    </div>
-  `;
+// Email wrapper template - matches Proclusive brand styling
+function emailWrapper(content: string, includeSignature: boolean = true): string {
+  const signature = includeSignature ? `
+            <tr>
+              <td style="padding: 30px 40px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                <p style="margin: 0 0 4px 0; font-size: 13px; color: #b0b2bc;">Warm regards,</p>
+                <p style="margin: 0; font-size: 13px; color: #f8f8fa; font-weight: 600;">The Proclusive Team</p>
+              </td>
+            </tr>` : '';
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #1a1d27; font-family: Arial, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #1a1d27;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #252833; border-radius: 12px; border: 1px solid rgba(201, 169, 98, 0.2);">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 40px 40px 20px 40px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+              <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; font-weight: 600; color: #f8f8fa; letter-spacing: 0.15em; text-transform: uppercase;">PROCLUSIVE</h1>
+              <div style="width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #c9a962, transparent); margin: 15px auto 0;"></div>
+            </td>
+          </tr>
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              ${content}
+            </td>
+          </tr>
+          <!-- Signature -->
+          ${signature}
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 40px 30px 40px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+              <p style="margin: 0; font-size: 12px; color: #6a6d78;">
+                © 2025 Proclusive. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
 }
 
-// CTA Button
+// Email wrapper with custom signature (for Michelle's emails)
+function emailWrapperWithCustomSignature(content: string, name: string, title: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #1a1d27; font-family: Arial, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #1a1d27;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #252833; border-radius: 12px; border: 1px solid rgba(201, 169, 98, 0.2);">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 40px 40px 20px 40px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+              <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; font-weight: 600; color: #f8f8fa; letter-spacing: 0.15em; text-transform: uppercase;">PROCLUSIVE</h1>
+              <div style="width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #c9a962, transparent); margin: 15px auto 0;"></div>
+            </td>
+          </tr>
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              ${content}
+            </td>
+          </tr>
+          <!-- Custom Signature -->
+          <tr>
+            <td style="padding: 30px 40px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+              <p style="margin: 0 0 4px 0; font-size: 13px; color: #b0b2bc;">Warm regards,</p>
+              <p style="margin: 0; font-size: 13px; color: #f8f8fa; font-weight: 600;">${name}</p>
+              <p style="margin: 4px 0 0 0; font-size: 12px; color: #6a6d78;">${title}</p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 40px 30px 40px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+              <p style="margin: 0; font-size: 12px; color: #6a6d78;">
+                © 2025 Proclusive. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+// CTA Button - matches Proclusive brand styling
 function ctaButton(text: string, url: string): string {
   return `
-    <div style="text-align: center; margin: 32px 0;">
-      <a href="${url}" style="display: inline-block; background-color: #c9a962; color: #1a1d27; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">
-        ${text}
-      </a>
-    </div>
-  `;
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 30px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="${url}" style="display: inline-block; padding: 16px 40px; background-color: #c9a962; color: #1a1d27; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 6px; letter-spacing: 0.5px; text-transform: uppercase;">${text}</a>
+                  </td>
+                </tr>
+              </table>`;
 }
 
 // ============================================
@@ -450,50 +536,36 @@ export async function sendApplicationApprovedNotification(
   const firstName = getFirstName(applicant.fullName);
 
   const content = `
-    <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;">Hi ${firstName},</p>
+              <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;">Hi ${firstName},</p>
 
-    <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;"><strong style="color: #c9a962;">Congratulations</strong>—your membership has been approved. Welcome to Proclusive.</p>
+              <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;"><strong style="color: #c9a962;">Congratulations</strong>—your membership has been approved. Welcome to Proclusive.</p>
 
-    <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;">You now have access to a network of verified professionals in the built environment. Here's how to get started:</p>
+              <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;">You now have access to a network of verified professionals in the built environment. Here's how to get started:</p>
 
-    <div style="background-color: #252833; padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid rgba(255, 255, 255, 0.08);">
-      <ol style="margin: 0; padding-left: 20px; color: #b0b2bc; line-height: 2;">
-        <li><strong style="color: #f8f8fa;">Log in to your dashboard</strong></li>
-        <li><strong style="color: #f8f8fa;">Complete your profile</strong> — A polished profile helps other members find and trust you.</li>
-        <li><strong style="color: #f8f8fa;">Explore the Member Directory</strong> — Connect with architects, contractors, designers, and specialists across the DC Metro area.</li>
-        <li><strong style="color: #f8f8fa;">Submit your first referral</strong> — When you know someone who needs quality work, send them to a fellow member.</li>
-      </ol>
-    </div>
+              <div style="background-color: rgba(201, 169, 98, 0.1); padding: 24px; border-radius: 8px; margin: 24px 0; border: 1px solid rgba(201, 169, 98, 0.2);">
+                <ol style="margin: 0; padding-left: 20px; color: #b0b2bc; line-height: 2;">
+                  <li><strong style="color: #f8f8fa;">Log in to your dashboard</strong></li>
+                  <li><strong style="color: #f8f8fa;">Complete your profile</strong> — A polished profile helps other members find and trust you.</li>
+                  <li><strong style="color: #f8f8fa;">Explore the Member Directory</strong> — Connect with architects, contractors, designers, and specialists across the DC Metro area.</li>
+                  <li><strong style="color: #f8f8fa;">Submit your first referral</strong> — When you know someone who needs quality work, send them to a fellow member.</li>
+                </ol>
+              </div>
 
-    ${ctaButton('Go to Dashboard', `${APP_URL}/dashboard`)}
+              ${ctaButton('Go to Dashboard', `${APP_URL}/dashboard`)}
 
-    <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;">Questions? Reply to this email anytime. We're here to help you make the most of your membership.</p>
+              <p style="margin: 20px 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;">Questions? Reply to this email anytime. We're here to help you make the most of your membership.</p>
 
-    <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;">Welcome aboard.</p>
-
-    <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-      <p style="color: #b0b2bc; font-size: 13px; margin: 0 0 4px 0;">Warm regards,</p>
-      <p style="color: #f8f8fa; font-size: 13px; margin: 0; font-weight: 600;">Michelle Liefke</p>
-      <p style="color: #6a6d78; font-size: 12px; margin: 4px 0 0 0;">Founder & CEO, Proclusive</p>
-    </div>
+              <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;">Welcome aboard.</p>
   `;
 
-  // Override the wrapper to use Michelle's signature instead
-  const customWrapper = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #1a1d27; color: #f8f8fa; padding: 32px; border-radius: 8px;">
-      <div style="text-align: center; margin-bottom: 32px;">
-        <h1 style="color: #c9a962; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; margin: 0 0 8px 0; letter-spacing: 0.1em;">PROCLUSIVE</h1>
-        <div style="height: 1px; background: linear-gradient(90deg, transparent, #c9a962, transparent); margin: 16px 0;"></div>
-      </div>
-      ${content}
-    </div>
-  `;
+  // Use wrapper with Michelle's custom signature
+  const customHtml = emailWrapperWithCustomSignature(content, 'Michelle Liefke', 'Founder & CEO, Proclusive');
 
   const msg = {
     to: applicant.email,
     from: FROM_EMAIL,
     subject: "Welcome to Proclusive — You're In",
-    html: customWrapper,
+    html: customHtml,
     text: `Hi ${firstName},
 
 Congratulations—your membership has been approved. Welcome to Proclusive.
