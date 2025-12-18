@@ -235,31 +235,58 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Clear localStorage cache IMMEDIATELY (synchronous)
     clearCachedStatus();
 
+    // Clear ALL Supabase-related localStorage items
+    if (typeof window !== "undefined") {
+      try {
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith("sb-") || key.includes("supabase"))) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach((key) => localStorage.removeItem(key));
+        console.log("[AuthProvider] Cleared Supabase localStorage keys:", keysToRemove);
+      } catch (e) {
+        console.error("[AuthProvider] Error clearing localStorage:", e);
+      }
+    }
+
     // Perform the async signout
     const performSignOut = async () => {
       // Set a timeout to guarantee redirect even if Supabase call hangs
       const redirectTimeout = setTimeout(() => {
         console.log("[AuthProvider] Redirect timeout - forcing redirect");
-        window.location.href = "/";
+        window.location.href = "/auth/login";
       }, 5000);
 
       try {
         const supabase = createClient();
-        const { error } = await supabase.auth.signOut();
+
+        // Use scope: 'global' to sign out from all devices/tabs
+        const { error } = await supabase.auth.signOut({ scope: 'global' });
 
         if (error) {
           console.error("[AuthProvider] Sign out error:", error);
+        } else {
+          console.log("[AuthProvider] Sign out successful");
         }
 
-        // Small delay so user sees the "Signing Out" message
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        // Wait a moment to ensure session is fully cleared
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err) {
         console.error("[AuthProvider] Sign out error:", err);
       } finally {
-        // Clear timeout and redirect
+        // Clear timeout and redirect to login page
         clearTimeout(redirectTimeout);
-        // Force full page reload to clear any cached state
-        window.location.href = "/";
+
+        // Clear React state before redirect
+        setUser(null);
+        setIsAdmin(false);
+        setIsVerified(false);
+
+        // Force full page reload to login page
+        window.location.href = "/auth/login";
       }
     };
 
