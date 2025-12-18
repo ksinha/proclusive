@@ -44,8 +44,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate a reference ID for the email
-    const referenceId = `REF-${referral.id.slice(0, 8).toUpperCase()}`;
     const completionDate = new Date().toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -53,7 +51,8 @@ export async function POST(request: NextRequest) {
     });
 
     const referralData = {
-      referralId: referenceId,
+      referralId: referral.id,
+      referenceNumber: referral.reference_number,
       clientName: referral.client_name,
       clientCompany: referral.client_company,
       projectType: referral.project_type,

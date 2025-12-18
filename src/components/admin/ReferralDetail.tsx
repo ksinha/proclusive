@@ -260,6 +260,11 @@ export default function ReferralDetail({
                 <CardTitle className="text-[24px] font-semibold text-white">
                   {referral.client_name}
                 </CardTitle>
+                {(referral as any).reference_number && (
+                  <Badge variant="outline" className="text-[#c9a962] border-[#c9a962]">
+                    Ref: {(referral as any).reference_number}
+                  </Badge>
+                )}
                 <Badge variant={statusConfig.variant}>
                   <StatusIcon className="h-4 w-4 mr-1" />
                   {statusConfig.label}
@@ -268,6 +273,11 @@ export default function ReferralDetail({
               <CardDescription className="text-[14px] text-[#b0b2bc]">
                 Submitted by {referral.submitter.full_name} ({referral.submitter.company_name}) on{" "}
                 {new Date(referral.created_at).toLocaleDateString()}
+                {!(referral as any).reference_number && (
+                  <span className="text-[#6a6d78] ml-2">
+                    • ID: {referral.id.substring(0, 8)}
+                  </span>
+                )}
               </CardDescription>
             </div>
             <Button onClick={onClose} variant="ghost" size="icon">

@@ -95,6 +95,7 @@ export default async function DashboardPage() {
         userId={user.id}
         badges={userBadges}
         profilePictureUrl={profilePictureUrl}
+        memberNumber={profile?.member_number}
       />
     );
   } catch (err) {

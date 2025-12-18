@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       .from('applications')
       .select(`
         *,
-        profile:profiles!applications_user_id_fkey(email, full_name)
+        profile:profiles!applications_user_id_fkey(email, full_name, member_number)
       `)
       .eq('id', applicationId)
       .single();
@@ -61,7 +61,8 @@ export async function POST(request: NextRequest) {
         email: application.profile.email,
         fullName: application.profile.full_name,
       },
-      badgeLevel
+      badgeLevel,
+      application.profile.member_number
     );
 
     return NextResponse.json({

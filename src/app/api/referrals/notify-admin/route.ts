@@ -36,13 +36,14 @@ export async function POST(request: NextRequest) {
     // Send email notification to admin
     const success = await sendNewReferralNotification(
       {
+        referralId: referral.id,
+        referenceNumber: referral.reference_number,
         clientName: referral.client_name,
         clientCompany: referral.client_company,
         projectType: referral.project_type,
         valueRange: referral.value_range,
         location: referral.location,
         timeline: referral.timeline,
-        referralId: referral.id,
       },
       {
         fullName: referral.submitter.full_name,

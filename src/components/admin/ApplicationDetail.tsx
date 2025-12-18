@@ -455,9 +455,16 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
                 size="xl"
               />
               <div>
-                <CardTitle className="text-[24px] font-semibold text-white">
-                  {application.profile.full_name}
-                </CardTitle>
+                <div className="flex items-center gap-3 mb-1">
+                  <CardTitle className="text-[24px] font-semibold text-white">
+                    {application.profile.full_name}
+                  </CardTitle>
+                  {currentApplication.status === "approved" && (currentApplication.profile as any).member_number && (
+                    <Badge variant="outline" className="text-[#c9a962] border-[#c9a962]">
+                      Member #{(currentApplication.profile as any).member_number}
+                    </Badge>
+                  )}
+                </div>
                 <CardDescription className="text-[14px] text-[#b0b2bc]">
                   {application.profile.company_name} • Submitted on {new Date(application.created_at).toLocaleString()}
                 </CardDescription>

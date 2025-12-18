@@ -158,6 +158,7 @@ interface ApplicantInfo {
 
 interface ReferralEmailData {
   referralId: string;
+  referenceNumber?: string;
   clientName: string;
   clientCompany?: string | null;
   projectType: string;
@@ -526,7 +527,8 @@ The Proclusive Team`,
 // ============================================
 export async function sendApplicationApprovedNotification(
   applicant: ApplicantInfo,
-  badgeLevel: string
+  badgeLevel: string,
+  memberNumber?: string
 ): Promise<boolean> {
   if (!process.env.SENDGRID_API_KEY) {
     console.log('SendGrid API key not configured - skipping email notification');
@@ -539,6 +541,8 @@ export async function sendApplicationApprovedNotification(
               <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;">Hi ${firstName},</p>
 
               <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;"><strong style="color: #c9a962;">Congratulations</strong>—your membership has been approved. Welcome to Proclusive.</p>
+
+              ${memberNumber ? `<p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;">Your member ID is <strong style="color: #c9a962;">${memberNumber}</strong>.</p>` : ''}
 
               <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #b0b2bc;">You now have access to a network of verified professionals in the built environment. Here's how to get started:</p>
 
@@ -569,6 +573,8 @@ export async function sendApplicationApprovedNotification(
     text: `Hi ${firstName},
 
 Congratulations—your membership has been approved. Welcome to Proclusive.
+
+${memberNumber ? `Your member ID is ${memberNumber}.` : ''}
 
 You now have access to a network of verified professionals in the built environment. Here's how to get started:
 
@@ -609,6 +615,7 @@ export async function sendReferralSubmittedConfirmation(
   }
 
   const firstName = getFirstName(submitter.fullName);
+  const referenceId = referral.referenceNumber || referral.referralId;
 
   const content = `
     <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;">Hi ${firstName},</p>
@@ -620,7 +627,7 @@ export async function sendReferralSubmittedConfirmation(
       <table style="width: 100%; border-collapse: collapse;">
         <tr>
           <td style="padding: 8px 0; color: #6a6d78; width: 120px;">Reference:</td>
-          <td style="padding: 8px 0; color: #f8f8fa;">${referral.referralId}</td>
+          <td style="padding: 8px 0; color: #f8f8fa;">${referenceId}</td>
         </tr>
         <tr>
           <td style="padding: 8px 0; color: #6a6d78;">Project Type:</td>
@@ -649,14 +656,14 @@ export async function sendReferralSubmittedConfirmation(
   const msg = {
     to: submitter.email,
     from: FROM_EMAIL,
-    subject: `Referral Submitted — ${referral.referralId}`,
+    subject: `Referral Submitted — ${referenceId}`,
     html: emailWrapper(content),
     text: `Hi ${firstName},
 
 Thank you for submitting a referral through Proclusive. We've received it and our team is reviewing the details.
 
 Referral Summary:
-- Reference: ${referral.referralId}
+- Reference: ${referenceId}
 - Project Type: ${referral.projectType}
 ${referral.valueRange ? `- Estimated Value: ${referral.valueRange}` : ''}
 - Status: Submitted
@@ -691,6 +698,8 @@ export async function sendNewReferralNotification(
     return false;
   }
 
+  const referenceId = referral.referenceNumber || referral.referralId;
+
   const content = `
     <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;">New referral submitted and ready for review.</p>
 
@@ -699,7 +708,7 @@ export async function sendNewReferralNotification(
       <table style="width: 100%; border-collapse: collapse;">
         <tr>
           <td style="padding: 8px 0; color: #6a6d78; width: 120px;">Reference:</td>
-          <td style="padding: 8px 0; color: #f8f8fa;">${referral.referralId}</td>
+          <td style="padding: 8px 0; color: #f8f8fa;">${referenceId}</td>
         </tr>
         <tr>
           <td style="padding: 8px 0; color: #6a6d78;">Submitted by:</td>
@@ -728,12 +737,12 @@ export async function sendNewReferralNotification(
   const msg = {
     to: ADMIN_EMAIL,
     from: FROM_EMAIL,
-    subject: `New Referral: ${referral.referralId} — ${referral.projectType}`,
+    subject: `New Referral: ${referenceId} — ${referral.projectType}`,
     html: emailWrapper(content),
     text: `New referral submitted and ready for review.
 
 Referral Details:
-- Reference: ${referral.referralId}
+- Reference: ${referenceId}
 - Submitted by: ${submitter.fullName} (${submitter.companyName})
 - Project Type: ${referral.projectType}
 ${referral.valueRange ? `- Estimated Value: ${referral.valueRange}` : ''}
@@ -767,6 +776,7 @@ export async function sendMatchedReferralNotification(
   }
 
   const firstName = getFirstName(member.fullName);
+  const referenceId = referral.referenceNumber || referral.referralId;
 
   const content = `
     <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;">Hi ${firstName},</p>
@@ -778,7 +788,7 @@ export async function sendMatchedReferralNotification(
       <table style="width: 100%; border-collapse: collapse;">
         <tr>
           <td style="padding: 8px 0; color: #6a6d78; width: 120px;">Reference:</td>
-          <td style="padding: 8px 0; color: #f8f8fa;">${referral.referralId}</td>
+          <td style="padding: 8px 0; color: #f8f8fa;">${referenceId}</td>
         </tr>
         <tr>
           <td style="padding: 8px 0; color: #6a6d78;">Project Type:</td>
@@ -816,7 +826,7 @@ export async function sendMatchedReferralNotification(
 A new project opportunity has been matched to you through Proclusive.
 
 Project Overview:
-- Reference: ${referral.referralId}
+- Reference: ${referenceId}
 - Project Type: ${referral.projectType}
 ${referral.valueRange ? `- Estimated Value: ${referral.valueRange}` : ''}
 - Location: ${referral.location}
@@ -856,6 +866,7 @@ export async function sendReferralStatusUpdate(
   }
 
   const firstName = getFirstName(member.fullName);
+  const referenceId = referral.referenceNumber || referral.referralId;
 
   const stageMessages: Record<string, string> = {
     reviewed: 'Your referral has been verified and is being matched with the right member.',
@@ -879,7 +890,7 @@ export async function sendReferralStatusUpdate(
       <table style="width: 100%; border-collapse: collapse;">
         <tr>
           <td style="padding: 8px 0; color: #6a6d78; width: 120px;">Reference:</td>
-          <td style="padding: 8px 0; color: #f8f8fa;">${referral.referralId}</td>
+          <td style="padding: 8px 0; color: #f8f8fa;">${referenceId}</td>
         </tr>
         <tr>
           <td style="padding: 8px 0; color: #6a6d78;">Stage:</td>
@@ -904,14 +915,14 @@ export async function sendReferralStatusUpdate(
   const msg = {
     to: member.email,
     from: FROM_EMAIL,
-    subject: `Referral Update — ${referral.referralId}`,
+    subject: `Referral Update — ${referenceId}`,
     html: emailWrapper(content),
     text: `Hi ${firstName},
 
 Your referral has moved to a new stage.
 
 Current Status:
-- Reference: ${referral.referralId}
+- Reference: ${referenceId}
 - Stage: ${stageLabels[currentStage]}
 - Updated: ${updateDate}
 
@@ -948,6 +959,7 @@ export async function sendReferralCompleted(
   }
 
   const firstName = getFirstName(member.fullName);
+  const referenceId = referral.referenceNumber || referral.referralId;
 
   const content = `
     <p style="color: #b0b2bc; line-height: 1.7; font-size: 15px;">Hi ${firstName},</p>
@@ -959,7 +971,7 @@ export async function sendReferralCompleted(
       <table style="width: 100%; border-collapse: collapse;">
         <tr>
           <td style="padding: 8px 0; color: #6a6d78; width: 120px;">Reference:</td>
-          <td style="padding: 8px 0; color: #f8f8fa;">${referral.referralId}</td>
+          <td style="padding: 8px 0; color: #f8f8fa;">${referenceId}</td>
         </tr>
         <tr>
           <td style="padding: 8px 0; color: #6a6d78;">Project Type:</td>
@@ -988,14 +1000,14 @@ export async function sendReferralCompleted(
   const msg = {
     to: member.email,
     from: FROM_EMAIL,
-    subject: `Referral Closed — ${referral.referralId}`,
+    subject: `Referral Closed — ${referenceId}`,
     html: emailWrapper(content),
     text: `Hi ${firstName},
 
 Great news—your referral has been successfully completed.
 
 Final Summary:
-- Reference: ${referral.referralId}
+- Reference: ${referenceId}
 - Project Type: ${referral.projectType}
 - Final Value: ${finalValue}
 - Closed: ${completionDate}

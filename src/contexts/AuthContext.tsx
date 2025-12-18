@@ -49,6 +49,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isVerified: boolean;
   loading: boolean;
+  signingOut: boolean;
   signOut: () => void;
 }
 
@@ -57,6 +58,7 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   isVerified: false,
   loading: true,
+  signingOut: false,
   signOut: () => {},
 });
 
@@ -107,6 +109,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isAdmin, setIsAdmin] = useState(cached.isAdmin);
   const [isVerified, setIsVerified] = useState(cached.isVerified);
   const [loading, setLoading] = useState(true);
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -215,7 +218,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Sign out - uses direct DOM manipulation for instant overlay
   const signOut = () => {
+    // Prevent multiple simultaneous signout attempts
+    if (signingOut) {
+      console.log("[AuthProvider] SignOut already in progress, ignoring");
+      return;
+    }
+
     console.log("[AuthProvider] SignOut triggered");
+
+    // Set signingOut state immediately
+    setSigningOut(true);
 
     // Show overlay IMMEDIATELY via direct DOM manipulation (synchronous, bypasses React)
     showLogoutOverlay();
@@ -255,7 +267,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, isVerified, loading, signOut }}>
+    <AuthContext.Provider value={{ user, isAdmin, isVerified, loading, signingOut, signOut }}>
       {children}
     </AuthContext.Provider>
   );

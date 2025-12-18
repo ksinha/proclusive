@@ -190,6 +190,11 @@ export default function ReferralsList({ referrals, members }: ReferralsListProps
                           <StatusIcon className="h-3 w-3 mr-1" />
                           {statusConfig.label}
                         </Badge>
+                        {(referral as any).reference_number && (
+                          <Badge variant="outline" className="text-[#c9a962] border-[#c9a962]">
+                            Ref: {(referral as any).reference_number}
+                          </Badge>
+                        )}
                       </div>
                       <CardDescription className="text-[14px] text-[#b0b2bc]">
                         Submitted by {referral.submitter.full_name} ({referral.submitter.company_name})
@@ -204,6 +209,16 @@ export default function ReferralsList({ referrals, members }: ReferralsListProps
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-4 gap-6 text-[13px]">
+                    <div>
+                      <div className="font-medium text-white mb-1">Reference Number</div>
+                      <div className="text-[#b0b2bc]">
+                        {(referral as any).reference_number || (
+                          <span className="text-[#6a6d78] italic">
+                            {referral.id.substring(0, 8)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                     <div>
                       <div className="font-medium text-white mb-1">Project Type</div>
                       <div className="text-[#b0b2bc]">{referral.project_type}</div>

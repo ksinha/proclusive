@@ -48,13 +48,14 @@ export async function POST(request: NextRequest) {
     // Send email notification to matched member
     const success = await sendMatchedReferralNotification(
       {
+        referralId: referral.id,
+        referenceNumber: referral.reference_number,
         clientName: referral.client_name,
         clientCompany: referral.client_company,
         projectType: referral.project_type,
         valueRange: referral.value_range,
         location: referral.location,
         timeline: referral.timeline,
-        referralId: referral.id,
       },
       {
         email: member.email,

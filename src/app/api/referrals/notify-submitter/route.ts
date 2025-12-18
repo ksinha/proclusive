@@ -38,9 +38,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate a reference ID for the email
-    const referenceId = `REF-${referral.id.slice(0, 8).toUpperCase()}`;
-
     // Send confirmation email to submitter
     const emailSent = await sendReferralSubmittedConfirmation(
       {
@@ -49,7 +46,8 @@ export async function POST(request: NextRequest) {
         companyName: referral.submitter.company_name,
       },
       {
-        referralId: referenceId,
+        referralId: referral.id,
+        referenceNumber: referral.reference_number,
         clientName: referral.client_name,
         clientCompany: referral.client_company,
         projectType: referral.project_type,

@@ -61,6 +61,7 @@ export interface Profile {
   tin_number: string | null;
   profile_picture_url: string | null;
   referred_by: string | null;
+  member_number: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -118,6 +119,9 @@ export interface Referral {
 
   // Submitter
   submitted_by: string;
+
+  // Reference Number
+  reference_number: string | null;
 
   // Client Information
   client_name: string;

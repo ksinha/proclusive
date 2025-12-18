@@ -154,6 +154,12 @@ export default async function ReferralsPage({
                           </Badge>
                         </div>
                         <CardDescription className="text-sm" style={{ color: '#b0b2bc' }}>
+                          {referral.reference_number && (
+                            <>
+                              <span className="font-medium" style={{ color: '#c9a962' }}>{referral.reference_number}</span>
+                              {' • '}
+                            </>
+                          )}
                           {referral.client_company && `${referral.client_company} • `}
                           {referral.project_type}
                         </CardDescription>

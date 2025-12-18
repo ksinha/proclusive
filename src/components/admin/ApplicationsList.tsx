@@ -134,6 +134,11 @@ export default function ApplicationsList({ applications, onUpdate, onViewingChan
                         <div>
                           <div className="text-[14px] font-medium text-white">
                             {app.profile.full_name}
+                            {app.status === "approved" && (app.profile as any).member_number && (
+                              <Badge variant="outline" className="ml-2 text-[#c9a962] border-[#c9a962] text-[11px]">
+                                #{(app.profile as any).member_number}
+                              </Badge>
+                            )}
                           </div>
                           <div className="text-[12px] text-[#6a6d78]">
                             {app.profile.email}

@@ -21,6 +21,7 @@ interface MemberDashboardProps {
   userId: string;
   badges: BadgeLevel[];
   profilePictureUrl?: string | null;
+  memberNumber?: string | null;
 }
 
 const STATUS_CONFIG: Record<
@@ -69,6 +70,7 @@ export default function MemberDashboard({
   userId,
   badges,
   profilePictureUrl,
+  memberNumber,
 }: MemberDashboardProps) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
@@ -368,7 +370,15 @@ export default function MemberDashboard({
               <h1 className="text-xl sm:text-2xl lg:text-[28px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
                 Welcome back, {profile.full_name.split(' ')[0]}
               </h1>
-              <p className="text-sm mt-1" style={{ color: '#b0b2bc' }}>{profile.company_name}</p>
+              <p className="text-sm mt-1" style={{ color: '#b0b2bc' }}>
+                {profile.company_name}
+                {memberNumber && (
+                  <>
+                    {' • '}
+                    <span className="font-medium" style={{ color: '#c9a962' }}>{memberNumber}</span>
+                  </>
+                )}
+              </p>
             </div>
           </div>
         </div>

@@ -11,7 +11,7 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAdmin, isVerified, loading, signOut } = useAuth();
+  const { user, isAdmin, isVerified, loading, signingOut, signOut } = useAuth();
 
   const isLoggedIn = !!user;
   // Only show Directory and Referrals to verified/approved users or admins
@@ -85,10 +85,12 @@ export default function Navigation() {
                   variant="ghost"
                   size="sm"
                   onClick={signOut}
+                  disabled={signingOut}
+                  loading={signingOut}
                   className="text-[#b0b2bc] hover:text-[#f8f8fa]"
                 >
                   <LogOut className="h-4 w-4 mr-1" />
-                  Logout
+                  {signingOut ? "Logging out..." : "Logout"}
                 </Button>
               </>
             ) : (
@@ -165,13 +167,12 @@ export default function Navigation() {
                 <Button
                   variant="outline"
                   className="w-full h-10"
-                  onClick={() => {
-                    signOut();
-                    setMobileMenuOpen(false);
-                  }}
+                  onClick={signOut}
+                  disabled={signingOut}
+                  loading={signingOut}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
-                  Logout
+                  {signingOut ? "Logging out..." : "Logout"}
                 </Button>
               </>
             ) : (
