@@ -50,7 +50,7 @@ interface AuthContextType {
   isVerified: boolean;
   loading: boolean;
   loggingOut: boolean;
-  signOut: () => Promise<void>;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -59,7 +59,7 @@ const AuthContext = createContext<AuthContextType>({
   isVerified: false,
   loading: true,
   loggingOut: false,
-  signOut: async () => {},
+  signOut: () => {},
 });
 
 export function useAuth() {
@@ -229,41 +229,55 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
-  const signOut = async () => {
-    console.log("[AuthProvider] Signing out...");
-
-    // Show logout overlay immediately - don't change other state yet
-    // This keeps the page looking the same behind the overlay
+  // Trigger signOut by setting loggingOut to true
+  const signOut = () => {
+    console.log("[AuthProvider] SignOut triggered, showing overlay...");
     setLoggingOut(true);
-
-    // Clear cached status so nav doesn't show member links after logout
-    clearCachedStatus();
-
-    // Set a timeout to guarantee redirect even if Supabase call hangs
-    const redirectTimeout = setTimeout(() => {
-      console.log("[AuthProvider] Redirect timeout - forcing redirect");
-      window.location.href = "/";
-    }, 5000);
-
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        console.error("[AuthProvider] Sign out error:", error);
-      }
-
-      // Small delay so user sees the "Signing Out" message
-      await new Promise((resolve) => setTimeout(resolve, 800));
-    } catch (err) {
-      console.error("[AuthProvider] Sign out error:", err);
-    } finally {
-      // Clear timeout and redirect
-      clearTimeout(redirectTimeout);
-      // Force full page reload to clear any cached state
-      window.location.href = "/";
-    }
   };
+
+  // Handle actual signOut in useEffect - this ensures overlay renders first
+  useEffect(() => {
+    if (!loggingOut) return;
+
+    const performSignOut = async () => {
+      console.log("[AuthProvider] Performing signOut...");
+
+      // Clear cache FIRST - this is synchronous
+      clearCachedStatus();
+
+      // Also clear state so if something goes wrong, we're logged out
+      setUser(null);
+      setIsAdmin(false);
+      setIsVerified(false);
+
+      // Set a timeout to guarantee redirect even if Supabase call hangs
+      const redirectTimeout = setTimeout(() => {
+        console.log("[AuthProvider] Redirect timeout - forcing redirect");
+        window.location.href = "/";
+      }, 5000);
+
+      try {
+        const supabase = createClient();
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+          console.error("[AuthProvider] Sign out error:", error);
+        }
+
+        // Small delay so user sees the "Signing Out" message
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      } catch (err) {
+        console.error("[AuthProvider] Sign out error:", err);
+      } finally {
+        // Clear timeout and redirect
+        clearTimeout(redirectTimeout);
+        // Force full page reload to clear any cached state
+        window.location.href = "/";
+      }
+    };
+
+    performSignOut();
+  }, [loggingOut]);
 
   return (
     <AuthContext.Provider value={{ user, isAdmin, isVerified, loading, loggingOut, signOut }}>
