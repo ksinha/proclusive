@@ -115,69 +115,61 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 15-Point Verification Section */}
-      <section className="bg-[#21242f] py-16 md:py-20">
-        <div className="max-w-5xl mx-auto px-6">
-          {/* Mobile: Centered layout */}
-          <div className="md:hidden text-center space-y-6">
-            <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto">
-              <Shield className="h-8 w-8 text-gold" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-[11px] text-[#c9a962] font-medium uppercase tracking-[0.2em]">
-                Vetting-as-a-Service™
-              </p>
-              <h2 className="text-[32px] font-display font-semibold text-[#f8f8fa]">
-                15-Point Verification
-              </h2>
-            </div>
-            <p className="text-[15px] text-[#b0b2bc] font-body leading-relaxed">
-              Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
-            </p>
-          </div>
+      {/* 15-Point Verification Section - Distinct panel with darker background */}
+      <section className="bg-[#1a1d27] py-16 md:py-20 relative">
+        {/* Top border accent */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/20 to-transparent"></div>
 
-          {/* Desktop: Left icon, right text */}
-          <div className="hidden md:flex items-center gap-12 lg:gap-16">
-            {/* Left: Icon with decorative elements */}
-            <div className="flex-shrink-0 relative">
-              {/* Outer ring */}
-              <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full border border-[#c9a962]/20 flex items-center justify-center">
-                {/* Inner circle with icon */}
-                <div className="w-20 h-20 lg:w-24 lg:h-24 bg-gold/10 rounded-full flex items-center justify-center">
-                  <Shield className="h-10 w-10 lg:h-12 lg:w-12 text-gold" />
+        <div className="max-w-4xl mx-auto px-6">
+          {/* Card container for visual distinction */}
+          <div className="bg-[#252833]/60 border border-[rgba(255,255,255,0.06)] rounded-2xl p-8 md:p-12 lg:p-16 relative overflow-hidden">
+            {/* Subtle corner accents */}
+            <div className="absolute top-4 left-4 w-8 h-8 pointer-events-none">
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[#c9a962]/30 to-transparent"></div>
+              <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-[#c9a962]/30 to-transparent"></div>
+            </div>
+            <div className="absolute bottom-4 right-4 w-8 h-8 pointer-events-none">
+              <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-[#c9a962]/30 to-transparent"></div>
+              <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-[#c9a962]/30 to-transparent"></div>
+            </div>
+
+            {/* Centered content */}
+            <div className="text-center space-y-6 md:space-y-8">
+              {/* Icon with ring */}
+              <div className="flex justify-center">
+                <div className="relative">
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-[#c9a962]/20 flex items-center justify-center">
+                    <div className="w-14 h-14 md:w-16 md:h-16 bg-[#c9a962]/10 rounded-full flex items-center justify-center">
+                      <Shield className="h-7 w-7 md:h-8 md:w-8 text-[#c9a962]" />
+                    </div>
+                  </div>
                 </div>
               </div>
-              {/* Decorative corner accent */}
-              <div className="absolute -top-2 -left-2 w-6 h-6">
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[#c9a962]/50 to-transparent"></div>
-                <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-[#c9a962]/50 to-transparent"></div>
-              </div>
-              <div className="absolute -bottom-2 -right-2 w-6 h-6">
-                <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-[#c9a962]/50 to-transparent"></div>
-                <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-[#c9a962]/50 to-transparent"></div>
-              </div>
-            </div>
 
-            {/* Right: Text content */}
-            <div className="flex-1 space-y-4">
-              <div className="space-y-2">
+              {/* Text content */}
+              <div className="space-y-3">
                 <p className="text-[11px] text-[#c9a962] font-medium uppercase tracking-[0.2em]">
                   Vetting-as-a-Service™
                 </p>
-                <h2 className="text-[36px] lg:text-[42px] font-display font-semibold text-[#f8f8fa] leading-tight">
+                <h2 className="text-[28px] md:text-[36px] lg:text-[40px] font-display font-semibold text-[#f8f8fa] leading-tight">
                   15-Point Verification
                 </h2>
               </div>
-              <p className="text-[16px] lg:text-[17px] text-[#b0b2bc] font-body leading-relaxed max-w-xl">
+
+              <p className="text-[15px] md:text-[16px] text-[#b0b2bc] font-body leading-relaxed max-w-2xl mx-auto">
                 Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
               </p>
-              {/* Decorative underline */}
+
+              {/* Decorative divider */}
               <div className="pt-2">
-                <div className="w-16 h-[2px] bg-gradient-to-r from-[#c9a962] to-transparent"></div>
+                <div className="w-16 h-[2px] bg-gradient-to-r from-transparent via-[#c9a962]/40 to-transparent mx-auto"></div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Bottom border accent */}
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/20 to-transparent"></div>
       </section>
 
       {/* Features Section */}
