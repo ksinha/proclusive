@@ -7,6 +7,7 @@ import { Profile, Application, ApplicationStatus, BadgeLevel } from "@/types/dat
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { VaasBadgeIcon, VaasBadgeCard } from "@/components/ui/vaas-badge";
+import { Avatar, AvatarUpload } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +20,7 @@ interface MemberDashboardProps {
   application: Application | null;
   userId: string;
   badges: BadgeLevel[];
+  profilePictureUrl?: string | null;
 }
 
 const STATUS_CONFIG: Record<
@@ -66,11 +68,14 @@ export default function MemberDashboard({
   application,
   userId,
   badges,
+  profilePictureUrl,
 }: MemberDashboardProps) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
   const [formData, setFormData] = useState<EditFormData>({
     full_name: profile?.full_name || "",
     phone: profile?.phone || "",
@@ -84,6 +89,15 @@ export default function MemberDashboard({
     is_public: profile?.is_public ?? true,
   });
 
+  const handleProfilePictureSelect = (file: File) => {
+    setNewProfilePicture(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePicturePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = async () => {
     console.log("[MemberDashboard] Starting profile save...");
     setSaving(true);
@@ -93,6 +107,24 @@ export default function MemberDashboard({
       const supabase = createClient();
       console.log("[MemberDashboard] Updating profile for user:", userId);
       console.log("[MemberDashboard] Form data:", formData);
+
+      // Upload new profile picture if provided
+      let newProfilePictureUrl: string | null = null;
+      if (newProfilePicture) {
+        const fileExt = newProfilePicture.name.split('.').pop()?.toLowerCase() || 'jpg';
+        const filePath = `${userId}/profile-picture.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("profile-pictures")
+          .upload(filePath, newProfilePicture, { upsert: true });
+
+        if (uploadError) {
+          console.error("[MemberDashboard] Profile picture upload error:", uploadError);
+          // Don't fail the whole save for profile picture
+        } else {
+          newProfilePictureUrl = filePath;
+        }
+      }
 
       const { data, error: updateError } = await supabase
         .from("profiles")
@@ -107,6 +139,7 @@ export default function MemberDashboard({
           bio: formData.bio || null,
           website: formData.website || null,
           is_public: formData.is_public,
+          ...(newProfilePictureUrl && { profile_picture_url: newProfilePictureUrl }),
         })
         .eq("id", userId)
         .select();
@@ -118,6 +151,8 @@ export default function MemberDashboard({
 
       console.log("[MemberDashboard] Profile updated successfully:", data);
       setIsEditing(false);
+      setNewProfilePicture(null);
+      setProfilePicturePreview(null);
       router.refresh();
     } catch (err: any) {
       console.error("[MemberDashboard] Error updating profile:", err);
@@ -322,10 +357,20 @@ export default function MemberDashboard({
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Header */}
         <div style={{ background: '#252833', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }} className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 mb-6 sm:mb-8 rounded-lg">
-          <h1 className="text-xl sm:text-2xl lg:text-[28px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
-            Welcome back, {profile.full_name.split(' ')[0]}
-          </h1>
-          <p className="text-sm mt-1" style={{ color: '#b0b2bc' }}>{profile.company_name}</p>
+          <div className="flex items-center gap-4">
+            <Avatar
+              src={profilePictureUrl}
+              alt={profile.full_name}
+              fallbackInitials={profile.full_name}
+              size="xl"
+            />
+            <div>
+              <h1 className="text-xl sm:text-2xl lg:text-[28px]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
+                Welcome back, {profile.full_name.split(' ')[0]}
+              </h1>
+              <p className="text-sm mt-1" style={{ color: '#b0b2bc' }}>{profile.company_name}</p>
+            </div>
+          </div>
         </div>
 
         {/* Verification Status Card */}
@@ -445,6 +490,27 @@ export default function MemberDashboard({
                     <p className="text-[13px]" style={{ color: '#f87171' }}>{error}</p>
                   </div>
                 )}
+
+                {/* Profile Picture Upload */}
+                <div className="flex flex-col sm:flex-row items-center gap-6 pb-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <AvatarUpload
+                    src={profilePictureUrl}
+                    previewUrl={profilePicturePreview}
+                    alt={formData.full_name}
+                    fallbackInitials={formData.full_name}
+                    size="2xl"
+                    onFileSelect={handleProfilePictureSelect}
+                  />
+                  <div className="text-center sm:text-left space-y-2">
+                    <Label className="text-[14px] font-medium">Profile Picture</Label>
+                    <p className="text-[13px]" style={{ color: '#b0b2bc' }}>
+                      {newProfilePicture ? newProfilePicture.name : "Click to upload a new photo"}
+                    </p>
+                    <p className="text-[12px]" style={{ color: '#6a6d78' }}>
+                      JPG, PNG, or WebP. Recommended: 400x400px or larger.
+                    </p>
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">

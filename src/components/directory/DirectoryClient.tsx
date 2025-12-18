@@ -14,6 +14,7 @@ interface DirectoryClientProps {
   profiles: Profile[];
   currentUserId: string;
   userBadgesMap: Record<string, BadgeLevel[]>;
+  profilePictureUrlsMap: Record<string, string>;
 }
 
 const TRADE_OPTIONS = [
@@ -42,6 +43,7 @@ export default function DirectoryClient({
   profiles,
   currentUserId,
   userBadgesMap,
+  profilePictureUrlsMap,
 }: DirectoryClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [tradeFilter, setTradeFilter] = useState("All Trades");
@@ -224,6 +226,7 @@ export default function DirectoryClient({
                 key={profile.id}
                 profile={profile}
                 badges={userBadgesMap[profile.id] || (profile.badge_level !== "none" ? [profile.badge_level] : [])}
+                profilePictureUrl={profilePictureUrlsMap[profile.id]}
                 onClick={() => setSelectedProfile(profile)}
               />
             ))}
@@ -235,6 +238,7 @@ export default function DirectoryClient({
           <ProfileDetailModal
             profile={selectedProfile}
             badges={userBadgesMap[selectedProfile.id] || (selectedProfile.badge_level !== "none" ? [selectedProfile.badge_level] : [])}
+            profilePictureUrl={profilePictureUrlsMap[selectedProfile.id]}
             onClose={() => setSelectedProfile(null)}
           />
         )}

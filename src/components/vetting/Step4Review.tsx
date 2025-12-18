@@ -1,11 +1,13 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { BusinessInfoData, DocumentData } from "./VettingWizard";
 import { PortfolioItem } from "./Step3Portfolio";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, FileText, Building2, MapPin, Loader2, Info, AlertCircle, ImageIcon } from "lucide-react";
+import { Avatar } from "@/components/ui/avatar";
+import { CheckCircle, FileText, Building2, MapPin, Loader2, Info, AlertCircle, ImageIcon, User } from "lucide-react";
 
 interface Step4Props {
   businessInfo: BusinessInfoData | null;
@@ -13,6 +15,7 @@ interface Step4Props {
   portfolioItems: PortfolioItem[];
   tosAccepted: boolean;
   privacyAccepted?: boolean;
+  profilePicture?: File | null;
   onBack: () => void;
   onGoToStep: (step: number) => void;
   onSubmit: () => void;
@@ -25,11 +28,25 @@ export default function Step4Review({
   portfolioItems,
   tosAccepted,
   privacyAccepted = false,
+  profilePicture,
   onBack,
   onGoToStep,
   onSubmit,
   loading,
 }: Step4Props) {
+  const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+
+  // Generate preview URL for profile picture
+  useEffect(() => {
+    if (profilePicture) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePicturePreview(reader.result as string);
+      };
+      reader.readAsDataURL(profilePicture);
+    }
+  }, [profilePicture]);
+
   // Safety check for portfolioItems
   const safePortfolioItems = portfolioItems || [];
 
@@ -106,6 +123,23 @@ export default function Step4Review({
           <CardDescription className="text-[13px] text-[#b0b2bc]">Your company details</CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Profile Picture and Name Header */}
+          <div className="flex items-center gap-4 mb-6 pb-6 border-b border-[rgba(255,255,255,0.08)]">
+            <Avatar
+              src={profilePicturePreview}
+              alt={businessInfo.full_name}
+              fallbackInitials={businessInfo.full_name}
+              size="xl"
+            />
+            <div>
+              <h3 className="text-[18px] font-semibold text-[#f8f8fa]">{businessInfo.full_name}</h3>
+              <p className="text-[14px] text-[#b0b2bc]">{businessInfo.company_name}</p>
+              {!profilePicture && (
+                <p className="text-[12px] text-[#6a6d78] mt-1">No profile picture uploaded</p>
+              )}
+            </div>
+          </div>
+
           <dl className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <dt className="text-[12px] font-medium text-[#6a6d78] uppercase">Full Name</dt>

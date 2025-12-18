@@ -4,15 +4,17 @@ import { Profile, BadgeLevel } from "@/types/database.types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { VaasBadgeInline } from "@/components/ui/vaas-badge";
+import { Avatar } from "@/components/ui/avatar";
 import { MapPin } from "lucide-react";
 
 interface ProfileCardProps {
   profile: Profile;
   badges: BadgeLevel[];
+  profilePictureUrl?: string | null;
   onClick: () => void;
 }
 
-export default function ProfileCard({ profile, badges, onClick }: ProfileCardProps) {
+export default function ProfileCard({ profile, badges, profilePictureUrl, onClick }: ProfileCardProps) {
 
   return (
     <Card
@@ -22,23 +24,33 @@ export default function ProfileCard({ profile, badges, onClick }: ProfileCardPro
       style={{ padding: '24px' }}
     >
       <CardContent className="p-0">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-3 sm:mb-4 gap-2">
+        {/* Header with Avatar */}
+        <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <Avatar
+            src={profilePictureUrl}
+            alt={profile.full_name}
+            fallbackInitials={profile.full_name}
+            size="lg"
+          />
           <div className="flex-1 min-w-0">
-            <h3 className="font-['Cormorant_Garamond',Georgia,serif] text-[#f8f8fa] mb-1 truncate" style={{ fontSize: '1.3rem', fontWeight: 500 }}>
-              {profile.full_name}
-            </h3>
-            <p className="text-[#b0b2bc] truncate" style={{ fontSize: '0.95rem' }}>
-              {profile.company_name}
-            </p>
-          </div>
-          {badges.length > 0 && (
-            <div className="flex flex-col gap-1 ml-2 sm:ml-3 flex-shrink-0">
-              {badges.map((badge) => (
-                <VaasBadgeInline key={badge} level={badge} size="sm" />
-              ))}
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-['Cormorant_Garamond',Georgia,serif] text-[#f8f8fa] mb-1 truncate" style={{ fontSize: '1.3rem', fontWeight: 500 }}>
+                  {profile.full_name}
+                </h3>
+                <p className="text-[#b0b2bc] truncate" style={{ fontSize: '0.95rem' }}>
+                  {profile.company_name}
+                </p>
+              </div>
+              {badges.length > 0 && (
+                <div className="flex flex-col gap-1 ml-2 flex-shrink-0">
+                  {badges.map((badge) => (
+                    <VaasBadgeInline key={badge} level={badge} size="sm" />
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Trade Tag */}

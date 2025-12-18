@@ -75,6 +75,18 @@ export default async function DashboardPage() {
       console.log("[DashboardPage] Application found:", application.id, "status:", application.status);
     }
 
+    // Generate signed URL for profile picture if exists
+    let profilePictureUrl: string | null = null;
+    if (profile?.profile_picture_url) {
+      const { data: signedUrl } = await supabase.storage
+        .from("profile-pictures")
+        .createSignedUrl(profile.profile_picture_url, 3600); // 1 hour expiry
+
+      if (signedUrl) {
+        profilePictureUrl = signedUrl.signedUrl;
+      }
+    }
+
     console.log("[DashboardPage] Rendering MemberDashboard");
     return (
       <MemberDashboard
@@ -82,6 +94,7 @@ export default async function DashboardPage() {
         application={application}
         userId={user.id}
         badges={userBadges}
+        profilePictureUrl={profilePictureUrl}
       />
     );
   } catch (err) {

@@ -8,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomSelect } from "@/components/ui/custom-select";
-import { Info, Building2, MapPin, Shield, Eye, AlertCircle } from "lucide-react";
+import { AvatarUpload } from "@/components/ui/avatar";
+import { Info, Building2, MapPin, Shield, Eye, AlertCircle, Camera } from "lucide-react";
 
 interface Step1Props {
-  onComplete: (data: BusinessInfoData) => void;
+  onComplete: (data: BusinessInfoData, profilePicture?: File) => void;
   initialData: BusinessInfoData | null;
+  initialProfilePicture?: File | null;
+  existingProfilePictureUrl?: string | null;
 }
 
 const TRADE_OPTIONS = [
@@ -79,7 +82,12 @@ interface ValidationErrors {
   tin_number?: string;
 }
 
-export default function Step1BusinessInfo({ onComplete, initialData }: Step1Props) {
+export default function Step1BusinessInfo({
+  onComplete,
+  initialData,
+  initialProfilePicture,
+  existingProfilePictureUrl
+}: Step1Props) {
   const [formData, setFormData] = useState<BusinessInfoData>(
     initialData || {
       full_name: "",
@@ -102,6 +110,18 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
   );
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [profilePicture, setProfilePicture] = useState<File | null>(initialProfilePicture || null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+
+  const handleProfilePictureSelect = (file: File) => {
+    setProfilePicture(file);
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePicturePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Validate all fields
   const validateForm = (): boolean => {
@@ -175,7 +195,7 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
     setSubmitted(true);
 
     if (validateForm()) {
-      onComplete(formData);
+      onComplete(formData, profilePicture || undefined);
     }
   };
 
@@ -253,6 +273,40 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
           </div>
         </Card>
       )}
+
+      {/* Profile Picture */}
+      <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Camera className="h-5 w-5 text-[#c9a962]" />
+            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Profile Picture</CardTitle>
+          </div>
+          <CardDescription className="text-[14px] text-[#b0b2bc]">Add a professional photo that will appear in the member directory</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <AvatarUpload
+              src={existingProfilePictureUrl}
+              previewUrl={profilePicturePreview}
+              alt={formData.full_name || "Profile"}
+              fallbackInitials={formData.full_name}
+              size="2xl"
+              onFileSelect={handleProfilePictureSelect}
+            />
+            <div className="text-center sm:text-left space-y-2">
+              <p className="text-[14px] text-[#f8f8fa] font-medium">
+                {profilePicture ? profilePicture.name : "Click to upload a photo"}
+              </p>
+              <p className="text-[12px] text-[#6a6d78]">
+                JPG, PNG, or WebP. Recommended: 400x400px or larger.
+              </p>
+              <p className="text-[12px] text-[#c9a962]">
+                Optional but recommended for visibility in the directory
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Personal Information */}
       <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">

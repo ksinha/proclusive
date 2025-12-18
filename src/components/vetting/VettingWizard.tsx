@@ -76,6 +76,7 @@ export default function VettingWizard({
   const [error, setError] = useState<string | null>(null);
   const [savingDraft, setSavingDraft] = useState(false);
   const [progressRestored, setProgressRestored] = useState(false);
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
 
   // Save progress to localStorage
   const saveProgress = useCallback((step: number, tos: boolean, privacy: boolean) => {
@@ -220,8 +221,11 @@ export default function VettingWizard({
     }
   };
 
-  const handleStep1Complete = async (data: BusinessInfoData) => {
+  const handleStep1Complete = async (data: BusinessInfoData, picture?: File) => {
     setBusinessInfo(data);
+    if (picture) {
+      setProfilePicture(picture);
+    }
     // Save profile immediately so progress is persisted
     await saveProfileDraft(data);
     setCurrentStep(2);
@@ -256,6 +260,25 @@ export default function VettingWizard({
     try {
       const supabase = createClient();
 
+      // 0. Upload profile picture if provided
+      let profilePictureUrl: string | null = null;
+      if (profilePicture) {
+        const fileExt = profilePicture.name.split('.').pop()?.toLowerCase() || 'jpg';
+        const filePath = `${userId}/profile-picture.${fileExt}`;
+
+        // Upload to profile-pictures bucket
+        const { error: uploadError } = await supabase.storage
+          .from("profile-pictures")
+          .upload(filePath, profilePicture, { upsert: true });
+
+        if (uploadError) {
+          console.error("[VettingWizard] Profile picture upload error:", uploadError);
+          // Don't fail the whole submission for profile picture
+        } else {
+          profilePictureUrl = filePath;
+        }
+      }
+
       // 1. Create/Update Profile
       const { error: profileError } = await supabase
         .from("profiles")
@@ -263,6 +286,7 @@ export default function VettingWizard({
           id: userId,
           email: (await supabase.auth.getUser()).data.user?.email || "",
           ...businessInfo,
+          ...(profilePictureUrl && { profile_picture_url: profilePictureUrl }),
         });
 
       if (profileError) throw profileError;
@@ -520,6 +544,8 @@ export default function VettingWizard({
             <Step1BusinessInfo
               onComplete={handleStep1Complete}
               initialData={businessInfo}
+              initialProfilePicture={profilePicture}
+              existingProfilePictureUrl={existingProfile?.profile_picture_url}
             />
           )}
 
@@ -555,6 +581,7 @@ export default function VettingWizard({
               portfolioItems={portfolioItems}
               tosAccepted={tosAccepted}
               privacyAccepted={privacyAccepted}
+              profilePicture={profilePicture}
               onBack={() => setCurrentStep(4)}
               onGoToStep={setCurrentStep}
               onSubmit={handleFinalSubmit}

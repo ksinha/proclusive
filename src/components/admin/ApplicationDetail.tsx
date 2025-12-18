@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { VaasBadgeCard } from "@/components/ui/vaas-badge";
+import { Avatar } from "@/components/ui/avatar";
 import {
   User,
   Building2,
@@ -56,12 +57,27 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectionNotes, setRejectionNotes] = useState("");
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
 
   useEffect(() => {
     loadDocuments();
     loadPortfolioItems();
     loadUserBadges();
+    loadProfilePicture();
   }, []);
+
+  const loadProfilePicture = async () => {
+    if (!application.profile.profile_picture_url) return;
+
+    const supabase = createClient();
+    const { data: signedUrl } = await supabase.storage
+      .from("profile-pictures")
+      .createSignedUrl(application.profile.profile_picture_url, 3600);
+
+    if (signedUrl) {
+      setProfilePictureUrl(signedUrl.signedUrl);
+    }
+  };
 
   const loadUserBadges = async () => {
     const supabase = createClient();
@@ -362,18 +378,19 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardHeader>
           <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(201, 169, 98, 0.15)' }}>
-                <span className="text-[16px] font-semibold text-[#c9a962]">
-                  {getInitials(application.profile.full_name)}
-                </span>
-              </div>
+            <div className="flex items-center gap-4">
+              <Avatar
+                src={profilePictureUrl}
+                alt={application.profile.full_name}
+                fallbackInitials={application.profile.full_name}
+                size="xl"
+              />
               <div>
                 <CardTitle className="text-[24px] font-semibold text-white">
                   {application.profile.full_name}
                 </CardTitle>
                 <CardDescription className="text-[14px] text-[#b0b2bc]">
-                  Submitted on {new Date(application.created_at).toLocaleString()}
+                  {application.profile.company_name} • Submitted on {new Date(application.created_at).toLocaleString()}
                 </CardDescription>
               </div>
             </div>

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { VaasBadgeIcon } from "@/components/ui/vaas-badge";
+import { Avatar } from "@/components/ui/avatar";
 import {
   X,
   Phone,
@@ -21,12 +22,14 @@ import {
 interface ProfileDetailModalProps {
   profile: Profile;
   badges: BadgeLevel[];
+  profilePictureUrl?: string | null;
   onClose: () => void;
 }
 
 export default function ProfileDetailModal({
   profile,
   badges,
+  profilePictureUrl,
   onClose,
 }: ProfileDetailModalProps) {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
@@ -98,31 +101,43 @@ export default function ProfileDetailModal({
           {/* Basic Info */}
           <Card className="bg-[#252833] border border-[rgba(255,255,255,0.08)] rounded-xl">
             <CardContent className="pt-6 p-8">
-              <div className="flex items-start justify-between gap-6 mb-4">
+              <div className="flex items-start gap-5 mb-4">
+                {/* Profile Picture */}
+                <Avatar
+                  src={profilePictureUrl}
+                  alt={profile.full_name}
+                  fallbackInitials={profile.full_name}
+                  size="2xl"
+                />
+
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-[24px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa] mb-2">
-                    {profile.full_name}
-                  </h3>
-                  <p className="text-[16px] text-[#b0b2bc] mb-3">
-                    {profile.company_name}
-                  </p>
-                  <Badge variant="outline" className="border-[rgba(255,255,255,0.08)] text-[#b0b2bc]">
-                    {profile.primary_trade}
-                  </Badge>
-                </div>
-                {badges.length > 0 && (
-                  <div className="flex flex-wrap gap-2 flex-shrink-0">
-                    {badges.map((badge) => (
-                      <VaasBadgeIcon
-                        key={badge}
-                        level={badge}
-                        size="md"
-                        showLabel
-                        showSubtitle
-                      />
-                    ))}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-[24px] font-['Cormorant_Garamond',Georgia,serif] font-semibold text-[#f8f8fa] mb-2">
+                        {profile.full_name}
+                      </h3>
+                      <p className="text-[16px] text-[#b0b2bc] mb-3">
+                        {profile.company_name}
+                      </p>
+                      <Badge variant="outline" className="border-[rgba(255,255,255,0.08)] text-[#b0b2bc]">
+                        {profile.primary_trade}
+                      </Badge>
+                    </div>
+                    {badges.length > 0 && (
+                      <div className="flex flex-wrap gap-2 flex-shrink-0">
+                        {badges.map((badge) => (
+                          <VaasBadgeIcon
+                            key={badge}
+                            level={badge}
+                            size="md"
+                            showLabel
+                            showSubtitle
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Contact Info */}

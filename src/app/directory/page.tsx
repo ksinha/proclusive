@@ -92,12 +92,31 @@ export default async function DirectoryPage() {
       }
     }
 
+    // Generate signed URLs for profile pictures
+    let profilePictureUrlsMap: Record<string, string> = {};
+    if (profiles && profiles.length > 0) {
+      const profilesWithPictures = profiles.filter(p => p.profile_picture_url);
+
+      for (const profile of profilesWithPictures) {
+        if (profile.profile_picture_url) {
+          const { data: signedUrl } = await supabase.storage
+            .from("profile-pictures")
+            .createSignedUrl(profile.profile_picture_url, 3600); // 1 hour expiry
+
+          if (signedUrl) {
+            profilePictureUrlsMap[profile.id] = signedUrl.signedUrl;
+          }
+        }
+      }
+    }
+
     console.log("[DirectoryPage] Fetched", profiles?.length || 0, "profiles");
     return (
       <DirectoryClient
         profiles={profiles || []}
         currentUserId={user.id}
         userBadgesMap={userBadgesMap}
+        profilePictureUrlsMap={profilePictureUrlsMap}
       />
     );
   } catch (err) {
