@@ -28,12 +28,10 @@ export default function Step3Portfolio({
 }: Step3PortfolioProps) {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(initialData);
   const [error, setError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
+  const processFiles = (files: FileList | File[]) => {
     const newItems: PortfolioItem[] = [];
 
     Array.from(files).forEach((file) => {
@@ -58,12 +56,44 @@ export default function Step3Portfolio({
       });
     });
 
-    setPortfolioItems([...portfolioItems, ...newItems]);
-    setError(null);
+    if (newItems.length > 0) {
+      setPortfolioItems([...portfolioItems, ...newItems]);
+      setError(null);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    processFiles(files);
 
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(false);
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      processFiles(files);
     }
   };
 
@@ -110,35 +140,51 @@ export default function Step3Portfolio({
         </Card>
       )}
 
-      {/* Upload Section */}
+      {/* Upload Section - Entire zone is clickable */}
       <Card className="bg-[#21242f] border-[rgba(255,255,255,0.08)]">
         <CardContent className="pt-6">
           <input
             type="file"
             ref={fileInputRef}
+            id="portfolio-file-input"
             onChange={handleFileSelect}
             accept="image/*"
             multiple
-            className="hidden"
+            className="sr-only"
+            aria-label="Upload portfolio images"
           />
-          <div className="border-2 border-dashed border-[rgba(255,255,255,0.15)] rounded-lg p-8 hover:border-[#c9a962] transition-colors">
-            <div className="flex flex-col items-center justify-center gap-4 text-center">
+          <div
+            className={`border-2 border-dashed rounded-lg p-8 transition-colors cursor-pointer ${
+              dragOver
+                ? 'border-[#c9a962] bg-[rgba(201,169,98,0.1)]'
+                : 'border-[rgba(255,255,255,0.15)] hover:border-[#c9a962] hover:bg-[rgba(201,169,98,0.05)]'
+            }`}
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
+          >
+            <div className="flex flex-col items-center justify-center gap-3 pointer-events-none">
               <Upload className="h-8 w-8 text-[#6a6d78]" />
-              <div className="space-y-2">
-                <h3 className="text-[14px] font-medium text-[#b0b2bc]">Upload Portfolio Images</h3>
-                <p className="text-[13px] text-[#6a6d78]">
+              <div className="text-center">
+                <span className="text-[14px] text-[#b0b2bc] font-medium">
+                  Choose files or drag and drop
+                </span>
+                <p className="text-[12px] text-[#6a6d78] mt-1">
+                  Accepted: JPG, PNG, WebP, GIF • Max 10MB per image
+                </p>
+                <p className="text-[13px] text-[#c9a962] mt-2 font-medium">
                   {portfolioItems.length} / 5 minimum images uploaded
                 </p>
               </div>
-              <Button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                variant="default"
-                className="h-10 text-[14px] bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27]"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Add Portfolio Images
-              </Button>
             </div>
           </div>
         </CardContent>

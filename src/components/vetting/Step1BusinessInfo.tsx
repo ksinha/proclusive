@@ -112,6 +112,10 @@ export default function Step1BusinessInfo({
   const [submitted, setSubmitted] = useState(false);
   const [profilePicture, setProfilePicture] = useState<File | null>(initialProfilePicture || null);
   const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+  // Store raw service areas string to avoid splitting issues on every keystroke
+  const [serviceAreasRaw, setServiceAreasRaw] = useState<string>(
+    initialData?.service_areas?.join(", ") || ""
+  );
 
   const handleProfilePictureSelect = (file: File) => {
     setProfilePicture(file);
@@ -155,7 +159,12 @@ export default function Step1BusinessInfo({
     if (!formData.team_size) {
       newErrors.team_size = "Team size is required";
     }
-    if (!formData.service_areas.length || !formData.service_areas.some(a => a.trim())) {
+    // Parse from raw string to check for validation
+    const serviceAreas = serviceAreasRaw
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    if (!serviceAreas.length) {
       newErrors.service_areas = "At least one service area is required";
     }
     if (!formData.bio.trim()) {
@@ -194,8 +203,20 @@ export default function Step1BusinessInfo({
     e.preventDefault();
     setSubmitted(true);
 
+    // Parse service areas from raw string before submit
+    const serviceAreas = serviceAreasRaw
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    // Update formData with parsed service areas
+    const finalFormData = {
+      ...formData,
+      service_areas: serviceAreas,
+    };
+
     if (validateForm()) {
-      onComplete(formData, profilePicture || undefined);
+      onComplete(finalFormData, profilePicture || undefined);
     }
   };
 
@@ -224,12 +245,21 @@ export default function Step1BusinessInfo({
   };
 
   const handleServiceAreasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const areas = e.target.value.split(",").map((s) => s.trim());
-    setFormData((prev) => ({ ...prev, service_areas: areas }));
+    // Store raw string to allow natural backspace behavior
+    setServiceAreasRaw(e.target.value);
 
     if (submitted && errors.service_areas) {
       setErrors((prev) => ({ ...prev, service_areas: undefined }));
     }
+  };
+
+  // Parse service areas on blur to update form data
+  const handleServiceAreasBlur = () => {
+    const areas = serviceAreasRaw
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    setFormData((prev) => ({ ...prev, service_areas: areas }));
   };
 
   // Helper for showing field errors
@@ -247,11 +277,16 @@ export default function Step1BusinessInfo({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Required Fields Notice */}
       <Card hover={false} compact className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
-        <div className="flex items-center gap-2">
-          <Info className="h-4 w-4 text-[#c9a962] flex-shrink-0" />
-          <p className="text-[13px] text-[#c9a962]">
-            All fields on this page are required for vetting. Please complete each section thoroughly.
-          </p>
+        <div className="flex items-start gap-2">
+          <Info className="h-4 w-4 text-[#c9a962] flex-shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="text-[13px] text-[#c9a962]">
+              All fields on this page are required for vetting. Please complete each section thoroughly.
+            </p>
+            <p className="text-[12px] text-[#b0b2bc]">
+              Step 3 (Document Uploads) includes detailed "More Info" buttons explaining each verification requirement.
+            </p>
+          </div>
         </div>
       </Card>
 
@@ -295,10 +330,13 @@ export default function Step1BusinessInfo({
             />
             <div className="text-center sm:text-left space-y-2">
               <p className="text-[14px] text-[#f8f8fa] font-medium">
-                {profilePicture ? profilePicture.name : "Click to upload a photo"}
+                {profilePicture ? profilePicture.name : "Click the circle to upload a photo"}
               </p>
               <p className="text-[12px] text-[#6a6d78]">
                 JPG, PNG, or WebP. Recommended: 400x400px or larger.
+              </p>
+              <p className="text-[12px] text-[#6a6d78]">
+                After uploading, you can position your photo within the frame.
               </p>
               <p className="text-[12px] text-[#c9a962]">
                 Optional but recommended for visibility in the directory
@@ -449,8 +487,9 @@ export default function Step1BusinessInfo({
               name="service_areas"
               id="service_areas"
               placeholder="e.g., Washington DC, Maryland, Virginia"
-              value={formData.service_areas.join(", ")}
+              value={serviceAreasRaw}
               onChange={handleServiceAreasChange}
+              onBlur={handleServiceAreasBlur}
               className={errors.service_areas ? "border-[#f87171]" : ""}
             />
             <p className="text-[12px] text-[#6a6d78]">Enter cities or regions where you provide services (comma-separated)</p>
