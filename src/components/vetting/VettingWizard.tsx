@@ -225,9 +225,15 @@ export default function VettingWizard({
   };
 
   const handleStep1Complete = async (data: BusinessInfoData, picture?: File) => {
+    console.log("[VettingWizard] Step 1 complete, picture received:", {
+      hasPicture: !!picture,
+      fileName: picture?.name,
+      fileSize: picture?.size,
+    });
     setBusinessInfo(data);
     if (picture) {
       setProfilePicture(picture);
+      console.log("[VettingWizard] Profile picture state updated");
     }
     // Save profile immediately so progress is persisted
     await saveProfileDraft(data);
@@ -265,21 +271,34 @@ export default function VettingWizard({
 
       // 0. Upload profile picture if provided
       let profilePictureUrl: string | null = null;
+      console.log("[VettingWizard] Profile picture state:", {
+        hasProfilePicture: !!profilePicture,
+        fileName: profilePicture?.name,
+        fileSize: profilePicture?.size,
+        fileType: profilePicture?.type,
+      });
+
       if (profilePicture) {
         const fileExt = profilePicture.name.split('.').pop()?.toLowerCase() || 'jpg';
         const filePath = `${userId}/profile-picture.${fileExt}`;
+        console.log("[VettingWizard] Uploading profile picture to:", filePath);
 
         // Upload to profile-pictures bucket
-        const { error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from("profile-pictures")
           .upload(filePath, profilePicture, { upsert: true });
+
+        console.log("[VettingWizard] Upload result:", { uploadData, uploadError });
 
         if (uploadError) {
           console.error("[VettingWizard] Profile picture upload error:", uploadError);
           // Don't fail the whole submission for profile picture
         } else {
           profilePictureUrl = filePath;
+          console.log("[VettingWizard] Profile picture URL set to:", profilePictureUrl);
         }
+      } else {
+        console.log("[VettingWizard] No profile picture to upload");
       }
 
       // 1. Create/Update Profile

@@ -1,13 +1,24 @@
 import sgMail from '@sendgrid/mail';
 
 // Initialize SendGrid with API key
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
-
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'noreply@proclusive.com';
 const ADMIN_EMAIL = process.env.SENDGRID_ADMIN_EMAIL || 'admin@proclusive.com';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+console.log('[SendGrid] Initializing with config:', {
+  hasApiKey: !!SENDGRID_API_KEY,
+  fromEmail: FROM_EMAIL,
+  adminEmail: ADMIN_EMAIL,
+  appUrl: APP_URL,
+});
+
+if (SENDGRID_API_KEY) {
+  sgMail.setApiKey(SENDGRID_API_KEY);
+  console.log('[SendGrid] API key configured');
+} else {
+  console.warn('[SendGrid] WARNING: No API key found in environment');
+}
 
 interface ReferralEmailData {
   clientName: string;
@@ -575,11 +586,16 @@ The Proclusive Team
   };
 
   try {
-    await sgMail.send(msg);
-    console.log('Application submitted notification email sent to:', applicant.email);
+    console.log('[SendGrid] Sending application submitted email to:', applicant.email);
+    const response = await sgMail.send(msg);
+    console.log('[SendGrid] Application submitted email sent successfully:', response[0].statusCode);
     return true;
-  } catch (error) {
-    console.error('Failed to send application submitted notification:', error);
+  } catch (error: any) {
+    console.error('[SendGrid] Failed to send application submitted notification:', {
+      message: error.message,
+      code: error.code,
+      response: error.response?.body,
+    });
     return false;
   }
 }
