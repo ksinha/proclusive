@@ -5,25 +5,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FileText, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 interface Step3Props {
-  onComplete: (accepted: boolean) => void;
+  onComplete: (tosAccepted: boolean, privacyAccepted: boolean) => void;
   onBack: () => void;
-  initialAccepted: boolean;
+  initialTosAccepted: boolean;
+  initialPrivacyAccepted: boolean;
 }
 
-export default function Step3TermsOfService({ onComplete, onBack, initialAccepted }: Step3Props) {
-  const [accepted, setAccepted] = useState(initialAccepted);
+export default function Step3TermsOfService({ onComplete, onBack, initialTosAccepted, initialPrivacyAccepted }: Step3Props) {
+  const [tosAccepted, setTosAccepted] = useState(initialTosAccepted);
+  const [privacyAccepted, setPrivacyAccepted] = useState(initialPrivacyAccepted);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!accepted) {
+    if (!tosAccepted) {
       alert("You must accept the Terms of Service to continue.");
       return;
     }
 
-    onComplete(accepted);
+    if (!privacyAccepted) {
+      alert("You must accept the Privacy Policy to continue.");
+      return;
+    }
+
+    onComplete(tosAccepted, privacyAccepted);
   };
 
   return (
@@ -155,21 +163,51 @@ export default function Step3TermsOfService({ onComplete, onBack, initialAccepte
         </CardContent>
       </Card>
 
-      {/* Acceptance Checkbox */}
+      {/* Acceptance Checkboxes */}
       <Card className="bg-[#21242f] border-[rgba(201,169,98,0.2)]">
-        <CardContent className="pt-6">
+        <CardContent className="pt-6 space-y-4">
+          {/* Terms of Service Checkbox */}
           <div className="flex items-start gap-3">
             <input
               type="checkbox"
               id="accept-terms"
-              checked={accepted}
-              onChange={(e) => setAccepted(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-[rgba(255,255,255,0.2)] bg-[#21242f] text-[#c9a962] focus:ring-[#c9a962]"
+              checked={tosAccepted}
+              onChange={(e) => setTosAccepted(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-[rgba(255,255,255,0.5)] bg-[#1a1d27] text-[#c9a962] focus:ring-[#c9a962] focus:ring-offset-0 cursor-pointer accent-[#c9a962]"
+              style={{
+                borderWidth: '2px',
+                borderColor: 'rgba(255,255,255,0.5)',
+              }}
             />
-            <Label htmlFor="accept-terms" className="text-[14px] text-[#b0b2bc] cursor-pointer">
-              I have read and agree to the Proclusive Terms of Service. I certify that all
-              information provided is accurate and complete. I understand that misrepresentation
+            <Label htmlFor="accept-terms" className="text-[14px] text-[#e8e9ec] cursor-pointer leading-relaxed">
+              I have read and agree to the{" "}
+              <Link href="/terms" target="_blank" className="text-[#c9a962] hover:text-[#d4b674] underline">
+                Proclusive Terms of Service
+              </Link>
+              . I certify that all information provided is accurate and complete. I understand that misrepresentation
               may result in immediate termination from the network.
+            </Label>
+          </div>
+
+          {/* Privacy Policy Checkbox */}
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="accept-privacy"
+              checked={privacyAccepted}
+              onChange={(e) => setPrivacyAccepted(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-[rgba(255,255,255,0.5)] bg-[#1a1d27] text-[#c9a962] focus:ring-[#c9a962] focus:ring-offset-0 cursor-pointer accent-[#c9a962]"
+              style={{
+                borderWidth: '2px',
+                borderColor: 'rgba(255,255,255,0.5)',
+              }}
+            />
+            <Label htmlFor="accept-privacy" className="text-[14px] text-[#e8e9ec] cursor-pointer leading-relaxed">
+              I have read and agree to the{" "}
+              <Link href="/privacy" target="_blank" className="text-[#c9a962] hover:text-[#d4b674] underline">
+                Privacy Policy
+              </Link>
+              . I understand how my personal and business information will be collected, used, and protected.
             </Label>
           </div>
         </CardContent>
@@ -180,7 +218,7 @@ export default function Step3TermsOfService({ onComplete, onBack, initialAccepte
         <Button type="button" variant="outline" onClick={onBack} className="h-10 text-[14px]">
           Back
         </Button>
-        <Button type="submit" variant="default" disabled={!accepted} className="h-10 text-[14px] bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27] disabled:bg-[rgba(201,169,98,0.3)]">
+        <Button type="submit" variant="default" disabled={!tosAccepted || !privacyAccepted} className="h-10 text-[14px] bg-[#c9a962] hover:bg-[#d4b674] text-[#1a1d27] disabled:bg-[rgba(201,169,98,0.3)]">
           Continue to Review
         </Button>
       </div>

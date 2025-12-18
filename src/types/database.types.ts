@@ -79,11 +79,14 @@ export interface Application {
   point_13_satisfaction: VerificationStatus;
   point_14_network_contrib: VerificationStatus;
   point_15_enterprise: VerificationStatus;
+  workers_comp_exempt_sole_prop: boolean;
   reviewed_by: string | null;
   reviewed_at: string | null;
   admin_notes: string | null;
   tos_accepted: boolean;
   tos_accepted_at: string | null;
+  privacy_accepted: boolean;
+  privacy_accepted_at: string | null;
   created_at: string;
   updated_at: string;
 }

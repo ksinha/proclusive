@@ -6,6 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Upload, CheckCircle, X, FileText, Info } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Step2Props {
   onComplete: (data: DocumentData) => void;
@@ -19,6 +27,11 @@ interface DocumentField {
   description: string;
   required: boolean;
   acceptedFormats: string;
+  verificationInfo: {
+    whatWeVerify: string;
+    howWeVerify: string;
+    whyItMatters: string;
+  };
 }
 
 const DOCUMENT_FIELDS: DocumentField[] = [
@@ -28,6 +41,11 @@ const DOCUMENT_FIELDS: DocumentField[] = [
     description: "State/local business license or registration certificate",
     required: true,
     acceptedFormats: ".pdf,.jpg,.jpeg,.png",
+    verificationInfo: {
+      whatWeVerify: "Active business registration with state/local authorities, including LLC, Corporation, or Sole Proprietorship documentation.",
+      howWeVerify: "Cross-reference provided registration documents with Secretary of State database and DUNS number verification where applicable.",
+      whyItMatters: "Establishes the business as a legitimate legal entity, not a fly-by-night operation. Required for contract enforcement and liability."
+    }
   },
   {
     key: "professional_license",
@@ -35,6 +53,11 @@ const DOCUMENT_FIELDS: DocumentField[] = [
     description: "Valid professional licenses for your trade (e.g., contractor license, architect registration)",
     required: true,
     acceptedFormats: ".pdf,.jpg,.jpeg,.png",
+    verificationInfo: {
+      whatWeVerify: "Current, valid professional licenses required for the member's trade (contractor license, architect registration, interior design certification, etc.).",
+      howWeVerify: "Direct verification with licensing boards (e.g., DC DCRA, Maryland DLLR, Virginia DPOR). License number, status, and expiration date confirmed.",
+      whyItMatters: "Unlicensed work exposes clients to legal and financial risk. License verification is non-negotiable for professional credibility."
+    }
   },
   {
     key: "liability_insurance",
@@ -42,6 +65,11 @@ const DOCUMENT_FIELDS: DocumentField[] = [
     description: "Certificate of Insurance (COI) showing minimum $1M per occurrence coverage",
     required: true,
     acceptedFormats: ".pdf,.jpg,.jpeg,.png",
+    verificationInfo: {
+      whatWeVerify: "Active general liability insurance policy with minimum coverage of $1M per occurrence / $2M aggregate (or trade-appropriate minimums).",
+      howWeVerify: "Certificate of Insurance (COI) review with policy number, coverage limits, and expiration date. Direct carrier verification for policies over $500K.",
+      whyItMatters: "Protects clients from liability exposure. Enterprise partners universally require insurance verification before contractor engagement."
+    }
   },
   {
     key: "workers_comp",
@@ -49,6 +77,11 @@ const DOCUMENT_FIELDS: DocumentField[] = [
     description: "Active policy or valid exemption certificate",
     required: true,
     acceptedFormats: ".pdf,.jpg,.jpeg,.png",
+    verificationInfo: {
+      whatWeVerify: "Active workers' compensation insurance (where required by law) or documented exemption status for sole proprietors without employees.",
+      howWeVerify: "COI review or exemption certificate. Cross-reference with state workers' comp board for compliance status.",
+      whyItMatters: "Non-compliance creates significant liability for clients and general contractors. Essential for commercial and enterprise projects."
+    }
   },
   {
     key: "contact_verification",
@@ -56,6 +89,11 @@ const DOCUMENT_FIELDS: DocumentField[] = [
     description: "Utility bill, lease agreement, or other proof of business address",
     required: false,
     acceptedFormats: ".pdf,.jpg,.jpeg,.png",
+    verificationInfo: {
+      whatWeVerify: "Valid business address (physical or registered agent), working phone number, and professional email domain.",
+      howWeVerify: "Phone verification call, email confirmation, and address cross-reference with business registration. P.O. boxes flagged (acceptable but noted).",
+      whyItMatters: "Ensures the business can be reached and is operating in the service area. Basic reachability is foundational to trust."
+    }
   },
   {
     key: "tax_compliance",
@@ -63,18 +101,84 @@ const DOCUMENT_FIELDS: DocumentField[] = [
     description: "IRS Form W-9 (Request for Taxpayer Identification Number). Download from IRS.gov if needed.",
     required: true,
     acceptedFormats: ".pdf,.jpg,.jpeg,.png",
+    verificationInfo: {
+      whatWeVerify: "Valid W-9 form with correct business name and tax identification number.",
+      howWeVerify: "W-9 form review for completeness and consistency with business registration.",
+      whyItMatters: "Required for proper 1099 reporting and ensures the business is tax compliant."
+    }
   },
 ];
+
+// More Info Modal Component
+function MoreInfoModal({ field }: { field: DocumentField }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="text-[#c9a962] hover:text-[#d4b674] hover:bg-[rgba(201,169,98,0.1)] h-auto px-2 py-1 gap-1"
+        >
+          <Info className="h-4 w-4" />
+          <span className="text-[12px] font-medium">More Info</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="bg-[#21242f] border-[rgba(255,255,255,0.08)] max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-[18px] font-semibold text-[#f8f8fa]">
+            {field.label} - Verification Details
+          </DialogTitle>
+          <DialogDescription className="text-[13px] text-[#b0b2bc]">
+            From the 15-Point VaaS Framework
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-5 mt-4">
+          <div className="space-y-2">
+            <h4 className="text-[14px] font-semibold text-[#c9a962] flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              What We Verify
+            </h4>
+            <p className="text-[13px] text-[#d4d6e1] leading-relaxed pl-6">
+              {field.verificationInfo.whatWeVerify}
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-[14px] font-semibold text-[#c9a962] flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              How We Verify
+            </h4>
+            <p className="text-[13px] text-[#d4d6e1] leading-relaxed pl-6">
+              {field.verificationInfo.howWeVerify}
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-[14px] font-semibold text-[#c9a962] flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Why It Matters
+            </h4>
+            <p className="text-[13px] text-[#d4d6e1] leading-relaxed pl-6">
+              {field.verificationInfo.whyItMatters}
+            </p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function Step2DocumentUploads({ onComplete, onBack, initialData }: Step2Props) {
   const [documents, setDocuments] = useState<DocumentData>(initialData);
   const [previews, setPreviews] = useState<Record<string, string[]>>({});
   const [dragOver, setDragOver] = useState<string | null>(null);
+  const [workersCompExempt, setWorkersCompExempt] = useState<boolean>(initialData.workers_comp_exempt_sole_prop || false);
 
   const handleFilesAdd = (key: keyof DocumentData, newFiles: FileList | File[]) => {
     const filesArray = Array.from(newFiles);
-    const existingFiles = documents[key] || [];
-    const allFiles = [...existingFiles, ...filesArray];
+    const existingFiles = documents[key];
+    // Ensure existingFiles is an array (skip if it's a boolean or undefined)
+    const existingFilesArray = Array.isArray(existingFiles) ? existingFiles : [];
+    const allFiles = [...existingFilesArray, ...filesArray];
 
     setDocuments((prev) => ({ ...prev, [key]: allFiles }));
 
@@ -95,8 +199,10 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
   };
 
   const handleFileRemove = (key: keyof DocumentData, index: number) => {
-    const existingFiles = documents[key] || [];
-    const newFiles = existingFiles.filter((_, i) => i !== index);
+    const existingFiles = documents[key];
+    // Ensure existingFiles is an array
+    const existingFilesArray = Array.isArray(existingFiles) ? existingFiles : [];
+    const newFiles = existingFilesArray.filter((_: File, i: number) => i !== index);
 
     if (newFiles.length === 0) {
       setDocuments((prev) => {
@@ -112,7 +218,7 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
     } else {
       setDocuments((prev) => ({ ...prev, [key]: newFiles }));
       const existingPreviews = previews[key] || [];
-      const newPreviews = existingPreviews.filter((_, i) => i !== index);
+      const newPreviews = existingPreviews.filter((_: string, i: number) => i !== index);
       setPreviews((prev) => ({ ...prev, [key]: newPreviews }));
     }
   };
@@ -145,7 +251,13 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
 
     // Check required documents
     const requiredFields = DOCUMENT_FIELDS.filter((f) => f.required);
-    const missingFields = requiredFields.filter((f) => !documents[f.key]);
+    const missingFields = requiredFields.filter((f) => {
+      // Special handling for workers' comp: if exempt, document is not required
+      if (f.key === 'workers_comp' && workersCompExempt) {
+        return false;
+      }
+      return !documents[f.key];
+    });
 
     if (missingFields.length > 0) {
       alert(
@@ -156,7 +268,13 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
       return;
     }
 
-    onComplete(documents);
+    // Include exemption status in the submission
+    const submissionData = {
+      ...documents,
+      workers_comp_exempt_sole_prop: workersCompExempt,
+    };
+
+    onComplete(submissionData);
   };
 
   return (
@@ -184,23 +302,63 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
                 <div className="flex items-start gap-3 flex-1">
                   <FileText className="h-5 w-5 text-[#c9a962] mt-1" />
                   <div className="flex-1">
-                    <CardTitle className="text-[16px] font-semibold text-[#f8f8fa] flex items-center gap-2">
-                      {field.label}
-                      {field.required && <Badge variant="destructive" className="text-[11px] px-2 py-0.5">Required</Badge>}
-                    </CardTitle>
+                    <div className="flex items-center justify-between gap-3">
+                      <CardTitle className="text-[16px] font-semibold text-[#f8f8fa] flex items-center gap-2">
+                        {field.label}
+                        {field.required && <Badge variant="destructive" className="text-[11px] px-2 py-0.5">Required</Badge>}
+                      </CardTitle>
+                      <MoreInfoModal field={field} />
+                    </div>
                     <CardDescription className="mt-1 text-[13px] text-[#b0b2bc]">{field.description}</CardDescription>
                   </div>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
+              {/* Workers' Comp Exemption Checkbox */}
+              {field.key === 'workers_comp' && (
+                <div className="bg-[rgba(201,169,98,0.1)] border border-[rgba(201,169,98,0.3)] rounded-lg p-4 mb-4">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={workersCompExempt}
+                      onChange={(e) => {
+                        setWorkersCompExempt(e.target.checked);
+                        // If checking the exemption, clear any uploaded workers' comp files
+                        if (e.target.checked && documents.workers_comp) {
+                          setDocuments((prev) => {
+                            const newDocs = { ...prev };
+                            delete newDocs.workers_comp;
+                            return newDocs;
+                          });
+                          setPreviews((prev) => {
+                            const newPreviews = { ...prev };
+                            delete newPreviews.workers_comp;
+                            return newPreviews;
+                          });
+                        }
+                      }}
+                      className="mt-0.5 h-4 w-4 rounded border-[rgba(201,169,98,0.5)] text-[#c9a962] focus:ring-[#c9a962] focus:ring-offset-[#21242f]"
+                    />
+                    <div className="flex-1">
+                      <span className="text-[13px] font-medium text-[#c9a962]">
+                        I am a sole proprietor without employees and exempt from workers' compensation requirements
+                      </span>
+                      <p className="text-[12px] text-[#b0b2bc] mt-1">
+                        If you check this box, you can optionally upload an exemption certificate if your state provides one. Otherwise, no document upload is required.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              )}
+
               {/* Upload Area */}
               <div
                 className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
                   dragOver === field.key
                     ? 'border-[#c9a962] bg-[rgba(201,169,98,0.1)]'
                     : 'border-[rgba(255,255,255,0.15)] hover:border-[#c9a962]'
-                }`}
+                }${field.key === 'workers_comp' && workersCompExempt ? ' opacity-60' : ''}`}
                 onDragOver={(e) => handleDragOver(e, field.key)}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, field.key)}
@@ -209,7 +367,7 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
                   <Upload className="h-8 w-8 text-[#6a6d78]" />
                   <div className="text-center">
                     <label htmlFor={`file-${field.key}`} className="text-[14px] text-[#b0b2bc] font-medium cursor-pointer hover:text-[#c9a962]">
-                      Choose files or drag and drop
+                      {field.key === 'workers_comp' && workersCompExempt ? 'Optional: Upload exemption certificate' : 'Choose files or drag and drop'}
                     </label>
                     <p className="text-[12px] text-[#6a6d78] mt-1">
                       Accepted: {field.acceptedFormats.replace(/\./g, '').toUpperCase()} • Multiple files allowed
@@ -232,9 +390,9 @@ export default function Step2DocumentUploads({ onComplete, onBack, initialData }
               </div>
 
               {/* Uploaded Files List */}
-              {documents[field.key] && documents[field.key]!.length > 0 && (
+              {documents[field.key] && Array.isArray(documents[field.key]) && (documents[field.key] as File[]).length > 0 && (
                 <div className="space-y-2">
-                  {documents[field.key]!.map((file, index) => (
+                  {(documents[field.key] as File[]).map((file: File, index: number) => (
                     <div key={index} className="bg-[rgba(34,197,94,0.1)] border border-[rgba(34,197,94,0.3)] rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">

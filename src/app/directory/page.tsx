@@ -27,6 +27,28 @@ export default async function DirectoryPage() {
 
     console.log("[DirectoryPage] User authenticated:", user.id);
 
+    // Check if user is verified or admin
+    const { data: currentUserProfile, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("[DirectoryPage] Profile error:", profileError);
+    }
+
+    // Only verified users or admins can access the directory
+    if (!currentUserProfile || (!currentUserProfile.is_verified && !currentUserProfile.is_admin)) {
+      console.log("[DirectoryPage] User is not verified or admin, redirecting to dashboard");
+      redirect("/dashboard");
+    }
+
+    console.log("[DirectoryPage] User access verified:", {
+      is_verified: currentUserProfile.is_verified,
+      is_admin: currentUserProfile.is_admin
+    });
+
     // Fetch public, verified profiles
     const { data: profiles, error } = await supabase
       .from("profiles")

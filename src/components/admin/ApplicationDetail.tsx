@@ -497,7 +497,14 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
             {tier1Points.map((point) => (
               <div key={point.key} className="flex items-center justify-between p-4 rounded-lg" style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
                 <div className="flex-1">
-                  <p className="text-[13px] font-medium text-white">{point.label}</p>
+                  <p className="text-[13px] font-medium text-white">
+                    {point.label}
+                    {point.key === "point_4_workers_comp" && currentApplication.workers_comp_exempt_sole_prop && (
+                      <Badge variant="outline" className="ml-2 text-[11px] text-[#c9a962] border-[#c9a962]">
+                        Exempt - Sole Proprietor
+                      </Badge>
+                    )}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   {getPointStatus(point.value)}

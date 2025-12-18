@@ -30,7 +30,6 @@ export interface BusinessInfoData {
   primary_trade: string;
   service_areas: string[];
   website: string;
-  linkedin_url: string;
   street_address: string;
   city: string;
   state: string;
@@ -47,6 +46,7 @@ export interface DocumentData {
   professional_license?: File[];
   liability_insurance?: File[];
   workers_comp?: File[];
+  workers_comp_exempt_sole_prop?: boolean;
   contact_verification?: File[];
   tax_compliance?: File[];
 }
@@ -71,18 +71,20 @@ export default function VettingWizard({
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
   const [documents, setDocuments] = useState<DocumentData>({});
   const [tosAccepted, setTosAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savingDraft, setSavingDraft] = useState(false);
   const [progressRestored, setProgressRestored] = useState(false);
 
   // Save progress to localStorage
-  const saveProgress = useCallback((step: number, tos: boolean) => {
+  const saveProgress = useCallback((step: number, tos: boolean, privacy: boolean) => {
     try {
       const progress = {
         userId,
         currentStep: step,
         tosAccepted: tos,
+        privacyAccepted: privacy,
         savedAt: new Date().toISOString(),
       };
       localStorage.setItem(VETTING_PROGRESS_KEY, JSON.stringify(progress));
@@ -108,6 +110,7 @@ export default function VettingWizard({
           console.log("[VettingWizard] Restoring progress to step", progress.currentStep);
           setCurrentStep(progress.currentStep);
           setTosAccepted(progress.tosAccepted || false);
+          setPrivacyAccepted(progress.privacyAccepted || false);
           if (progress.currentStep > 1) {
             setProgressRestored(true);
           }
@@ -134,7 +137,6 @@ export default function VettingWizard({
           primary_trade: existingProfile.primary_trade || "",
           service_areas: existingProfile.service_areas || [],
           website: existingProfile.website || "",
-          linkedin_url: existingProfile.linkedin_url || "",
           street_address: existingProfile.street_address || "",
           city: existingProfile.city || "",
           state: existingProfile.state || "",
@@ -147,6 +149,7 @@ export default function VettingWizard({
         });
         if (existingApplication) {
           setTosAccepted(existingApplication.tos_accepted || false);
+          setPrivacyAccepted(existingApplication.privacy_accepted || false);
         }
         return;
       }
@@ -171,7 +174,6 @@ export default function VettingWizard({
             primary_trade: profile.primary_trade || "",
             service_areas: profile.service_areas || [],
             website: profile.website || "",
-            linkedin_url: profile.linkedin_url || "",
             street_address: profile.street_address || "",
             city: profile.city || "",
             state: profile.state || "",
@@ -223,25 +225,26 @@ export default function VettingWizard({
     // Save profile immediately so progress is persisted
     await saveProfileDraft(data);
     setCurrentStep(2);
-    saveProgress(2, tosAccepted);
+    saveProgress(2, tosAccepted, privacyAccepted);
   };
 
   const handleStep2Complete = (items: PortfolioItem[]) => {
     setPortfolioItems(items);
     setCurrentStep(3);
-    saveProgress(3, tosAccepted);
+    saveProgress(3, tosAccepted, privacyAccepted);
   };
 
   const handleStep3Complete = (data: DocumentData) => {
     setDocuments(data);
     setCurrentStep(4);
-    saveProgress(4, tosAccepted);
+    saveProgress(4, tosAccepted, privacyAccepted);
   };
 
-  const handleStep4Complete = (accepted: boolean) => {
-    setTosAccepted(accepted);
+  const handleStep4Complete = (tos: boolean, privacy: boolean) => {
+    setTosAccepted(tos);
+    setPrivacyAccepted(privacy);
     setCurrentStep(5);
-    saveProgress(5, accepted);
+    saveProgress(5, tos, privacy);
   };
 
   const handleFinalSubmit = async () => {
@@ -274,6 +277,9 @@ export default function VettingWizard({
             status: "pending",
             tos_accepted: tosAccepted,
             tos_accepted_at: new Date().toISOString(),
+            privacy_accepted: privacyAccepted,
+            privacy_accepted_at: new Date().toISOString(),
+            workers_comp_exempt_sole_prop: documents.workers_comp_exempt_sole_prop || false,
             // Reset all rejected points to pending so they can be re-reviewed
             point_1_business_reg: existingApplication.point_1_business_reg === "rejected" ? "pending" : existingApplication.point_1_business_reg,
             point_2_prof_license: existingApplication.point_2_prof_license === "rejected" ? "pending" : existingApplication.point_2_prof_license,
@@ -301,6 +307,9 @@ export default function VettingWizard({
             status: "pending",
             tos_accepted: tosAccepted,
             tos_accepted_at: new Date().toISOString(),
+            privacy_accepted: privacyAccepted,
+            privacy_accepted_at: new Date().toISOString(),
+            workers_comp_exempt_sole_prop: documents.workers_comp_exempt_sole_prop || false,
           })
           .select()
           .single();
@@ -321,7 +330,7 @@ export default function VettingWizard({
 
       for (const docType of documentTypes) {
         const files = documents[docType];
-        if (!files || files.length === 0) continue;
+        if (!files || !Array.isArray(files) || files.length === 0) continue;
 
         // Upload each file in the array
         for (const file of files) {
@@ -534,7 +543,8 @@ export default function VettingWizard({
             <Step4TermsOfService
               onComplete={handleStep4Complete}
               onBack={() => setCurrentStep(3)}
-              initialAccepted={tosAccepted}
+              initialTosAccepted={tosAccepted}
+              initialPrivacyAccepted={privacyAccepted}
             />
           )}
 
@@ -544,6 +554,7 @@ export default function VettingWizard({
               documents={documents}
               portfolioItems={portfolioItems}
               tosAccepted={tosAccepted}
+              privacyAccepted={privacyAccepted}
               onBack={() => setCurrentStep(4)}
               onGoToStep={setCurrentStep}
               onSubmit={handleFinalSubmit}

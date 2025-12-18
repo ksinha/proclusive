@@ -26,6 +26,7 @@ const TRADE_OPTIONS = [
   "Plumbing",
   "HVAC",
   "Landscaping",
+  "Real Estate Agent",
   "Specialty Contractor",
   "Other",
 ];

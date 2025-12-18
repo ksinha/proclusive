@@ -24,6 +24,7 @@ const TRADE_OPTIONS = [
   { value: "Plumbing", label: "Plumbing" },
   { value: "HVAC", label: "HVAC" },
   { value: "Landscaping", label: "Landscaping" },
+  { value: "Real Estate Agent", label: "Real Estate Agent" },
   { value: "Specialty Contractor", label: "Specialty Contractor" },
   { value: "Other", label: "Other" },
 ];
@@ -71,7 +72,6 @@ interface ValidationErrors {
   service_areas?: string;
   bio?: string;
   website?: string;
-  linkedin_url?: string;
   street_address?: string;
   city?: string;
   state?: string;
@@ -89,7 +89,6 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
       primary_trade: "",
       service_areas: [],
       website: "",
-      linkedin_url: "",
       street_address: "",
       city: "",
       state: "",
@@ -418,32 +417,17 @@ export default function Step1BusinessInfo({ onComplete, initialData }: Step1Prop
             <FieldError error={errors.bio} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="website" className="text-[13px] font-medium text-[#b0b2bc]">Website</Label>
-              <Input
-                type="text"
-                name="website"
-                id="website"
-                placeholder="yourcompany.com"
-                value={formData.website}
-                onChange={handleChange}
-              />
-              <p className="text-[12px] text-[#6a6d78]">Optional but recommended</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="linkedin_url" className="text-[13px] font-medium text-[#b0b2bc]">LinkedIn Profile</Label>
-              <Input
-                type="text"
-                name="linkedin_url"
-                id="linkedin_url"
-                placeholder="linkedin.com/in/yourprofile"
-                value={formData.linkedin_url}
-                onChange={handleChange}
-              />
-              <p className="text-[12px] text-[#6a6d78]">Optional but recommended</p>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="website" className="text-[13px] font-medium text-[#b0b2bc]">Website</Label>
+            <Input
+              type="text"
+              name="website"
+              id="website"
+              placeholder="yourcompany.com"
+              value={formData.website}
+              onChange={handleChange}
+            />
+            <p className="text-[12px] text-[#6a6d78]">Optional but recommended</p>
           </div>
         </CardContent>
       </Card>

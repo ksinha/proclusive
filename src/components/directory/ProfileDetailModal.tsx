@@ -13,7 +13,6 @@ import {
   Mail,
   MapPin,
   Globe,
-  Linkedin,
   Briefcase,
   Building2,
   Loader2
@@ -166,17 +165,6 @@ export default function ProfileDetailModal({
                   >
                     <Globe className="h-4 w-4" />
                     Website
-                  </a>
-                )}
-                {profile.linkedin_url && (
-                  <a
-                    href={profile.linkedin_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#c9a962] hover:text-[#d4b674] transition-colors"
-                  >
-                    <Linkedin className="h-4 w-4" />
-                    LinkedIn
                   </a>
                 )}
               </div>
