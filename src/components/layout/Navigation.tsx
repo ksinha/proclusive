@@ -91,28 +91,20 @@ export default function Navigation() {
                 </Button>
               </>
             ) : (
-              <>
-                <Link
-                  href="/auth/login"
-                  className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
-                    pathname === "/auth/login"
-                      ? "text-[#c9a962]"
-                      : "text-[#b0b2bc] hover:text-[#c9a962]"
-                  }`}
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                >
-                  Login
-                  <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
-                    pathname === "/auth/login" ? "w-full" : "w-0 group-hover:w-full"
-                  }`}></span>
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-outfit font-medium tracking-wide transition-all duration-300 bg-[#c9a962] text-[#1a1d27] border-none hover:bg-[#dfc07a] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(201,169,98,0.3)] h-[46px] px-9 text-[14px] rounded-[5px]"
-                >
-                  Apply to Join
-                </Link>
-              </>
+              <Link
+                href="/auth/login"
+                className={`text-[0.85rem] tracking-[0.02em] transition-colors duration-300 relative group ${
+                  pathname === "/auth/login"
+                    ? "text-[#c9a962]"
+                    : "text-[#b0b2bc] hover:text-[#c9a962]"
+                }`}
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+              >
+                Login
+                <span className={`absolute bottom-[-4px] left-0 h-[1px] bg-[#c9a962] transition-all duration-300 ${
+                  pathname === "/auth/login" ? "w-full" : "w-0 group-hover:w-full"
+                }`}></span>
+              </Link>
             )}
           </div>
 
@@ -182,19 +174,14 @@ export default function Navigation() {
                 </Button>
               </>
             ) : (
-              <>
-                <Link
-                  href="/auth/login"
-                  className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                >
-                  Login
-                </Link>
-                <Button variant="cta" className="w-full h-10" onClick={() => { router.push("/auth/signup"); setMobileMenuOpen(false); }}>
-                  Apply to Join
-                </Button>
-              </>
+              <Link
+                href="/auth/login"
+                className="block px-1 py-2 text-[0.85rem] tracking-[0.02em] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+              >
+                Login
+              </Link>
             )}
           </div>
         )}
