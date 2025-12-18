@@ -257,7 +257,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Set a timeout to guarantee redirect even if Supabase call hangs
       const redirectTimeout = setTimeout(() => {
         console.log("[AuthProvider] Redirect timeout - forcing redirect");
-        window.location.href = "/auth/login";
+        window.location.href = "/";
       }, 5000);
 
       try {
@@ -286,7 +286,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setIsVerified(false);
 
         // Force full page reload to login page
-        window.location.href = "/auth/login";
+        window.location.href = "/";
       }
     };
 
