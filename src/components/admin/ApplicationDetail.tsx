@@ -24,7 +24,9 @@ import {
   Eye,
   X,
   ArrowLeft,
-  ImageIcon
+  ImageIcon,
+  ZoomIn,
+  ZoomOut
 } from "lucide-react";
 
 interface ApplicationWithProfile extends Application {
@@ -60,6 +62,8 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const [isPaid, setIsPaid] = useState(application.profile.is_paid || false);
   const [paidAt, setPaidAt] = useState(application.profile.paid_at || "");
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   useEffect(() => {
     loadDocuments();
@@ -67,6 +71,52 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
     loadUserBadges();
     loadProfilePicture();
   }, []);
+
+  // Handle escape key to close lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxImage) {
+        if (e.key === "Escape") {
+          closeLightbox();
+        } else if (e.key === "+" || e.key === "=") {
+          handleZoomIn();
+        } else if (e.key === "-") {
+          handleZoomOut();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxImage, zoomLevel]);
+
+  // Lightbox functions
+  const openLightbox = (imageUrl: string) => {
+    setLightboxImage(imageUrl);
+    setZoomLevel(1);
+  };
+
+  const closeLightbox = () => {
+    setLightboxImage(null);
+    setZoomLevel(1);
+  };
+
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.25, 3));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.25, 0.5));
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      handleZoomIn();
+    } else {
+      handleZoomOut();
+    }
+  };
 
   const loadProfilePicture = async () => {
     if (!application.profile.profile_picture_url) return;
@@ -735,7 +785,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
                         src={portfolioUrls[item.id]}
                         alt={`Portfolio ${item.display_order + 1}`}
                         className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => setPreviewUrl(portfolioUrls[item.id])}
+                        onClick={() => openLightbox(portfolioUrls[item.id])}
                       />
                     ) : (
                       <div className="text-[#6a6d78] text-center p-4">
@@ -1045,6 +1095,86 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
               <iframe src={previewUrl} className="w-full h-[70vh] rounded-lg" />
             </CardContent>
           </Card>
+        </div>
+      )}
+
+      {/* Portfolio Image Lightbox */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0, 0, 0, 0.95)' }}
+          onClick={(e) => {
+            // Close when clicking on backdrop (not on image or controls)
+            if (e.target === e.currentTarget) {
+              closeLightbox();
+            }
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:bg-white/10 z-10"
+            style={{ background: 'rgba(255, 255, 255, 0.1)' }}
+            aria-label="Close lightbox"
+          >
+            <X className="h-6 w-6 text-white" />
+          </button>
+
+          {/* Zoom controls */}
+          <div
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-2 rounded-full z-10"
+            style={{ background: 'rgba(37, 40, 51, 0.9)', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+          >
+            <button
+              onClick={handleZoomOut}
+              disabled={zoomLevel <= 0.5}
+              className="p-2 rounded-full transition-all duration-200 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Zoom out"
+            >
+              <ZoomOut className="h-5 w-5 text-white" />
+            </button>
+            <span className="text-white text-sm font-medium min-w-[60px] text-center">
+              {Math.round(zoomLevel * 100)}%
+            </span>
+            <button
+              onClick={handleZoomIn}
+              disabled={zoomLevel >= 3}
+              className="p-2 rounded-full transition-all duration-200 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Zoom in"
+            >
+              <ZoomIn className="h-5 w-5 text-white" />
+            </button>
+          </div>
+
+          {/* Keyboard shortcuts hint */}
+          <div
+            className="absolute bottom-6 right-6 px-3 py-1.5 rounded text-xs text-[#6a6d78] z-10"
+            style={{ background: 'rgba(37, 40, 51, 0.7)' }}
+          >
+            ESC to close | +/- to zoom | Scroll to zoom
+          </div>
+
+          {/* Image container with zoom */}
+          <div
+            className="max-w-[90vw] max-h-[85vh] overflow-auto"
+            onWheel={handleWheel}
+            style={{ cursor: zoomLevel > 1 ? 'grab' : 'default' }}
+          >
+            <img
+              src={lightboxImage}
+              alt="Portfolio image preview"
+              className="transition-transform duration-200 ease-out"
+              style={{
+                transform: `scale(${zoomLevel})`,
+                transformOrigin: 'center center',
+                maxWidth: zoomLevel <= 1 ? '90vw' : 'none',
+                maxHeight: zoomLevel <= 1 ? '85vh' : 'none',
+                objectFit: 'contain',
+              }}
+              onClick={(e) => e.stopPropagation()}
+              draggable={false}
+            />
+          </div>
         </div>
       )}
     </div>

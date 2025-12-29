@@ -9,37 +9,43 @@ import {
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-[#1a1d27] relative overflow-hidden">
-        {/* Grid background effect */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Horizontal grid lines */}
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'linear-gradient(to bottom, transparent 0%, transparent 99%, rgba(201, 169, 98, 0.06) 100%)',
-            backgroundSize: '100% 80px'
-          }}></div>
-          {/* Vertical grid lines */}
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'linear-gradient(to right, transparent 0%, transparent 99%, rgba(201, 169, 98, 0.06) 100%)',
-            backgroundSize: '80px 100%'
-          }}></div>
-        </div>
+    <main className="min-h-screen relative">
+      {/* Animated Background Atmosphere */}
+      <div className="bg-atmosphere">
+        <div className="bg-gradient"></div>
+      </div>
 
+      {/* Blueprint-style Grid Overlay - Fixed across entire viewport */}
+      <div
+        className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-none max-md:opacity-50"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(201, 169, 98, 0.045) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201, 169, 98, 0.045) 1px, transparent 1px),
+            linear-gradient(rgba(201, 169, 98, 0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201, 169, 98, 0.025) 1px, transparent 1px)
+          `,
+          backgroundSize: '100px 100px, 100px 100px, 20px 20px, 20px 20px',
+          backgroundPosition: 'center center',
+          maskImage: 'radial-gradient(ellipse at center, black 0%, transparent 70%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at center, black 0%, transparent 70%)'
+        }}
+      ></div>
+
+      {/* Hero Section */}
+      <section className="bg-[#1a1d27] relative overflow-hidden z-10">
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#1f2230]/50 via-transparent to-[#1a1d27] pointer-events-none"></div>
 
-        {/* Decorative corner lines - Top Left */}
-        <div className="absolute top-8 left-8 pointer-events-none">
-          <div className="w-24 h-[1px] bg-gradient-to-r from-[#c9a962]/40 to-transparent"></div>
-          <div className="w-[1px] h-24 bg-gradient-to-b from-[#c9a962]/40 to-transparent"></div>
-        </div>
-
-        {/* Decorative corner lines - Bottom Right */}
-        <div className="absolute bottom-8 right-8 pointer-events-none">
-          <div className="w-24 h-[1px] bg-gradient-to-l from-[#c9a962]/40 to-transparent absolute bottom-0 right-0"></div>
-          <div className="w-[1px] h-24 bg-gradient-to-t from-[#c9a962]/40 to-transparent absolute bottom-0 right-0"></div>
-        </div>
+        {/* Noise texture overlay */}
+        <div
+          className="fixed top-0 left-0 w-full h-full pointer-events-none"
+          style={{
+            zIndex: 2,
+            opacity: 0.025,
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")"
+          }}
+        ></div>
 
         {/* Decorative top gold line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/30 to-transparent"></div>
@@ -47,25 +53,23 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 pt-24 pb-16 relative z-10">
           <div className="text-center space-y-8">
             {/* Eyebrow */}
-            <p className="text-[12px] text-[#6a6d78] font-medium uppercase tracking-[0.25em]">
+            <p className="text-[12px] text-[#6a6d78] font-light uppercase tracking-[0.3em]">
               By invitation only
             </p>
 
             {/* Main Headline */}
             <div className="space-y-2">
-              <h1 className="text-[42px] md:text-[52px] font-display font-normal text-[#f8f8fa] leading-tight">
+              <h1 className="text-[42px] md:text-[52px] font-display font-light text-[#f8f8fa] leading-tight tracking-[0.15em] uppercase">
                 Where trust builds
               </h1>
-              <p className="text-[42px] md:text-[52px] font-display italic text-[#c9a962] leading-tight">
+              <p className="text-[42px] md:text-[52px] font-display font-normal italic text-[#c9a962] leading-tight tracking-[0.15em] uppercase">
                 infrastructure
               </p>
             </div>
 
             {/* Subheadline */}
-            <p className="text-[16px] md:text-[18px] text-[#8a8d98] font-body leading-relaxed max-w-2xl mx-auto">
-              An exclusive network for the built environment. Verified professionals.
-              <br className="hidden md:block" />
-              Curated referrals. Fifty founding seats.
+            <p className="text-[16px] md:text-[18px] text-[#8a8d98] font-body font-light leading-relaxed max-w-2xl mx-auto">
+              An exclusive network for the built environment. Fifty founding seats.
             </p>
 
             {/* CTA Button */}
@@ -78,7 +82,7 @@ export default function Home() {
             </div>
 
             {/* Small note */}
-            <p className="text-[12px] text-[#6a6d78] tracking-wide">
+            <p className="text-[12px] text-[#6a6d78] font-light tracking-wide">
               Limited to 50 founding members · DC Metro professionals
             </p>
           </div>
@@ -90,7 +94,7 @@ export default function Home() {
                 <div className="text-[32px] md:text-[40px] font-display font-light text-[#c9a962] tracking-tight">
                   15
                 </div>
-                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
+                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-light uppercase tracking-[0.15em] mt-1">
                   Point Verification
                 </p>
               </div>
@@ -98,7 +102,7 @@ export default function Home() {
                 <div className="text-[32px] md:text-[40px] font-display font-light text-[#c9a962] tracking-tight">
                   50
                 </div>
-                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
+                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-light uppercase tracking-[0.15em] mt-1">
                   Founding Seats
                 </p>
               </div>
@@ -106,7 +110,7 @@ export default function Home() {
                 <div className="text-[32px] md:text-[40px] font-display font-light text-[#c9a962] tracking-tight">
                   78%
                 </div>
-                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-medium uppercase tracking-[0.15em] mt-1">
+                <p className="text-[10px] md:text-[11px] text-[#6a6d78] font-light uppercase tracking-[0.15em] mt-1">
                   Referral Conversion
                 </p>
               </div>
@@ -116,7 +120,7 @@ export default function Home() {
       </section>
 
       {/* 15-Point Verification Section - Distinct panel with darker background */}
-      <section className="bg-[#1a1d27] py-16 md:py-20 relative">
+      <section className="bg-[#1a1d27] py-16 md:py-20 relative z-10">
         {/* Top border accent */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/20 to-transparent"></div>
 
@@ -148,15 +152,15 @@ export default function Home() {
 
               {/* Text content */}
               <div className="space-y-3">
-                <p className="text-[11px] text-[#c9a962] font-medium uppercase tracking-[0.2em]">
+                <p className="text-[11px] text-[#c9a962] font-light uppercase tracking-[0.2em]">
                   Vetting-as-a-Service™
                 </p>
-                <h2 className="text-[28px] md:text-[36px] lg:text-[40px] font-display font-semibold text-[#f8f8fa] leading-tight">
+                <h2 className="text-[28px] md:text-[36px] lg:text-[40px] font-display font-light text-[#f8f8fa] leading-tight">
                   15-Point Verification
                 </h2>
               </div>
 
-              <p className="text-[15px] md:text-[16px] text-[#b0b2bc] font-body leading-relaxed max-w-2xl mx-auto">
+              <p className="text-[15px] md:text-[16px] text-[#b0b2bc] font-body font-light leading-relaxed max-w-2xl mx-auto">
                 Pass our comprehensive Vetting-as-a-Service™ (VaaS) verification. We validate your expertise, credentials, insurance, and professional track record to maintain network quality.
               </p>
 
@@ -172,12 +176,12 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/20 to-transparent"></div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section - Hidden for now, may re-enable later
       <section className="bg-[#21242f] py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16 space-y-3">
-            <h2 className="text-[36px] font-display font-semibold text-[#f8f8fa]">Why Join Proclusive?</h2>
-            <p className="text-[14px] text-[#b0b2bc] font-body">
+            <h2 className="text-[36px] font-display font-light text-[#f8f8fa]">Why Join Proclusive?</h2>
+            <p className="text-[14px] text-[#b0b2bc] font-body font-light">
               Unlock higher-converting opportunities with verified professionals
             </p>
           </div>
@@ -221,6 +225,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      */}
 
     </main>
   );

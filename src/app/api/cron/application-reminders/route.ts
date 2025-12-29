@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { sendIncompleteApplicationReminder } from '@/lib/email/sendgrid';
 
-// Use service role key for cron jobs to bypass RLS
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazily create Supabase admin client to avoid build-time errors
+function getSupabaseAdmin(): SupabaseClient {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // Reminder schedule in days
 const REMINDER_SCHEDULE = {
@@ -114,6 +116,8 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[ApplicationReminders] Starting reminder check...');
+
+    const supabaseAdmin = getSupabaseAdmin();
 
     // Get all pending applications with their profiles
     const { data: applications, error: fetchError } = await supabaseAdmin

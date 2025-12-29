@@ -126,16 +126,17 @@ const config: Config = {
         'glow': '0 0 30px rgba(201, 169, 98, 0.15)',
         'focus': '0 0 0 3px rgba(201, 169, 98, 0.2)',
       },
-      // Typography scale
+      // Typography scale - Proclusive v5 Design System
+      // Headers and body use font-weight 300 (light) for elegance
       fontSize: {
-        'display-1': ['60px', { lineHeight: '1.1', fontWeight: '700', letterSpacing: '-0.02em' }],
-        'display-2': ['48px', { lineHeight: '1.1', fontWeight: '700', letterSpacing: '-0.02em' }],
-        'h1': ['36px', { lineHeight: '1.2', fontWeight: '600', letterSpacing: '-0.02em' }],
-        'h2': ['30px', { lineHeight: '1.3', fontWeight: '600', letterSpacing: '-0.02em' }],
-        'h3': ['24px', { lineHeight: '1.4', fontWeight: '600', letterSpacing: '-0.02em' }],
-        'body': ['15px', { lineHeight: '1.6', fontWeight: '400' }],
+        'display-1': ['60px', { lineHeight: '1.1', fontWeight: '300', letterSpacing: '0.15em' }],
+        'display-2': ['48px', { lineHeight: '1.1', fontWeight: '300', letterSpacing: '0.15em' }],
+        'h1': ['36px', { lineHeight: '1.2', fontWeight: '300', letterSpacing: '0.15em' }],
+        'h2': ['30px', { lineHeight: '1.3', fontWeight: '300', letterSpacing: '-0.02em' }],
+        'h3': ['24px', { lineHeight: '1.4', fontWeight: '300', letterSpacing: '-0.02em' }],
+        'body': ['15px', { lineHeight: '1.6', fontWeight: '300' }],
         'ui': ['14px', { lineHeight: '1.5', fontWeight: '500' }],
-        'caption': ['12px', { lineHeight: '1.4', fontWeight: '500' }],
+        'caption': ['12px', { lineHeight: '1.4', fontWeight: '300' }],
       },
     },
   },

@@ -1,16 +1,18 @@
-import sgMail from '@sendgrid/mail';
+import sgMail, { MailDataRequired } from '@sendgrid/mail';
 
 // Initialize SendGrid with API key
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'noreply@proclusive.com';
 const ADMIN_EMAIL = process.env.SENDGRID_ADMIN_EMAIL || 'admin@proclusive.com';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 console.log('[SendGrid] Initializing with config:', {
   hasApiKey: !!SENDGRID_API_KEY,
   fromEmail: FROM_EMAIL,
   adminEmail: ADMIN_EMAIL,
   appUrl: APP_URL,
+  isProduction: IS_PRODUCTION,
 });
 
 if (SENDGRID_API_KEY) {
@@ -18,6 +20,71 @@ if (SENDGRID_API_KEY) {
   console.log('[SendGrid] API key configured');
 } else {
   console.warn('[SendGrid] WARNING: No API key found in environment');
+}
+
+// ============================================
+// RETRY MECHANISM WITH EXPONENTIAL BACKOFF
+// ============================================
+const MAX_RETRIES = 3;
+const INITIAL_DELAY_MS = 1000; // 1 second
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function sendWithRetry(msg: MailDataRequired, context: string): Promise<boolean> {
+  // Check for API key - throw in production, warn in development
+  if (!SENDGRID_API_KEY) {
+    if (IS_PRODUCTION) {
+      throw new Error(`[SendGrid] CRITICAL: API key not configured in production - ${context} email NOT sent`);
+    }
+    console.warn(`[SendGrid] API key not configured - skipping ${context} email (dev mode)`);
+    return false;
+  }
+
+  let lastError: any = null;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[SendGrid] Sending ${context} email (attempt ${attempt}/${MAX_RETRIES})`);
+      const response = await sgMail.send(msg);
+      console.log(`[SendGrid] ${context} email sent successfully:`, response[0].statusCode);
+      return true;
+    } catch (error: any) {
+      lastError = error;
+      const statusCode = error.code || error.response?.statusCode;
+
+      // Don't retry on permanent failures (4xx errors except 429 rate limit)
+      if (statusCode && statusCode >= 400 && statusCode < 500 && statusCode !== 429) {
+        console.error(`[SendGrid] Permanent failure for ${context} email (${statusCode}):`, {
+          message: error.message,
+          response: error.response?.body,
+        });
+        return false;
+      }
+
+      // Log retry attempt
+      console.warn(`[SendGrid] Attempt ${attempt}/${MAX_RETRIES} failed for ${context} email:`, {
+        message: error.message,
+        code: statusCode,
+      });
+
+      // Wait before retrying (exponential backoff)
+      if (attempt < MAX_RETRIES) {
+        const delay = INITIAL_DELAY_MS * Math.pow(2, attempt - 1);
+        console.log(`[SendGrid] Retrying in ${delay}ms...`);
+        await sleep(delay);
+      }
+    }
+  }
+
+  // All retries exhausted
+  console.error(`[SendGrid] All ${MAX_RETRIES} attempts failed for ${context} email:`, {
+    message: lastError?.message,
+    code: lastError?.code,
+    response: lastError?.response?.body,
+  });
+  return false;
 }
 
 // Helper to get first name from full name
@@ -194,11 +261,6 @@ interface VerificationPointStatus {
 export async function sendApplicationSubmittedNotification(
   applicant: ApplicantInfo
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const firstName = getFirstName(applicant.fullName);
 
   const content = `
@@ -232,19 +294,7 @@ Warm regards,
 The Proclusive Team`,
   };
 
-  try {
-    console.log('[SendGrid] Sending application submitted email to:', applicant.email);
-    const response = await sgMail.send(msg);
-    console.log('[SendGrid] Application submitted email sent successfully:', response[0].statusCode);
-    return true;
-  } catch (error: any) {
-    console.error('[SendGrid] Failed to send application submitted notification:', {
-      message: error.message,
-      code: error.code,
-      response: error.response?.body,
-    });
-    return false;
-  }
+  return sendWithRetry(msg, `application-submitted to ${applicant.email}`);
 }
 
 // ============================================
@@ -254,11 +304,6 @@ export async function sendNewApplicationNotification(
   applicant: ApplicantInfo,
   applicationId: string
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const submissionDate = formatDate();
 
   const content = `
@@ -313,14 +358,7 @@ ${applicant.primaryTrade ? `- Service Category: ${applicant.primaryTrade}` : ''}
 Review Application: ${APP_URL}/admin/dashboard`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('New application notification email sent to admin');
-    return true;
-  } catch (error) {
-    console.error('Failed to send new application notification:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `new-application-admin for ${applicant.fullName}`);
 }
 
 // ============================================
@@ -330,11 +368,6 @@ export async function sendPaymentReceivedNotification(
   applicant: ApplicantInfo,
   payment: PaymentInfo
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const firstName = getFirstName(applicant.fullName);
 
   const content = `
@@ -383,14 +416,7 @@ Warm regards,
 The Proclusive Team`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('Payment received notification email sent to:', applicant.email);
-    return true;
-  } catch (error) {
-    console.error('Failed to send payment received notification:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `payment-received to ${applicant.email}`);
 }
 
 // ============================================
@@ -400,11 +426,6 @@ export async function sendApplicationRejectionNotification(
   applicant: ApplicantInfo,
   adminNotes: string
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping rejection email');
-    return false;
-  }
-
   const firstName = getFirstName(applicant.fullName);
 
   const content = `
@@ -444,14 +465,7 @@ Warm regards,
 The Proclusive Team`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('Application rejection notification email sent to:', applicant.email);
-    return true;
-  } catch (error) {
-    console.error('Failed to send rejection notification:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `application-rejection to ${applicant.email}`);
 }
 
 // ============================================
@@ -461,11 +475,6 @@ export async function sendIncompleteApplicationReminder(
   applicant: ApplicantInfo,
   incompleteSteps: string[]
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const firstName = getFirstName(applicant.fullName);
   const stepsList = incompleteSteps.map(step => `<li style="color: #b0b2bc; padding: 4px 0;">${step}</li>`).join('');
 
@@ -512,14 +521,7 @@ Warm regards,
 The Proclusive Team`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('Incomplete application reminder email sent to:', applicant.email);
-    return true;
-  } catch (error) {
-    console.error('Failed to send incomplete application reminder:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `incomplete-reminder to ${applicant.email}`);
 }
 
 // ============================================
@@ -530,11 +532,6 @@ export async function sendApplicationApprovedNotification(
   badgeLevel: string,
   memberNumber?: string
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const firstName = getFirstName(applicant.fullName);
 
   const content = `
@@ -592,14 +589,7 @@ Michelle Liefke
 Founder & CEO, Proclusive`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('Application approved notification email sent to:', applicant.email);
-    return true;
-  } catch (error) {
-    console.error('Failed to send application approved notification:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `application-approved to ${applicant.email}`);
 }
 
 // ============================================
@@ -609,11 +599,6 @@ export async function sendReferralSubmittedConfirmation(
   submitter: SubmitterInfo & { email: string },
   referral: ReferralEmailData
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const firstName = getFirstName(submitter.fullName);
   const referenceId = referral.referenceNumber || referral.referralId;
 
@@ -676,14 +661,7 @@ Warm regards,
 The Proclusive Team`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('Referral submitted confirmation email sent to:', submitter.email);
-    return true;
-  } catch (error) {
-    console.error('Failed to send referral submitted confirmation:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `referral-submitted to ${submitter.email}`);
 }
 
 // ============================================
@@ -693,11 +671,6 @@ export async function sendNewReferralNotification(
   referral: ReferralEmailData,
   submitter: SubmitterInfo
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const referenceId = referral.referenceNumber || referral.referralId;
 
   const content = `
@@ -751,14 +724,7 @@ ${referral.valueRange ? `- Estimated Value: ${referral.valueRange}` : ''}
 Review Referral: ${APP_URL}/admin/referrals`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('New referral notification email sent to admin');
-    return true;
-  } catch (error) {
-    console.error('Failed to send new referral notification:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `new-referral-admin for ${referenceId}`);
 }
 
 // ============================================
@@ -770,11 +736,6 @@ export async function sendMatchedReferralNotification(
   clientEmail?: string | null,
   clientPhone?: string | null
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const firstName = getFirstName(member.fullName);
   const referenceId = referral.referenceNumber || referral.referralId;
 
@@ -841,14 +802,7 @@ Warm regards,
 The Proclusive Team`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('Matched referral notification email sent to member');
-    return true;
-  } catch (error) {
-    console.error('Failed to send matched referral notification:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `matched-referral to ${member.email}`);
 }
 
 // ============================================
@@ -860,11 +814,6 @@ export async function sendReferralStatusUpdate(
   currentStage: 'reviewed' | 'matched' | 'engaged',
   updateDate: string
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const firstName = getFirstName(member.fullName);
   const referenceId = referral.referenceNumber || referral.referralId;
 
@@ -934,14 +883,7 @@ Warm regards,
 The Proclusive Team`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('Referral status update email sent to:', member.email);
-    return true;
-  } catch (error) {
-    console.error('Failed to send referral status update:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `referral-status-update to ${member.email}`);
 }
 
 // ============================================
@@ -953,11 +895,6 @@ export async function sendReferralCompleted(
   finalValue: string,
   completionDate: string
 ): Promise<boolean> {
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('SendGrid API key not configured - skipping email notification');
-    return false;
-  }
-
   const firstName = getFirstName(member.fullName);
   const referenceId = referral.referenceNumber || referral.referralId;
 
@@ -1024,12 +961,5 @@ Warm regards,
 The Proclusive Team`,
   };
 
-  try {
-    await sgMail.send(msg);
-    console.log('Referral completed email sent to:', member.email);
-    return true;
-  } catch (error) {
-    console.error('Failed to send referral completed notification:', error);
-    return false;
-  }
+  return sendWithRetry(msg, `referral-completed to ${member.email}`);
 }

@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#21242f] border-t border-white/[0.08] px-[30px] py-[60px]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Company */}
           <div>
             <h3 className="text-[13px] font-semibold text-[#f8f8fa] uppercase tracking-[0.1em] mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
@@ -13,39 +13,6 @@ export default function Footer() {
             <p className="text-[14px] text-[#b0b2bc]">
               For the built environment
             </p>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <h3 className="text-[13px] font-semibold text-[#f8f8fa] uppercase tracking-[0.1em] mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              Resources
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/"
-                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
-                >
-                  How It Works
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/auth/login"
-                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
-                >
-                  Member Login
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/auth/signup"
-                  className="text-[14px] text-[#b0b2bc] hover:text-[#c9a962] transition-colors duration-300 py-2 inline-block"
-                >
-                  Apply to Join
-                </Link>
-              </li>
-            </ul>
           </div>
 
           {/* Legal */}
@@ -85,7 +52,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-white/[0.08]">
           <p className="text-[13px] text-[#6a6d78] text-center">
-            © {new Date().getFullYear()} Chalo Enterprises LLC. All rights reserved.
+            © 2026 Chalo Enterprises LLC. All rights reserved.
           </p>
         </div>
       </div>
