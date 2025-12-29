@@ -44,9 +44,9 @@ export function BackgroundEffects() {
           className="fixed top-[100px] left-[30px] w-[100px] h-[100px] border-l border-t"
           style={{ borderColor: 'rgba(201, 169, 98, 0.25)' }}
         />
-        {/* Bottom-right corner - positioned above footer */}
+        {/* Bottom-right corner - positioned just above page bottom */}
         <div
-          className="fixed bottom-[220px] right-[30px] w-[100px] h-[100px] border-r border-b"
+          className="fixed bottom-[30px] right-[30px] w-[100px] h-[100px] border-r border-b"
           style={{ borderColor: 'rgba(201, 169, 98, 0.25)' }}
         />
       </div>
