@@ -109,7 +109,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
   const handleZoomIn = () => {
     setZoomLevel((prev) => {
-      const newZoom = Math.min(prev + 0.5, 4);
+      const newZoom = Math.min(prev + 0.25, 4);
       // Reset pan when zooming back to 1 or below
       if (newZoom <= 1) {
         setPanPosition({ x: 0, y: 0 });
@@ -120,7 +120,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
   const handleZoomOut = () => {
     setZoomLevel((prev) => {
-      const newZoom = Math.max(prev - 0.5, 0.5);
+      const newZoom = Math.max(prev - 0.25, 0.25);
       // Reset pan when zooming back to 1 or below
       if (newZoom <= 1) {
         setPanPosition({ x: 0, y: 0 });
@@ -1169,7 +1169,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
           >
             <button
               onClick={handleZoomOut}
-              disabled={zoomLevel <= 0.5}
+              disabled={zoomLevel <= 0.25}
               className="p-2 rounded-full transition-all duration-200 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Zoom out"
             >
