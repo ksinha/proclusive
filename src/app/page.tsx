@@ -32,14 +32,14 @@ export default function Home() {
         }}
       ></div>
 
-      {/* Decorative Corner Accents - matching reference design */}
-      {/* Top-left corner */}
+      {/* Decorative Corner Accents */}
+      {/* Top-left corner - positioned below nav */}
       <div
-        className="fixed top-[30px] left-[30px] w-[100px] h-[100px] pointer-events-none z-[5] border-l border-t border-[#c9a962]/25"
+        className="fixed top-[100px] left-[30px] w-[100px] h-[100px] pointer-events-none z-[5] border-l border-t border-[#c9a962]/25"
       ></div>
       {/* Bottom-right corner - positioned above footer */}
       <div
-        className="fixed bottom-[200px] right-[30px] w-[100px] h-[100px] pointer-events-none z-[5] border-r border-b border-[#c9a962]/25"
+        className="fixed bottom-[220px] right-[30px] w-[100px] h-[100px] pointer-events-none z-[5] border-r border-b border-[#c9a962]/25"
       ></div>
 
       {/* Hero Section */}
