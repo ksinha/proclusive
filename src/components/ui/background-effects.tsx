@@ -39,12 +39,14 @@ export function BackgroundEffects() {
 
       {/* Corner Accents (Desktop Only) */}
       <div className="hidden lg:block">
+        {/* Top-left corner - positioned below nav */}
         <div
-          className="fixed top-8 left-8 w-24 h-24 border-l border-t"
+          className="fixed top-[100px] left-[30px] w-[100px] h-[100px] border-l border-t"
           style={{ borderColor: 'rgba(201, 169, 98, 0.25)' }}
         />
+        {/* Bottom-right corner - positioned above footer */}
         <div
-          className="fixed bottom-8 right-8 w-24 h-24 border-r border-b"
+          className="fixed bottom-[220px] right-[30px] w-[100px] h-[100px] border-r border-b"
           style={{ borderColor: 'rgba(201, 169, 98, 0.25)' }}
         />
       </div>
