@@ -33,7 +33,7 @@ export default function Home() {
       ></div>
 
       {/* Hero Section */}
-      <section className="bg-[#1a1d27] relative overflow-hidden z-10">
+      <section className="relative overflow-hidden z-10">
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#1f2230]/50 via-transparent to-[#1a1d27] pointer-events-none"></div>
 
@@ -59,10 +59,10 @@ export default function Home() {
 
             {/* Main Headline */}
             <div className="space-y-2">
-              <h1 className="text-[42px] md:text-[52px] font-display font-light text-[#f8f8fa] leading-tight tracking-[0.15em] uppercase">
+              <h1 className="text-[42px] md:text-[52px] font-display font-light text-[#f8f8fa] leading-tight tracking-[0.02em]">
                 Where trust builds
               </h1>
-              <p className="text-[42px] md:text-[52px] font-display font-normal italic text-[#c9a962] leading-tight tracking-[0.15em] uppercase">
+              <p className="text-[42px] md:text-[52px] font-display font-normal italic text-[#c9a962] leading-tight tracking-[0.02em]">
                 infrastructure
               </p>
             </div>
@@ -120,7 +120,7 @@ export default function Home() {
       </section>
 
       {/* 15-Point Verification Section - Distinct panel with darker background */}
-      <section className="bg-[#1a1d27] py-16 md:py-20 relative z-10">
+      <section className="py-16 md:py-20 relative z-10">
         {/* Top border accent */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#c9a962]/20 to-transparent"></div>
 

@@ -64,6 +64,9 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const [paidAt, setPaidAt] = useState(application.profile.paid_at || "");
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     loadDocuments();
@@ -94,19 +97,36 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const openLightbox = (imageUrl: string) => {
     setLightboxImage(imageUrl);
     setZoomLevel(1);
+    setPanPosition({ x: 0, y: 0 });
   };
 
   const closeLightbox = () => {
     setLightboxImage(null);
     setZoomLevel(1);
+    setPanPosition({ x: 0, y: 0 });
+    setIsDragging(false);
   };
 
   const handleZoomIn = () => {
-    setZoomLevel((prev) => Math.min(prev + 0.25, 3));
+    setZoomLevel((prev) => {
+      const newZoom = Math.min(prev + 0.5, 4);
+      // Reset pan when zooming back to 1 or below
+      if (newZoom <= 1) {
+        setPanPosition({ x: 0, y: 0 });
+      }
+      return newZoom;
+    });
   };
 
   const handleZoomOut = () => {
-    setZoomLevel((prev) => Math.max(prev - 0.25, 0.5));
+    setZoomLevel((prev) => {
+      const newZoom = Math.max(prev - 0.5, 0.5);
+      // Reset pan when zooming back to 1 or below
+      if (newZoom <= 1) {
+        setPanPosition({ x: 0, y: 0 });
+      }
+      return newZoom;
+    });
   };
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -116,6 +136,26 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
     } else {
       handleZoomOut();
     }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (zoomLevel > 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - panPosition.x, y: e.clientY - panPosition.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && zoomLevel > 1) {
+      setPanPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   const loadProfilePicture = async () => {
@@ -1101,19 +1141,21 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       {/* Portfolio Image Lightbox */}
       {lightboxImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
           style={{ background: 'rgba(0, 0, 0, 0.95)' }}
           onClick={(e) => {
-            // Close when clicking on backdrop (not on image or controls)
             if (e.target === e.currentTarget) {
               closeLightbox();
             }
           }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
         >
           {/* Close button */}
           <button
             onClick={closeLightbox}
-            className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:bg-white/10 z-10"
+            className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:bg-white/10 z-20"
             style={{ background: 'rgba(255, 255, 255, 0.1)' }}
             aria-label="Close lightbox"
           >
@@ -1122,7 +1164,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
           {/* Zoom controls */}
           <div
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-2 rounded-full z-10"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-2 rounded-full z-20"
             style={{ background: 'rgba(37, 40, 51, 0.9)', border: '1px solid rgba(255, 255, 255, 0.1)' }}
           >
             <button
@@ -1138,7 +1180,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
             </span>
             <button
               onClick={handleZoomIn}
-              disabled={zoomLevel >= 3}
+              disabled={zoomLevel >= 4}
               className="p-2 rounded-full transition-all duration-200 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Zoom in"
             >
@@ -1148,29 +1190,32 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
           {/* Keyboard shortcuts hint */}
           <div
-            className="absolute bottom-6 right-6 px-3 py-1.5 rounded text-xs text-[#6a6d78] z-10"
+            className="absolute bottom-6 right-6 px-3 py-1.5 rounded text-xs text-[#6a6d78] z-20"
             style={{ background: 'rgba(37, 40, 51, 0.7)' }}
           >
-            ESC to close | +/- to zoom | Scroll to zoom
+            ESC to close | +/- to zoom | Scroll to zoom | Drag to pan
           </div>
 
-          {/* Image container with zoom */}
+          {/* Image container with zoom and pan */}
           <div
-            className="max-w-[90vw] max-h-[85vh] overflow-auto"
+            className="relative flex items-center justify-center w-full h-full"
             onWheel={handleWheel}
-            style={{ cursor: zoomLevel > 1 ? 'grab' : 'default' }}
           >
             <img
               src={lightboxImage}
               alt="Portfolio image preview"
-              className="transition-transform duration-200 ease-out"
+              className="select-none"
               style={{
-                transform: `scale(${zoomLevel})`,
-                transformOrigin: 'center center',
                 maxWidth: zoomLevel <= 1 ? '90vw' : 'none',
                 maxHeight: zoomLevel <= 1 ? '85vh' : 'none',
+                width: zoomLevel > 1 ? `${90 * zoomLevel}vw` : 'auto',
+                height: zoomLevel > 1 ? 'auto' : 'auto',
                 objectFit: 'contain',
+                transform: `translate(${panPosition.x}px, ${panPosition.y}px)`,
+                cursor: zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+                transition: isDragging ? 'none' : 'transform 0.1s ease-out',
               }}
+              onMouseDown={handleMouseDown}
               onClick={(e) => e.stopPropagation()}
               draggable={false}
             />
