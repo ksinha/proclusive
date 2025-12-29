@@ -87,6 +87,10 @@ export default function Home() {
               </Button>
             </div>
 
+            {/* Small note */}
+            <p className="text-[12px] text-[#6a6d78] font-light tracking-wide">
+              DC Metro professionals
+            </p>
           </div>
 
           {/* Stats Row */}
