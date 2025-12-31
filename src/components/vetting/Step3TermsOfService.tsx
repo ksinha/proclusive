@@ -51,43 +51,66 @@ export default function Step3TermsOfService({ onComplete, onBack, initialTosAcce
             <FileText className="h-5 w-5 text-[#c9a962]" />
             <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Proclusive Platform Terms of Service</CardTitle>
           </div>
-          <CardDescription className="text-[13px] text-[#b0b2bc]">Last Updated: January 2025</CardDescription>
+          <CardDescription className="text-[13px] text-[#b0b2bc]">Last Updated: December 31, 2025 | Effective: February 1, 2026</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="max-h-96 overflow-y-auto pr-4 space-y-4 border border-[rgba(255,255,255,0.08)] rounded-lg p-4 bg-[#1a1d27]">
+            <div className="text-[12px] text-[#c9a962] bg-[rgba(201,169,98,0.1)] px-3 py-2 rounded-md mb-4">
+              This is a summary of key terms. For the complete Terms of Service, please visit the{" "}
+              <Link href="/terms" target="_blank" className="underline hover:text-[#d4b674]">full terms page</Link>.
+            </div>
+
             <div className="space-y-2">
               <h4 className="text-[14px] font-semibold text-[#f8f8fa]">1. Acceptance of Terms</h4>
               <p className="text-[13px] text-[#b0b2bc]">
                 By accessing and using the Proclusive platform, you agree to be bound by these Terms of
                 Service and all applicable laws and regulations. If you do not agree with any of these
-                terms, you are prohibited from using or accessing this platform.
+                terms, you are prohibited from using or accessing this platform. These terms become
+                effective February 1, 2026.
               </p>
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">2. Membership & Verification</h4>
+              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">2. Membership Eligibility</h4>
               <p className="text-[13px] text-[#b0b2bc]">
-                Proclusive operates a curated, high-trust network. All members must:
+                Proclusive operates a curated, high-trust network. Key eligibility requirements:
               </p>
               <ul className="text-[13px] text-[#b0b2bc] space-y-1 list-disc list-inside ml-4">
+                <li>Must be a licensed professional or registered business entity</li>
                 <li>Provide accurate and complete information during the vetting process</li>
                 <li>Maintain current licenses, insurance, and regulatory compliance</li>
-                <li>Notify Proclusive immediately of any changes to verification documents</li>
                 <li>Cooperate with periodic re-verification as required</li>
               </ul>
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">3. Referral System</h4>
+              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">3. Referral System & Commission</h4>
               <p className="text-[13px] text-[#b0b2bc]">
-                Members may submit and receive B2B referrals through the platform. By participating:
+                Members may submit and receive B2B referrals through the platform. Commission structure:
               </p>
               <ul className="text-[13px] text-[#b0b2bc] space-y-1 list-disc list-inside ml-4">
-                <li>You agree to provide accurate project and client information</li>
-                <li>You understand that referrals are not guarantees of awarded work</li>
-                <li>You agree to the commission structure (3% {`<`}$25K, 2% $25K-$100K, 1% {`>`}$100K)</li>
-                <li>You will report project outcomes honestly for commission calculation</li>
+                <li><span className="text-[#c9a962] font-medium">2.5% total commission</span> on successful referrals</li>
+                <li><span className="text-[#f8f8fa]">2.0%</span> paid to the referring Member</li>
+                <li><span className="text-[#f8f8fa]">0.5%</span> retained by Proclusive as admin fee</li>
+                <li>Custom commissions allowed (replacing Member portion only, 0.5% admin fee always applies)</li>
               </ul>
+              <p className="text-[13px] text-[#b0b2bc] mt-2">
+                <span className="text-[#f8f8fa] font-medium">Five-Stage Referral Workflow:</span>
+              </p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                <span className="text-[11px] px-2 py-1 rounded bg-[rgba(255,255,255,0.08)] text-[#b0b2bc]">SUBMITTED</span>
+                <span className="text-[11px] text-[#b0b2bc]">→</span>
+                <span className="text-[11px] px-2 py-1 rounded bg-[rgba(255,255,255,0.08)] text-[#b0b2bc]">REVIEWED</span>
+                <span className="text-[11px] text-[#b0b2bc]">→</span>
+                <span className="text-[11px] px-2 py-1 rounded bg-[rgba(255,255,255,0.08)] text-[#b0b2bc]">MATCHED</span>
+                <span className="text-[11px] text-[#b0b2bc]">→</span>
+                <span className="text-[11px] px-2 py-1 rounded bg-[rgba(255,255,255,0.08)] text-[#b0b2bc]">ENGAGED</span>
+                <span className="text-[11px] text-[#b0b2bc]">→</span>
+                <span className="text-[11px] px-2 py-1 rounded bg-[rgba(201,169,98,0.3)] text-[#c9a962]">COMPLETED</span>
+              </div>
+              <p className="text-[12px] text-[#b0b2bc] mt-2 italic">
+                Commission is due only upon COMPLETED status.
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -101,24 +124,12 @@ export default function Step3TermsOfService({ onComplete, onBack, initialTosAcce
                 <li>Not circumvent the platform to avoid commission payments</li>
                 <li>Not misrepresent credentials, capabilities, or project outcomes</li>
                 <li>Not engage in fraudulent or deceptive practices</li>
+                <li>Report project outcomes honestly for commission calculation</li>
               </ul>
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">5. Data Privacy & Security</h4>
-              <p className="text-[13px] text-[#b0b2bc]">
-                Proclusive takes data security seriously. We:
-              </p>
-              <ul className="text-[13px] text-[#b0b2bc] space-y-1 list-disc list-inside ml-4">
-                <li>Implement industry-standard security measures (RLS, encryption)</li>
-                <li>Use member data only for platform operations and verification</li>
-                <li>Do not sell or share member data with third parties without consent</li>
-                <li>Allow members to request data deletion upon account termination</li>
-              </ul>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">6. Limitation of Liability</h4>
+              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">5. Limitation of Liability</h4>
               <p className="text-[13px] text-[#b0b2bc]">
                 Proclusive is a referral platform and does not:
               </p>
@@ -127,37 +138,13 @@ export default function Step3TermsOfService({ onComplete, onBack, initialTosAcce
                 <li>Assume liability for project disputes between members and clients</li>
                 <li>Warrant that all member information is 100% accurate at all times</li>
                 <li>Accept responsibility for independent contractor relationships</li>
+                <li>Guarantee referral volume, match success, or business outcomes</li>
               </ul>
             </div>
 
-            <div className="space-y-2">
-              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">7. Termination</h4>
-              <p className="text-[13px] text-[#b0b2bc]">
-                Proclusive reserves the right to suspend or terminate membership for:
-              </p>
-              <ul className="text-[13px] text-[#b0b2bc] space-y-1 list-disc list-inside ml-4">
-                <li>Violation of these Terms of Service</li>
-                <li>Fraudulent activity or misrepresentation</li>
-                <li>Failure to maintain required verification standards</li>
-                <li>Non-payment of commissions or platform fees</li>
-                <li>Conduct detrimental to the network's reputation</li>
-              </ul>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">8. Governing Law</h4>
-              <p className="text-[13px] text-[#b0b2bc]">
-                These Terms shall be governed by the laws of the District of Columbia, without regard
-                to its conflict of law provisions.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="text-[14px] font-semibold text-[#f8f8fa]">9. Changes to Terms</h4>
-              <p className="text-[13px] text-[#b0b2bc]">
-                Proclusive may update these Terms at any time. Continued use of the platform after
-                changes constitutes acceptance of the new Terms.
-              </p>
+            <div className="text-[12px] text-[#b0b2bc] text-center pt-2 border-t border-[rgba(255,255,255,0.08)]">
+              For complete terms including Termination, Governing Law, and Changes to Terms,{" "}
+              <Link href="/terms" target="_blank" className="text-[#c9a962] underline hover:text-[#d4b674]">view full Terms of Service</Link>.
             </div>
           </div>
         </CardContent>

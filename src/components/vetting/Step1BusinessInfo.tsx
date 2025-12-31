@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { AvatarUpload } from "@/components/ui/avatar";
-import { Info, Building2, MapPin, Shield, Eye, AlertCircle, Camera } from "lucide-react";
+import { Info, Building2, MapPin, Shield, AlertCircle, Camera } from "lucide-react";
 
 interface Step1Props {
   onComplete: (data: BusinessInfoData, profilePicture?: File) => void;
@@ -685,43 +685,6 @@ export default function Step1BusinessInfo({
             </p>
             <FieldError error={errors.referred_by} />
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Profile Settings */}
-      <Card className="bg-[#21242f] border-[rgba(201,169,98,0.2)]">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Eye className="h-5 w-5 text-[#c9a962]" />
-            <CardTitle className="text-[18px] font-semibold text-[#f8f8fa]">Profile Settings</CardTitle>
-          </div>
-          <CardDescription className="text-[14px] text-[#b0b2bc]">Control your profile visibility</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Card hover={false} compact className="bg-[rgba(201,169,98,0.1)] border-[rgba(201,169,98,0.3)]">
-            <div className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                name="is_public"
-                id="is_public"
-                checked={formData.is_public}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, is_public: e.target.checked }))
-                }
-                className="h-4 w-4 rounded border-[rgba(255,255,255,0.2)] bg-[#21242f] text-[#c9a962] focus:ring-[#c9a962] mt-0.5"
-              />
-              <div className="space-y-0.5">
-                <Label htmlFor="is_public" className="text-[13px] font-medium text-[#f8f8fa] cursor-pointer">
-                  Make my profile visible in the Member Directory
-                </Label>
-                <p className="text-[12px] text-[#b0b2bc]">
-                  When enabled, verified members can view your profile, portfolio, and contact
-                  information in the directory. Your sensitive documents (W-9, insurance, etc.)
-                  are never shown publicly. You can change this setting later.
-                </p>
-              </div>
-            </div>
-          </Card>
         </CardContent>
       </Card>
 

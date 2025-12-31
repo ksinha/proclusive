@@ -26,8 +26,23 @@ import {
   ArrowLeft,
   ImageIcon,
   ZoomIn,
-  ZoomOut
+  ZoomOut,
+  Pencil,
+  Loader2,
+  History,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface ApplicationWithProfile extends Application {
   profile: Profile;
@@ -43,6 +58,17 @@ interface PortfolioItem {
   image_url: string;
   description: string | null;
   display_order: number;
+}
+
+interface AuditLogEntry {
+  id: string;
+  admin_id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  details: Record<string, any> | null;
+  created_at: string;
+  admin_name?: string;
 }
 
 const BADGE_OPTIONS: BadgeLevel[] = ["verified", "vetted", "elite"];
@@ -68,11 +94,33 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
+  // Audit Log State
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
+  const [auditLogsLoading, setAuditLogsLoading] = useState(false);
+  const [auditLogsError, setAuditLogsError] = useState<string | null>(null);
+  const [auditLogsExpanded, setAuditLogsExpanded] = useState(false);
+  const [showAllAuditLogs, setShowAllAuditLogs] = useState(false);
+
+  // Edit Profile Modal State
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [editProfileLoading, setEditProfileLoading] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    full_name: application.profile.full_name || "",
+    company_name: application.profile.company_name || "",
+    phone: application.profile.phone || "",
+    email: application.profile.email || "",
+    street_address: application.profile.street_address || "",
+    city: application.profile.city || "",
+    state: application.profile.state || "",
+    zip_code: application.profile.zip_code || "",
+  });
+
   useEffect(() => {
     loadDocuments();
     loadPortfolioItems();
     loadUserBadges();
     loadProfilePicture();
+    loadAuditLogs();
   }, []);
 
   // Handle escape key to close lightbox
@@ -168,6 +216,62 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
 
     if (signedUrl) {
       setProfilePictureUrl(signedUrl.signedUrl);
+    }
+  };
+
+  const loadAuditLogs = async () => {
+    setAuditLogsLoading(true);
+    setAuditLogsError(null);
+
+    try {
+      const supabase = createClient();
+
+      // Query audit logs for both application and profile entity types
+      const { data: logs, error } = await supabase
+        .from("admin_audit_log")
+        .select("*")
+        .or(`and(entity_type.eq.application,entity_id.eq.${application.id}),and(entity_type.eq.profile,entity_id.eq.${application.user_id})`)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error loading audit logs:", error);
+        setAuditLogsError("Failed to load audit logs");
+        setAuditLogsLoading(false);
+        return;
+      }
+
+      if (logs && logs.length > 0) {
+        // Get unique admin IDs
+        const adminIds = [...new Set(logs.map((log) => log.admin_id).filter(Boolean))];
+
+        // Fetch admin names
+        const { data: adminProfiles, error: adminError } = await supabase
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", adminIds);
+
+        // Map admin names to logs
+        const adminNameMap: Record<string, string> = {};
+        if (!adminError && adminProfiles) {
+          adminProfiles.forEach((profile) => {
+            adminNameMap[profile.id] = profile.full_name || "Unknown Admin";
+          });
+        }
+
+        const logsWithNames = logs.map((log) => ({
+          ...log,
+          admin_name: log.admin_id ? adminNameMap[log.admin_id] || "Unknown Admin" : "System",
+        }));
+
+        setAuditLogs(logsWithNames);
+      } else {
+        setAuditLogs([]);
+      }
+    } catch (err) {
+      console.error("Error loading audit logs:", err);
+      setAuditLogsError("An unexpected error occurred");
+    } finally {
+      setAuditLogsLoading(false);
     }
   };
 
@@ -458,6 +562,148 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
     }
   };
 
+  const openEditProfileModal = () => {
+    // Reset form data to current profile values
+    setEditFormData({
+      full_name: currentApplication.profile.full_name || "",
+      company_name: currentApplication.profile.company_name || "",
+      phone: currentApplication.profile.phone || "",
+      email: currentApplication.profile.email || "",
+      street_address: currentApplication.profile.street_address || "",
+      city: currentApplication.profile.city || "",
+      state: currentApplication.profile.state || "",
+      zip_code: currentApplication.profile.zip_code || "",
+    });
+    setShowEditProfileModal(true);
+  };
+
+  const handleEditProfileSave = async () => {
+    setEditProfileLoading(true);
+    setSuccessMessage(null);
+    const supabase = createClient();
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Identify which fields changed
+      const changedFields: Record<string, any> = {};
+      const newValues: Record<string, any> = {};
+      const originalProfile = currentApplication.profile;
+
+      const fieldsToCheck = [
+        "full_name",
+        "company_name",
+        "phone",
+        "email",
+        "street_address",
+        "city",
+        "state",
+        "zip_code",
+      ] as const;
+
+      for (const field of fieldsToCheck) {
+        const originalValue = originalProfile[field] || "";
+        const newValue = editFormData[field] || "";
+        if (originalValue !== newValue) {
+          changedFields[field] = originalValue;
+          newValues[field] = newValue;
+        }
+      }
+
+      // If no changes, just close the modal
+      if (Object.keys(changedFields).length === 0) {
+        setShowEditProfileModal(false);
+        setEditProfileLoading(false);
+        return;
+      }
+
+      // Check if email changed - will need special handling
+      const emailChanged = "email" in changedFields;
+
+      // Update the profile
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({
+          full_name: editFormData.full_name,
+          company_name: editFormData.company_name,
+          phone: editFormData.phone || null,
+          email: editFormData.email,
+          street_address: editFormData.street_address || null,
+          city: editFormData.city || null,
+          state: editFormData.state || null,
+          zip_code: editFormData.zip_code || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", application.user_id);
+
+      if (updateError) {
+        console.error("Error updating profile:", updateError);
+        setSuccessMessage(null);
+        setEditProfileLoading(false);
+        return;
+      }
+
+      // Log admin action to audit log
+      await supabase.from("admin_audit_log").insert({
+        admin_id: user?.id,
+        action: "edited_member_profile",
+        entity_type: "profile",
+        entity_id: application.user_id,
+        details: {
+          changed_fields: changedFields,
+          new_values: newValues,
+        },
+      });
+
+      // If email changed, send notifications via API
+      if (emailChanged) {
+        try {
+          const response = await fetch('/api/admin/update-member-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              profileId: application.user_id,
+              oldEmail: changedFields.email,
+              newEmail: newValues.email,
+              memberName: editFormData.full_name,
+            }),
+          });
+
+          if (!response.ok) {
+            console.warn('Email notification failed, but profile was updated');
+          }
+        } catch (emailError) {
+          console.error('Error sending email notification:', emailError);
+          // Don't fail the update if email notification fails
+        }
+      }
+
+      // Update local state
+      setCurrentApplication((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          full_name: editFormData.full_name,
+          company_name: editFormData.company_name,
+          phone: editFormData.phone || null,
+          email: editFormData.email,
+          street_address: editFormData.street_address || null,
+          city: editFormData.city || null,
+          state: editFormData.state || null,
+          zip_code: editFormData.zip_code || null,
+        },
+      }));
+
+      setShowEditProfileModal(false);
+      setSuccessMessage("Profile updated successfully.");
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    } finally {
+      setEditProfileLoading(false);
+    }
+  };
+
   const getPointStatus = (status: string) => {
     const variants = {
       not_submitted: "secondary",
@@ -507,6 +753,59 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
       .toUpperCase()
       .slice(0, 2);
   };
+
+  const formatAuditAction = (action: string): string => {
+    const actionLabels: Record<string, string> = {
+      verified_point: "Verified Point",
+      approved_application: "Approved Application",
+      updated_application_status: "Updated Application Status",
+      edited_member_profile: "Edited Profile",
+      rejected_application: "Rejected Application",
+      assigned_badge: "Assigned Badge",
+      updated_payment_status: "Updated Payment Status",
+      created_application: "Created Application",
+    };
+    return actionLabels[action] || action.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+
+  const formatAuditDetails = (details: Record<string, any> | null): string => {
+    if (!details) return "";
+
+    const parts: string[] = [];
+
+    if (details.point) {
+      const pointLabel = details.point.replace(/point_\d+_/, "").replace(/_/g, " ");
+      parts.push(`${pointLabel}: ${details.status || "updated"}`);
+    }
+
+    if (details.new_status) {
+      parts.push(`Status: ${details.new_status.replace(/_/g, " ")}`);
+    }
+
+    if (details.badges_assigned && details.badges_assigned.length > 0) {
+      parts.push(`Badges: ${details.badges_assigned.join(", ")}`);
+    }
+
+    if (details.changed_fields && Object.keys(details.changed_fields).length > 0) {
+      const fields = Object.keys(details.changed_fields).map((f) => f.replace(/_/g, " "));
+      parts.push(`Changed: ${fields.join(", ")}`);
+    }
+
+    return parts.join(" | ");
+  };
+
+  const formatDateTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const displayedAuditLogs = showAllAuditLogs ? auditLogs : auditLogs.slice(0, 10);
 
   return (
     <div className="space-y-6">
@@ -560,13 +859,24 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
                 </CardDescription>
               </div>
             </div>
-            <Button
-              onClick={onClose}
-              variant="ghost"
-              size="icon"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={openEditProfileModal}
+                variant="outline"
+                size="sm"
+                className="gap-2 border-[#c9a962] text-[#c9a962] hover:bg-[#c9a962]/10"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit Profile
+              </Button>
+              <Button
+                onClick={onClose}
+                variant="ghost"
+                size="icon"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </CardHeader>
       </Card>
@@ -615,42 +925,42 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Full Name</div>
-              <div className="text-[14px] font-medium text-white">{application.profile.full_name}</div>
+              <div className="text-[14px] font-medium text-white">{currentApplication.profile.full_name}</div>
             </div>
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Email</div>
-              <div className="text-[14px] font-medium text-white">{application.profile.email}</div>
+              <div className="text-[14px] font-medium text-white">{currentApplication.profile.email}</div>
             </div>
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Phone</div>
-              <div className="text-[14px] font-medium text-white">{application.profile.phone || "N/A"}</div>
+              <div className="text-[14px] font-medium text-white">{currentApplication.profile.phone || "N/A"}</div>
             </div>
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Company</div>
-              <div className="text-[14px] font-medium text-white">{application.profile.company_name}</div>
+              <div className="text-[14px] font-medium text-white">{currentApplication.profile.company_name}</div>
             </div>
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Primary Trade</div>
-              <div><Badge variant="outline">{application.profile.primary_trade}</Badge></div>
+              <div><Badge variant="outline">{currentApplication.profile.primary_trade}</Badge></div>
             </div>
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Business Type</div>
-              <div className="text-[14px] font-medium text-white">{application.profile.business_type || "N/A"}</div>
+              <div className="text-[14px] font-medium text-white">{currentApplication.profile.business_type || "N/A"}</div>
             </div>
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Location</div>
               <div className="text-[14px] font-medium text-white">
-                {application.profile.city && application.profile.state
-                  ? `${application.profile.city}, ${application.profile.state}`
+                {currentApplication.profile.city && currentApplication.profile.state
+                  ? `${currentApplication.profile.city}, ${currentApplication.profile.state}`
                   : "N/A"}
               </div>
             </div>
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Website</div>
               <div className="text-[14px] font-medium text-white">
-                {application.profile.website ? (
+                {currentApplication.profile.website ? (
                   <a
-                    href={application.profile.website}
+                    href={currentApplication.profile.website}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#60a5fa] hover:text-[#7ab8ff]"
@@ -664,7 +974,7 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
             </div>
             <div className="space-y-1">
               <div className="text-[12px] font-medium text-[#6a6d78] uppercase tracking-wide">Referred By</div>
-              <div className="text-[14px] font-medium text-white">{application.profile.referred_by || "N/A"}</div>
+              <div className="text-[14px] font-medium text-white">{currentApplication.profile.referred_by || "N/A"}</div>
             </div>
           </div>
         </CardContent>
@@ -1034,6 +1344,132 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
         </CardContent>
       </Card>
 
+      {/* Audit Log / Activity History */}
+      <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
+        <CardHeader
+          className="cursor-pointer select-none"
+          onClick={() => setAuditLogsExpanded(!auditLogsExpanded)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <History className="h-5 w-5 text-[#c9a962]" />
+              <CardTitle className="text-white">Activity Log</CardTitle>
+              {auditLogs.length > 0 && (
+                <Badge variant="outline" className="ml-2 text-[#6a6d78] border-[#6a6d78]">
+                  {auditLogs.length} {auditLogs.length === 1 ? "entry" : "entries"}
+                </Badge>
+              )}
+            </div>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              {auditLogsExpanded ? (
+                <ChevronUp className="h-4 w-4 text-[#b0b2bc]" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-[#b0b2bc]" />
+              )}
+            </Button>
+          </div>
+          <CardDescription className="text-[#b0b2bc]">
+            Track all admin actions performed on this member
+          </CardDescription>
+        </CardHeader>
+
+        {auditLogsExpanded && (
+          <CardContent>
+            {/* Loading State */}
+            {auditLogsLoading && (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-[#c9a962]" />
+                <span className="ml-2 text-[14px] text-[#b0b2bc]">Loading activity log...</span>
+              </div>
+            )}
+
+            {/* Error State */}
+            {auditLogsError && !auditLogsLoading && (
+              <div className="rounded-lg p-4" style={{ background: 'rgba(248, 113, 113, 0.1)', border: '1px solid rgba(248, 113, 113, 0.3)' }}>
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-[#f87171] flex-shrink-0" />
+                  <p className="text-[14px] text-[#f87171]">{auditLogsError}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!auditLogsLoading && !auditLogsError && auditLogs.length === 0 && (
+              <div className="text-center py-8">
+                <History className="h-10 w-10 mx-auto text-[#6a6d78] opacity-50 mb-3" />
+                <p className="text-[14px] text-[#6a6d78]">No activity recorded yet</p>
+                <p className="text-[12px] text-[#6a6d78] mt-1">Actions performed on this member will appear here</p>
+              </div>
+            )}
+
+            {/* Audit Log List */}
+            {!auditLogsLoading && !auditLogsError && auditLogs.length > 0 && (
+              <div className="space-y-2">
+                <div
+                  className="max-h-[400px] overflow-y-auto space-y-2 pr-2"
+                  style={{ scrollbarWidth: 'thin', scrollbarColor: '#6a6d78 #282c38' }}
+                >
+                  {displayedAuditLogs.map((log) => (
+                    <div
+                      key={log.id}
+                      className="p-4 rounded-lg transition-colors hover:bg-[#2f3442]"
+                      style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[14px] font-medium text-[#c9a962]">
+                              {formatAuditAction(log.action)}
+                            </span>
+                            <Badge variant="outline" className="text-[11px] text-[#6a6d78] border-[#6a6d78]">
+                              {log.entity_type}
+                            </Badge>
+                          </div>
+                          {log.details && formatAuditDetails(log.details) && (
+                            <p className="text-[13px] text-[#b0b2bc] mt-1 truncate">
+                              {formatAuditDetails(log.details)}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-3 mt-2 text-[12px] text-[#6a6d78]">
+                            <span>by {log.admin_name}</span>
+                            <span>|</span>
+                            <span>{formatDateTime(log.created_at)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Show All / Show Less Toggle */}
+                {auditLogs.length > 10 && (
+                  <div className="pt-3 border-t border-white/[0.08]">
+                    <Button
+                      onClick={() => setShowAllAuditLogs(!showAllAuditLogs)}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-[#b0b2bc] hover:text-white"
+                    >
+                      {showAllAuditLogs ? (
+                        <>
+                          <ChevronUp className="h-4 w-4 mr-2" />
+                          Show Less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="h-4 w-4 mr-2" />
+                          Show All ({auditLogs.length} entries)
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        )}
+      </Card>
+
       {/* Rejection Modal */}
       {showRejectModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ background: 'rgba(0, 0, 0, 0.8)' }}>
@@ -1222,6 +1658,146 @@ export default function ApplicationDetail({ application, onClose }: ApplicationD
           </div>
         </div>
       )}
+
+      {/* Edit Profile Modal */}
+      <Dialog open={showEditProfileModal} onOpenChange={setShowEditProfileModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#252833', border: '1px solid rgba(201, 169, 98, 0.2)' }}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-white">
+              <Pencil className="h-5 w-5 text-[#c9a962]" />
+              Edit Member Profile
+            </DialogTitle>
+            <DialogDescription>
+              Update the member's profile information. Changes will be logged to the admin audit log.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-6 py-4">
+            {/* Full Name */}
+            <div className="space-y-2">
+              <Label htmlFor="edit_full_name">Full Name</Label>
+              <Input
+                id="edit_full_name"
+                value={editFormData.full_name}
+                onChange={(e) => setEditFormData({ ...editFormData, full_name: e.target.value })}
+                placeholder="Enter full name"
+              />
+            </div>
+
+            {/* Company Name */}
+            <div className="space-y-2">
+              <Label htmlFor="edit_company_name">Company Name</Label>
+              <Input
+                id="edit_company_name"
+                value={editFormData.company_name}
+                onChange={(e) => setEditFormData({ ...editFormData, company_name: e.target.value })}
+                placeholder="Enter company name"
+              />
+            </div>
+
+            {/* Phone */}
+            <div className="space-y-2">
+              <Label htmlFor="edit_phone">Phone</Label>
+              <Input
+                id="edit_phone"
+                type="tel"
+                value={editFormData.phone}
+                onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                placeholder="Enter phone number"
+              />
+            </div>
+
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="edit_email">
+                Email
+                <span className="text-[#c9a962] text-xs ml-2">(Changing email will send notifications)</span>
+              </Label>
+              <Input
+                id="edit_email"
+                type="email"
+                value={editFormData.email}
+                onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                placeholder="Enter email address"
+              />
+            </div>
+
+            {/* Address Section */}
+            <div className="pt-2 border-t border-white/[0.08]">
+              <h4 className="text-[14px] font-medium text-white mb-4">Address Information</h4>
+
+              {/* Street Address */}
+              <div className="space-y-2 mb-4">
+                <Label htmlFor="edit_street_address">Street Address</Label>
+                <Input
+                  id="edit_street_address"
+                  value={editFormData.street_address}
+                  onChange={(e) => setEditFormData({ ...editFormData, street_address: e.target.value })}
+                  placeholder="Enter street address"
+                />
+              </div>
+
+              {/* City, State, Zip in a row */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit_city">City</Label>
+                  <Input
+                    id="edit_city"
+                    value={editFormData.city}
+                    onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
+                    placeholder="City"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_state">State</Label>
+                  <Input
+                    id="edit_state"
+                    value={editFormData.state}
+                    onChange={(e) => setEditFormData({ ...editFormData, state: e.target.value })}
+                    placeholder="State"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_zip_code">Zip Code</Label>
+                  <Input
+                    id="edit_zip_code"
+                    value={editFormData.zip_code}
+                    onChange={(e) => setEditFormData({ ...editFormData, zip_code: e.target.value })}
+                    placeholder="Zip"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-3 sm:gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowEditProfileModal(false)}
+              disabled={editProfileLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEditProfileSave}
+              disabled={editProfileLoading}
+              className="gap-2"
+            >
+              {editProfileLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
