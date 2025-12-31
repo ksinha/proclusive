@@ -59,10 +59,10 @@ export default function Home() {
 
             {/* Main Headline */}
             <div className="space-y-2">
-              <h1 className="text-[3rem] font-display font-light text-[#f8f8fa] leading-[1.2] tracking-[0.02em]">
+              <h1 className="text-[3rem] font-display font-[300] text-[#f8f8fa] leading-[1.2]">
                 Where trust builds
               </h1>
-              <p className="text-[3rem] font-display font-normal italic text-[#c9a962] leading-[1.2] tracking-[0.02em]">
+              <p className="text-[3rem] font-display font-[400] italic text-[#c9a962] leading-[1.2]">
                 infrastructure
               </p>
             </div>
