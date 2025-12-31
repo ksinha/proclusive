@@ -427,8 +427,8 @@ export default function ReferralDetail({
         </Card>
       )}
 
-      {/* Member Matching (Only show when status is REVIEWED) */}
-      {referral.status === "REVIEWED" && (
+      {/* Member Matching (Show when status is REVIEWED or when no member matched yet) */}
+      {(referral.status === "REVIEWED" || (!referral.matched_to && referral.status !== "SUBMITTED")) && (
         <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
           <CardHeader>
             <CardTitle className="text-[18px] text-white">Match to Member</CardTitle>
@@ -522,26 +522,56 @@ export default function ReferralDetail({
       {/* Action Buttons */}
       <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
         <CardContent className="pt-6">
-          <div className="flex justify-end gap-3">
-            {nextStatus && (
-              <Button
-                onClick={() => {
-                  if (nextStatus === "MATCHED") {
-                    if (!selectedMember) {
-                      alert("Please select a member to match this referral to");
-                      return;
-                    }
-                    handleStatusTransition(nextStatus, selectedMember);
-                  } else {
-                    handleStatusTransition(nextStatus);
+          <div className="flex items-center justify-between gap-4">
+            {/* Status Dropdown - allows moving to any status */}
+            <div className="flex items-center gap-3">
+              <label className="text-[14px] text-[#b0b2bc]">Change status:</label>
+              <select
+                value={referral.status}
+                onChange={(e) => {
+                  const newStatus = e.target.value as ReferralStatus;
+                  if (newStatus === referral.status) return;
+
+                  if (newStatus === "MATCHED" && !selectedMember && !referral.matched_to) {
+                    alert("Please select a member to match this referral to first");
+                    return;
                   }
+                  handleStatusTransition(newStatus, selectedMember || referral.matched_to || undefined);
                 }}
-                disabled={loading || (nextStatus === "MATCHED" && !selectedMember)}
-                variant="default"
+                disabled={loading}
+                className="h-10 rounded-md shadow-xs text-[14px] border px-3 py-2 text-white min-w-[160px]"
+                style={{ background: '#282c38', border: '1px solid rgba(255, 255, 255, 0.08)' }}
               >
-                {statusConfig.nextAction}
-              </Button>
-            )}
+                {STATUS_FLOW.map((status) => (
+                  <option key={status} value={status}>
+                    {STATUS_CONFIG[status].label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Quick action button for next status */}
+            <div className="flex gap-3">
+              {nextStatus && (
+                <Button
+                  onClick={() => {
+                    if (nextStatus === "MATCHED") {
+                      if (!selectedMember) {
+                        alert("Please select a member to match this referral to");
+                        return;
+                      }
+                      handleStatusTransition(nextStatus, selectedMember);
+                    } else {
+                      handleStatusTransition(nextStatus);
+                    }
+                  }}
+                  disabled={loading || (nextStatus === "MATCHED" && !selectedMember)}
+                  variant="default"
+                >
+                  {statusConfig.nextAction}
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
