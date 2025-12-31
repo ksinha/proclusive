@@ -1,3 +1,5 @@
+"use client";
+
 export default function TermsOfService() {
   return (
     <main className="min-h-screen relative" style={{ backgroundColor: '#1a1d27' }}>

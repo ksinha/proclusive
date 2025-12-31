@@ -1,3 +1,5 @@
+"use client";
+
 export default function PrivacyPolicyPage() {
   return (
     <main className="min-h-screen" style={{ background: '#1a1d27' }}>
