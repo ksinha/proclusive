@@ -278,31 +278,83 @@ export default function MemberDashboard({
             </CardContent>
           </Card>
 
-          {/* Preview of submitted info */}
+          {/* Link to view full application details */}
           <Card style={{ background: '#252833', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px' }}>
             <CardHeader>
               <CardTitle className="text-base" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400, color: '#f8f8fa' }}>
-                Your Submitted Information
+                Your Submitted Application
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              {/* Quick summary */}
+              <div className="flex items-center gap-4 pb-4 border-b border-[rgba(255,255,255,0.08)]">
+                <Avatar
+                  src={profilePictureUrl}
+                  alt={profile.full_name || "Profile"}
+                  fallbackInitials={profile.full_name || "?"}
+                  size="lg"
+                />
+                <div>
+                  <p className="text-[16px] font-medium" style={{ color: '#f8f8fa' }}>{profile.full_name}</p>
+                  <p className="text-[14px]" style={{ color: '#b0b2bc' }}>{profile.company_name}</p>
+                  {profile.primary_trade && (
+                    <Badge variant="outline" className="mt-1 text-[11px]">{profile.primary_trade}</Badge>
+                  )}
+                </div>
+              </div>
+
+              {/* Key details grid */}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Name</p>
-                  <p style={{ color: '#f8f8fa' }}>{profile.full_name}</p>
+                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Email</p>
+                  <p style={{ color: '#f8f8fa' }}>{profile.email}</p>
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Company</p>
-                  <p style={{ color: '#f8f8fa' }}>{profile.company_name}</p>
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Trade</p>
-                  <p style={{ color: '#f8f8fa' }}>{profile.primary_trade}</p>
+                  <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Phone</p>
+                  <p style={{ color: '#f8f8fa' }}>{profile.phone || "—"}</p>
                 </div>
                 <div>
                   <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Location</p>
-                  <p style={{ color: '#f8f8fa' }}>{profile.city}{profile.city && profile.state && ", "}{profile.state}</p>
+                  <p style={{ color: '#f8f8fa' }}>
+                    {profile.city}{profile.city && profile.state && ", "}{profile.state}
+                    {!profile.city && !profile.state && "—"}
+                  </p>
                 </div>
+                {profile.years_in_business && profile.years_in_business > 0 && (
+                  <div>
+                    <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Years in Business</p>
+                    <p style={{ color: '#f8f8fa' }}>{profile.years_in_business}</p>
+                  </div>
+                )}
+                {profile.team_size && (
+                  <div>
+                    <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Team Size</p>
+                    <p style={{ color: '#f8f8fa' }}>{profile.team_size}</p>
+                  </div>
+                )}
+                {profile.business_type && (
+                  <div>
+                    <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: '#6a6d78' }}>Business Type</p>
+                    <p style={{ color: '#f8f8fa' }}>{profile.business_type}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Bio if present */}
+              {profile.bio && (
+                <div className="pt-4 border-t border-[rgba(255,255,255,0.08)]">
+                  <p className="text-[11px] uppercase tracking-wide mb-2" style={{ color: '#6a6d78' }}>About</p>
+                  <p className="text-[13px] line-clamp-3" style={{ color: '#b0b2bc' }}>{profile.bio}</p>
+                </div>
+              )}
+
+              {/* View full details link */}
+              <div className="pt-4 border-t border-[rgba(255,255,255,0.08)]">
+                <Link href="/vetting">
+                  <Button variant="outline" className="w-full text-[13px]">
+                    View Full Application Details
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
