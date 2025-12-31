@@ -119,14 +119,39 @@ export default function ReferralDetail({
         admin_notes: adminNotes,
       };
 
-      // Set timestamps based on status
-      if (newStatus === "REVIEWED") {
+      // Determine if moving forward or backward
+      const currentIndex = STATUS_FLOW.indexOf(referral.status);
+      const newIndex = STATUS_FLOW.indexOf(newStatus);
+      const isMovingBackward = newIndex < currentIndex;
+
+      // If moving backward, clear fields for statuses we're moving past
+      if (isMovingBackward) {
+        // Clear fields based on how far back we're going
+        if (newIndex < STATUS_FLOW.indexOf("COMPLETED")) {
+          updateData.completed_at = null;
+          updateData.final_value = null;
+        }
+        if (newIndex < STATUS_FLOW.indexOf("ENGAGED")) {
+          updateData.engaged_at = null;
+        }
+        if (newIndex < STATUS_FLOW.indexOf("MATCHED")) {
+          updateData.matched_to = null;
+          updateData.matched_at = null;
+        }
+        if (newIndex < STATUS_FLOW.indexOf("REVIEWED")) {
+          updateData.reviewed_by = null;
+          updateData.reviewed_at = null;
+        }
+      }
+
+      // Set timestamps based on status (for forward movement or re-setting current stage)
+      if (newStatus === "REVIEWED" && !isMovingBackward) {
         updateData.reviewed_by = user.id;
         updateData.reviewed_at = new Date().toISOString();
       } else if (newStatus === "MATCHED") {
         updateData.matched_to = matchedTo || selectedMember;
         updateData.matched_at = new Date().toISOString();
-      } else if (newStatus === "ENGAGED") {
+      } else if (newStatus === "ENGAGED" && !isMovingBackward) {
         updateData.engaged_at = new Date().toISOString();
       } else if (newStatus === "COMPLETED") {
         updateData.completed_at = new Date().toISOString();
