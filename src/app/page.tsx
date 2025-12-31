@@ -69,7 +69,7 @@ export default function Home() {
 
             {/* Subheadline */}
             <p className="text-[16px] md:text-[18px] text-[#8a8d98] font-body font-light leading-relaxed max-w-2xl mx-auto">
-              An exclusive network for the built environment. Fifty founding seats.
+              An exclusive network for the built environment. Verified professionals. Curated referrals. Fifty founding seats.
             </p>
 
             {/* CTA Button */}
@@ -83,7 +83,7 @@ export default function Home() {
 
             {/* Small note */}
             <p className="text-[12px] text-[#6a6d78] font-light tracking-wide">
-              DC Metro professionals
+              Limited to 50 founding members · DC Metro professionals
             </p>
           </div>
 
