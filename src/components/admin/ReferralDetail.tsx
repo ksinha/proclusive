@@ -477,8 +477,8 @@ export default function ReferralDetail({
         </Card>
       )}
 
-      {/* Matched Member Info */}
-      {referral.matched_member && (
+      {/* Matched Member Info - only show if status is at or past MATCHED */}
+      {referral.matched_member && STATUS_FLOW.indexOf(referral.status) >= STATUS_FLOW.indexOf("MATCHED") && (
         <Card style={{ background: 'rgba(201, 169, 98, 0.1)', border: '1px solid rgba(201, 169, 98, 0.3)', borderRadius: '10px' }}>
           <CardHeader>
             <CardTitle className="text-[18px] text-white">Matched Member</CardTitle>
