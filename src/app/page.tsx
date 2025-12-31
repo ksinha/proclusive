@@ -53,22 +53,22 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 pt-24 pb-16 relative z-10">
           <div className="text-center space-y-8">
             {/* Eyebrow */}
-            <p className="text-[12px] text-[#6a6d78] font-light uppercase tracking-[0.3em]">
+            <p className="text-[0.8rem] text-[#b0b2bc] font-light uppercase tracking-[0.3em]">
               By invitation only
             </p>
 
             {/* Main Headline */}
             <div className="space-y-2">
-              <h1 className="text-[42px] md:text-[52px] font-display font-light text-[#f8f8fa] leading-tight tracking-[0.02em]">
+              <h1 className="text-[3rem] font-display font-light text-[#f8f8fa] leading-[1.2] tracking-[0.02em]">
                 Where trust builds
               </h1>
-              <p className="text-[42px] md:text-[52px] font-display font-normal italic text-[#c9a962] leading-tight tracking-[0.02em]">
+              <p className="text-[3rem] font-display font-normal italic text-[#c9a962] leading-[1.2] tracking-[0.02em]">
                 infrastructure
               </p>
             </div>
 
             {/* Subheadline */}
-            <p className="text-[16px] md:text-[18px] text-[#8a8d98] font-body font-light leading-relaxed max-w-2xl mx-auto">
+            <p className="text-[1.1rem] text-[#b0b2bc] font-body font-light leading-[1.6] max-w-[600px] mx-auto">
               An exclusive network for the built environment. Fifty founding seats.
             </p>
 
