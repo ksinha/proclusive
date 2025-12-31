@@ -8,7 +8,8 @@ import { Application, Profile } from "@/types/database.types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle2, XCircle, Clock, ArrowRight, Eye, ChevronDown, ChevronUp, Building2, Phone, Mail, MapPin, Globe, Users, Briefcase, FileText, Image } from "lucide-react";
+import { AlertTriangle, CheckCircle2, XCircle, Clock, ArrowRight, Eye, ChevronDown, ChevronUp, Building2, Phone, Mail, MapPin, Globe, Users, Briefcase, FileText, Image, Calendar, User } from "lucide-react";
+import { Avatar } from "@/components/ui/avatar";
 
 interface ExistingApplicationData {
   application: Application;
@@ -36,6 +37,7 @@ export default function VettingPage() {
   const [portfolioItems, setPortfolioItems] = useState<any[]>([]);
   const [documents, setDocuments] = useState<any[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading) {
@@ -118,13 +120,23 @@ export default function VettingPage() {
     }
   };
 
-  // Load application details (portfolio and documents) when viewing
+  // Load application details (portfolio, documents, and profile picture) when viewing
   const loadApplicationDetails = async () => {
     if (!user || !existingData?.application) return;
 
     setLoadingDetails(true);
     try {
       const supabase = createClient();
+
+      // Fetch profile picture if exists
+      if (existingData.profile?.profile_picture_url) {
+        const { data: picData } = await supabase.storage
+          .from("profile-pictures")
+          .createSignedUrl(existingData.profile.profile_picture_url, 3600);
+        if (picData?.signedUrl) {
+          setProfilePictureUrl(picData.signedUrl);
+        }
+      }
 
       // Fetch portfolio items
       const { data: portfolio } = await supabase
@@ -252,6 +264,23 @@ export default function VettingPage() {
                     </div>
                   ) : (
                     <>
+                      {/* Profile Header with Picture */}
+                      <div className="flex items-center gap-4 pb-6 border-b border-[rgba(255,255,255,0.08)]">
+                        <Avatar
+                          src={profilePictureUrl}
+                          alt={profile.full_name || "Profile"}
+                          fallbackInitials={profile.full_name || "?"}
+                          size="xl"
+                        />
+                        <div>
+                          <h3 className="text-[18px] font-semibold text-[#f8f8fa]">{profile.full_name}</h3>
+                          <p className="text-[14px] text-[#b0b2bc]">{profile.company_name}</p>
+                          {profile.primary_trade && (
+                            <Badge variant="outline" className="mt-2 text-[12px]">{profile.primary_trade}</Badge>
+                          )}
+                        </div>
+                      </div>
+
                       {/* Business Information */}
                       <div className="space-y-4">
                         <h4 className="text-[14px] font-semibold text-[#c9a962] uppercase tracking-wide flex items-center gap-2">
@@ -273,12 +302,32 @@ export default function VettingPage() {
                             </p>
                             <p className="text-[14px] text-[#f8f8fa]">{profile.primary_trade || "—"}</p>
                           </div>
+                          {profile.business_type && (
+                            <div className="bg-[#21242f] rounded-lg p-4 border border-[rgba(255,255,255,0.08)]">
+                              <p className="text-[12px] text-[#6a6d78] uppercase tracking-wide mb-1">Business Type</p>
+                              <p className="text-[14px] text-[#f8f8fa]">{profile.business_type}</p>
+                            </div>
+                          )}
+                          {profile.years_in_business && profile.years_in_business > 0 && (
+                            <div className="bg-[#21242f] rounded-lg p-4 border border-[rgba(255,255,255,0.08)]">
+                              <p className="text-[12px] text-[#6a6d78] uppercase tracking-wide mb-1 flex items-center gap-1">
+                                <Calendar className="h-3 w-3" /> Years in Business
+                              </p>
+                              <p className="text-[14px] text-[#f8f8fa]">{profile.years_in_business}</p>
+                            </div>
+                          )}
                           <div className="bg-[#21242f] rounded-lg p-4 border border-[rgba(255,255,255,0.08)]">
                             <p className="text-[12px] text-[#6a6d78] uppercase tracking-wide mb-1 flex items-center gap-1">
                               <Users className="h-3 w-3" /> Team Size
                             </p>
                             <p className="text-[14px] text-[#f8f8fa]">{profile.team_size || "—"}</p>
                           </div>
+                          {profile.service_areas && profile.service_areas.length > 0 && (
+                            <div className="bg-[#21242f] rounded-lg p-4 border border-[rgba(255,255,255,0.08)] md:col-span-2">
+                              <p className="text-[12px] text-[#6a6d78] uppercase tracking-wide mb-1">Service Areas</p>
+                              <p className="text-[14px] text-[#f8f8fa]">{profile.service_areas.join(", ")}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -317,7 +366,7 @@ export default function VettingPage() {
                               <p className="text-[12px] text-[#6a6d78] uppercase tracking-wide mb-1 flex items-center gap-1">
                                 <Globe className="h-3 w-3" /> Website
                               </p>
-                              <p className="text-[14px] text-[#c9a962]">{profile.website}</p>
+                              <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-[14px] text-[#c9a962] hover:underline">{profile.website}</a>
                             </div>
                           )}
                         </div>
@@ -331,6 +380,20 @@ export default function VettingPage() {
                           </h4>
                           <div className="bg-[#21242f] rounded-lg p-4 border border-[rgba(255,255,255,0.08)]">
                             <p className="text-[14px] text-[#b0b2bc] whitespace-pre-wrap">{profile.bio}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Referred By */}
+                      {profile.referred_by && (
+                        <div className="space-y-4">
+                          <h4 className="text-[14px] font-semibold text-[#c9a962] uppercase tracking-wide flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            Referral
+                          </h4>
+                          <div className="bg-[#21242f] rounded-lg p-4 border border-[rgba(255,255,255,0.08)]">
+                            <p className="text-[12px] text-[#6a6d78] uppercase tracking-wide mb-1">Referred By</p>
+                            <p className="text-[14px] text-[#f8f8fa]">{profile.referred_by}</p>
                           </div>
                         </div>
                       )}
