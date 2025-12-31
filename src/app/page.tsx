@@ -61,13 +61,13 @@ export default function Home() {
             <div className="space-y-2">
               <h1
                 className="text-[3rem] text-[#f8f8fa] leading-[1.2]"
-                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 300 }}
+                style={{ fontFamily: "var(--font-cormorant), Georgia, serif", fontWeight: 300 }}
               >
                 Where trust builds
               </h1>
               <p
                 className="text-[3rem] text-[#c9a962] leading-[1.2] italic"
-                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 400 }}
+                style={{ fontFamily: "var(--font-cormorant), Georgia, serif", fontWeight: 400 }}
               >
                 infrastructure
               </p>

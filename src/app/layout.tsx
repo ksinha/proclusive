@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Cormorant_Garamond, Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 import { BackgroundEffects } from "@/components/ui/background-effects";
 
-const inter = Inter({
+const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600"],
+  variable: "--font-outfit",
   display: "swap",
 });
 
@@ -34,8 +42,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="antialiased" style={{ background: '#1a1d27' }}>
+    <html lang="en" className={`${cormorantGaramond.variable} ${outfit.variable}`}>
+      <body className="antialiased" style={{ background: '#1a1d27', fontFamily: 'var(--font-outfit), system-ui, sans-serif' }}>
         <Providers>
           <BackgroundEffects />
           <div className="relative z-10">
