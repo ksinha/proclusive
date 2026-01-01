@@ -17,7 +17,7 @@ export default function PrivacyPolicyPage() {
               Privacy Policy
             </h1>
             <p className="text-[14px] text-[#6a6d78] font-light">
-              Last updated: December 31, 2025
+              Last updated: January 1, 2026
             </p>
           </div>
         </div>
@@ -56,10 +56,10 @@ export default function PrivacyPolicyPage() {
                 Proclusive Privacy Policy
               </h2>
               <p className="text-[14px] text-[#b0b2bc] mb-1">
-                <strong className="text-[#f8f8fa]">Effective Date:</strong> February 1, 2026
+                <strong className="text-[#f8f8fa]">Effective Date:</strong> January 1, 2026
               </p>
               <p className="text-[14px] text-[#b0b2bc] mb-8">
-                <strong className="text-[#f8f8fa]">Last Updated:</strong> December 31, 2025
+                <strong className="text-[#f8f8fa]">Last Updated:</strong> January 1, 2026
               </p>
 
               {/* Section 1 */}

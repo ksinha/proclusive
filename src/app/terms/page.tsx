@@ -37,7 +37,7 @@ export default function TermsOfService() {
             className="text-[14px] font-light"
             style={{ color: '#6a6d78' }}
           >
-            Last updated: December 31, 2025
+            Last updated: January 1, 2026
           </p>
         </div>
 
@@ -69,7 +69,7 @@ export default function TermsOfService() {
               Proclusive Platform Terms of Service
             </h2>
             <p className="text-[14px] mb-8" style={{ color: '#b0b2bc' }}>
-              Effective Date: February 1, 2026
+              Effective Date: January 1, 2026
             </p>
 
             {/* Section 1 */}
