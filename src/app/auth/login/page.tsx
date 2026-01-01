@@ -157,9 +157,18 @@ export default function LoginPage() {
 
               {/* Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="password" style={{ color: '#b0b2bc', fontSize: '0.9rem' }}>
-                  Password
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" style={{ color: '#b0b2bc', fontSize: '0.9rem' }}>
+                    Password
+                  </Label>
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-[13px] transition-colors hover:text-[#b0b2bc]"
+                    style={{ color: '#6a6d78' }}
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <div className="relative">
                   <Input
                     id="password"
@@ -185,35 +194,24 @@ export default function LoginPage() {
 
               {/* Error Display */}
               {error && (
-                <div className="space-y-3">
-                  <Card style={{
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    background: 'rgba(248, 113, 113, 0.15)'
-                  }}>
-                    <CardContent className="py-3 px-4">
-                      <div className="flex items-start gap-3">
-                        <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#f87171' }} />
-                        <div className="flex-1">
-                          <p className="text-[13px] font-medium" style={{ color: '#f87171' }}>
-                            Authentication failed
-                          </p>
-                          <p className="text-[13px] mt-1" style={{ color: '#f87171' }}>
-                            {error}
-                          </p>
-                        </div>
+                <Card style={{
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(248, 113, 113, 0.15)'
+                }}>
+                  <CardContent className="py-3 px-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#f87171' }} />
+                      <div className="flex-1">
+                        <p className="text-[13px] font-medium" style={{ color: '#f87171' }}>
+                          Authentication failed
+                        </p>
+                        <p className="text-[13px] mt-1" style={{ color: '#f87171' }}>
+                          {error}
+                        </p>
                       </div>
-                    </CardContent>
-                  </Card>
-                  <div className="text-center">
-                    <Link
-                      href="/auth/forgot-password"
-                      className="text-sm transition-colors underline-offset-4 hover:underline"
-                      style={{ color: '#c9a962' }}
-                    >
-                      Forgot Password?
-                    </Link>
-                  </div>
-                </div>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
 
               {/* Submit Button */}
