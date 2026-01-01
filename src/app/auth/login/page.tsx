@@ -163,10 +163,9 @@ export default function LoginPage() {
                   </Label>
                   <Link
                     href="/auth/forgot-password"
-                    className="text-[13px] transition-colors hover:text-[#b0b2bc]"
-                    style={{ color: '#6a6d78' }}
+                    className="text-[13px] text-[#6a6d78] transition-colors hover:text-[#b0b2bc]"
                   >
-                    Forgot password?
+                    Forgot password
                   </Link>
                 </div>
                 <div className="relative">
